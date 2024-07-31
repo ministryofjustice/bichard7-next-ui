@@ -272,7 +272,7 @@ jobs:
       - fetch_images:
           IMAGES: user-service nginx-auth-proxy
       - run:
-          command: npm run ui
+          command: bash .circleci/scripts/run-infrastructure.sh ui ui
           working_directory: ~/bichard7-next-core
       - run:
           name: Run UI tests

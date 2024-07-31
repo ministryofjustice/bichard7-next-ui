@@ -6,8 +6,8 @@ import parseFormToken, { ParseFormTokenResult } from "../../../src/middleware/wi
 
 const request = <IncomingMessage>{ url: "/login" }
 
-it("should return form token and cookie name when token exists in the form data", () => {
-  const { formToken, cookieName: expectedCookieName } = generateCsrfToken(request)
+it("should return form token when token exists in the form data", () => {
+  const formToken = generateCsrfToken(request)
   const formData = <QueryString.ParsedQs>{
     CSRFToken: formToken
   }
@@ -17,9 +17,8 @@ it("should return form token and cookie name when token exists in the form data"
 
   expect(isError(result)).toBe(false)
 
-  const { formToken: actualFormToken, cookieName: actualCookieName } = result as ParseFormTokenResult
+  const { formToken: actualFormToken } = result as ParseFormTokenResult
   expect(actualFormToken).toBe(expectedFormToken)
-  expect(actualCookieName).toBe(expectedCookieName)
 })
 
 it("should return error when token does not exist in form data", () => {

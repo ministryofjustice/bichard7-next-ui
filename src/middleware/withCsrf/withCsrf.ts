@@ -1,10 +1,8 @@
 import { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult } from "next"
 import { ParsedUrlQuery } from "querystring"
 import CsrfServerSidePropsContext from "types/CsrfServerSidePropsContext"
-import setCookie from "utils/setCookie"
 import generateCsrfToken from "./generateCsrfToken"
 import verifyCsrfToken from "./verifyCsrfToken"
-import { CSRF } from "../../config"
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default <Props extends { [key: string]: any }>(
@@ -24,9 +22,7 @@ export default <Props extends { [key: string]: any }>(
       return { props: {} } as unknown as GetServerSidePropsResult<Props>
     }
 
-    const { maximumTokenAgeInSeconds } = CSRF
-    const { formToken, cookieToken, cookieName } = generateCsrfToken(req)
-    setCookie(res, cookieName, cookieToken, { maxAge: maximumTokenAgeInSeconds, path: "/bichard", httpOnly: true })
+    const formToken = generateCsrfToken(req)
 
     return getServerSidePropsFunction({ ...context, formData, csrfToken: formToken } as CsrfServerSidePropsContext)
   }
