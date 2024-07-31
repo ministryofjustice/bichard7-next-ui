@@ -145,6 +145,30 @@ describe("Case list", () => {
       cy.get("tr").not(":first").eq(2).should("not.exist")
     })
 
+    it("Should display the resolved badge on cases marked as resolved using the bottom search button", () => {
+      cy.task("insertCourtCasesWithFields", [
+        {
+          errorStatus: "Resolved",
+          resolutionTimestamp: new Date(),
+          errorResolvedBy: "GeneralHandler",
+          errorResolvedTimestamp: new Date(),
+          orgForPoliceFilter: "01"
+        },
+        { resolutionTimestamp: null, orgForPoliceFilter: "01" },
+        { resolutionTimestamp: null, orgForPoliceFilter: "01" }
+      ])
+
+      loginAndVisit()
+
+      cy.get(`label[for="resolved"]`).click()
+      cy.get("#search-bottom").contains("Apply filters").click()
+
+      cy.get("tr").not(":first").eq(0).get("td:nth-child(5)").contains(`Case00000`)
+      cy.get("tr").not(":first").eq(0).contains(`Resolved`).should("exist")
+      cy.get("tr").not(":first").eq(1).should("not.exist")
+      cy.get("tr").not(":first").eq(2).should("not.exist")
+    })
+
     it("Should display the submitted badge on cases marked as submitted", () => {
       cy.task("insertCourtCasesWithFields", [
         { errorStatus: "Submitted", orgForPoliceFilter: "01" },
