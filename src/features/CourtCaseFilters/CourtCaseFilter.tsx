@@ -1,3 +1,4 @@
+import { PrimaryButton } from "components/Buttons"
 import ConditionalRender from "components/ConditionalRender"
 import CaseStateFilter from "components/SearchFilters/CaseStateFilter"
 import LockedFilter, { lockedStateShortLabels } from "components/SearchFilters/LockedFilter"
@@ -14,7 +15,7 @@ import Permission from "types/Permission"
 import { anyFilterChips } from "utils/filterChips"
 import { reasonOptions } from "utils/reasonOptions"
 import CourtDateFilter from "../../components/SearchFilters/CourtDateFilter"
-import { SelectedFiltersContainer } from "./CourtCaseFilter.styles"
+import { FilterOptionsContainer, SelectedFiltersContainer } from "./CourtCaseFilter.styles"
 import FilterChipSection from "./FilterChipSection"
 import { filtersReducer } from "./reducers/filters"
 
@@ -86,10 +87,10 @@ const CourtCaseFilter: React.FC<Props> = ({
             </SelectedFiltersContainer>
           </div>
         </div>
-        <div className="moj-filter__options">
-          <button className="govuk-button" data-module="govuk-button" id="search">
+        <FilterOptionsContainer className="moj-filter__options">
+          <PrimaryButton className="govuk-button" dataModule="govuk-button" id={"search"}>
             {"Apply filters"}
-          </button>
+          </PrimaryButton>
 
           <input type="hidden" id="order" name="order" value={order || ""} />
           <input type="hidden" id="orderBy" name="orderBy" value={orderBy || ""} />
@@ -128,7 +129,12 @@ const CourtCaseFilter: React.FC<Props> = ({
           <Divider />
 
           <LockedFilter lockedState={state.lockedStateFilter.value} dispatch={dispatch} />
-        </div>
+          <Divider />
+
+          <PrimaryButton className="govuk-button" dataModule="govuk-button" id={"search-bottom"}>
+            {"Apply filters"}
+          </PrimaryButton>
+        </FilterOptionsContainer>
       </div>
     </form>
   )
