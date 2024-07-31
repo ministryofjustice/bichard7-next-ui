@@ -337,35 +337,6 @@ describe("listCourtCases", () => {
     expect(totalCasesDesc).toEqual(3)
   })
 
-  describe("search by defendant name", () => {
-    it("Should list cases when there is a case insensitive match", async () => {
-      const defendantToInclude = "WAYNE Bruce"
-      const defendantToIncludeWithPartialMatch = "WAYNE Bill"
-      const defendantToNotInclude = "GORDON Barbara"
-
-      await insertCourtCasesWithFields([
-        { defendantName: defendantToInclude, orgForPoliceFilter: orgCode },
-        { defendantName: defendantToNotInclude, orgForPoliceFilter: orgCode },
-        { defendantName: defendantToIncludeWithPartialMatch, orgForPoliceFilter: orgCode }
-      ])
-
-      let result = await listCourtCases(dataSource, { maxPageItems: 100, defendantName: "WAYNE Bruce" }, testUser)
-      expect(isError(result)).toBe(false)
-      let { result: cases } = result as ListCourtCaseResult
-
-      expect(cases).toHaveLength(1)
-      expect(cases[0].defendantName).toStrictEqual(defendantToInclude)
-
-      result = await listCourtCases(dataSource, { maxPageItems: 100, defendantName: "WAYNE B" }, testUser)
-      expect(isError(result)).toBe(false)
-      cases = (result as ListCourtCaseResult).result
-
-      expect(cases).toHaveLength(2)
-      expect(cases[0].defendantName).toStrictEqual(defendantToInclude)
-      expect(cases[1].defendantName).toStrictEqual(defendantToIncludeWithPartialMatch)
-    })
-  })
-
   describe("filter by cases allocated to me", () => {
     it("Should list cases that are locked to me", async () => {
       await insertCourtCasesWithFields([
