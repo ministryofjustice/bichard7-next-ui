@@ -3,13 +3,14 @@ import { CaseListQueryParams, LockedState } from "types/CaseListQueryParams"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import Permission from "types/Permission"
 import PromiseResult from "types/PromiseResult"
+
 import { isError } from "types/Result"
 import CourtCase from "./entities/CourtCase"
+import getLongTriggerCode from "./entities/transformers/getLongTriggerCode"
 import User from "./entities/User"
 import filterByReasonAndResolutionStatus from "./filters/filterByReasonAndResolutionStatus"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 import leftJoinAndSelectTriggersQuery from "./queries/leftJoinAndSelectTriggersQuery"
-import getLongTriggerCode from "./entities/transformers/getLongTriggerCode"
 
 const listCourtCases = async (
   connection: DataSource,
@@ -83,8 +84,13 @@ const listCourtCases = async (
 
   // Filters
   if (defendantName) {
-    const defendantNameLike = { defendantName: ILike(`%${defendantName}%`) }
-    query.andWhere(defendantNameLike)
+    let splitDefendantName = defendantName.replace(/\*|\s+/g, "%")
+
+    if (!splitDefendantName.endsWith("%")) {
+      splitDefendantName = `${splitDefendantName}%`
+    }
+
+    query.andWhere({ defendantName: ILike(splitDefendantName) })
   }
 
   if (courtName) {
