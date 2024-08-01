@@ -74,7 +74,7 @@ type Props = {
 
 const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param === "desc"
 
-// Remove characters the have impact of queries.
+// Remove characters that have an impact on queries.
 const sanitise = (value: string) => value.replace(/[\\%_^]/g, "")
 
 const extractSearchParamsFromQuery = (query: ParsedUrlQuery, currentUser: User): CaseListQueryParams => {
