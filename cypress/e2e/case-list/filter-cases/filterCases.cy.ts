@@ -454,6 +454,16 @@ describe("Filtering cases", () => {
     visitBasePath()
 
     inputAndSearch("defendantName", "Bruce")
+    confirmMultipleFieldsNotDisplayed(["PENNYWORTH Alfred", "WAYNE Bruce", "GORDON Bruce", "PENNYWORTH Bruce"])
+    cy.get("tr").should("have.length", 0)
+    confirmMultipleFieldsDisplayed([])
+
+    inputAndSearch("defendantName", "*Bruce")
+    confirmMultipleFieldsNotDisplayed(["PENNYWORTH Alfred"])
+    cy.get("tr").should("have.length", 4)
+    confirmMultipleFieldsDisplayed(["WAYNE Bruce", "GORDON Bruce", "PENNYWORTH Bruce"])
+
+    inputAndSearch("defendantName", " Bruce")
     confirmMultipleFieldsNotDisplayed(["PENNYWORTH Alfred"])
     cy.get("tr").should("have.length", 4)
     confirmMultipleFieldsDisplayed(["WAYNE Bruce", "GORDON Bruce", "PENNYWORTH Bruce"])
