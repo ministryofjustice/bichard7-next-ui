@@ -74,6 +74,9 @@ type Props = {
 
 const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param === "desc"
 
+// Remove characters that have an impact on queries.
+const sanitise = (value: string) => value.replace(/[\\%_^]/g, "")
+
 const extractSearchParamsFromQuery = (query: ParsedUrlQuery, currentUser: User): CaseListQueryParams => {
   // TODO: Actual validation of content with zod
   const reason =
@@ -85,12 +88,14 @@ const extractSearchParamsFromQuery = (query: ParsedUrlQuery, currentUser: User):
     from: query.from,
     to: query.to
   })
-  const defendantName = validateQueryParams(query.defendantName) ? query.defendantName : null
-  const courtName = validateQueryParams(query.courtName) ? query.courtName : undefined
+  const defendantName = validateQueryParams(query.defendantName) ? sanitise(query.defendantName) : null
+  const courtName = validateQueryParams(query.courtName) ? sanitise(query.courtName) : undefined
   const reasonCodes = validateQueryParams(query.reasonCodes)
-    ? dedupeTriggerCodes(query.reasonCodes.split(" ").filter((reasonCode) => reasonCode != ""))
+    ? dedupeTriggerCodes(query.reasonCodes.split(" ").filter((reasonCode) => reasonCode !== "")).map((reasonCode) =>
+        sanitise(reasonCode)
+      )
     : []
-  const ptiurn = validateQueryParams(query.ptiurn) ? query.ptiurn : undefined
+  const ptiurn = validateQueryParams(query.ptiurn) ? sanitise(query.ptiurn) : undefined
   const lockedState: LockedState = validateQueryParams(query.lockedState)
     ? (query.lockedState as LockedState)
     : LockedState.All
