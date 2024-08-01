@@ -355,7 +355,7 @@ describe("Filter cases by resolution status", () => {
       },
       {
         description:
-          "Should see cases with unresolved exception when user is a exception handler and searches for TRPR0010",
+          "Should see cases with unresolved exception when user is a exception handler and searches for HO100300",
         filters: {
           reasonCodes: ["HO100300"]
         },
