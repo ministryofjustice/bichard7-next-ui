@@ -7,12 +7,7 @@ import logAccessibilityViolations from "../../../support/logAccessibilityViolati
 
 describe("Filtering cases by trigger groups", () => {
   beforeEach(() => {
-    cy.task("clearCourtCases")
     cy.loginAs("GeneralHandler")
-  })
-
-  after(() => {
-    cy.task("clearTriggers")
   })
 
   it("Should be accessible with trigger group is unchecked", () => {
@@ -107,7 +102,9 @@ describe("Filtering cases by trigger groups", () => {
   })
 
   describe("when using the using the group checkboxes", () => {
-    beforeEach(() => {
+    before(() => {
+      cy.task("clearCourtCases")
+
       // Add 20 cases
       cy.task("insertCourtCasesWithFields", [
         { defendantName: "WAYNE Bruce", orgForPoliceFilter: "01" },
@@ -158,36 +155,100 @@ describe("Filtering cases by trigger groups", () => {
       })
     })
 
-    it("shows all cases before we filter them", () => {
+    after(() => {
+      cy.task("clearTriggers")
+    })
+
+    it("shows all cases before we filter them and the short trigger and description", () => {
       cy.visit("/bichard")
 
       cy.get("tbody").should("have.length", "20")
 
       // Bails
-      cy.get("tbody").contains("WAYNE Bruce")
-      cy.get("tbody").contains("GORDON Barbara")
-      cy.get("tbody").contains("PENNYWORTH Alfred")
-      cy.get("tbody").contains("GRAYSON Richard")
+      cy.get("table tbody:nth-child(2)").within(() => {
+        cy.get(".defendant-name").contains("WAYNE Bruce")
+        cy.get(".trigger-description").contains("PR08 - Breach of bail")
+      })
+      cy.get("table tbody:nth-child(3)").within(() => {
+        cy.get(".defendant-name").contains("GORDON Barbara")
+        cy.get(".trigger-description").contains("PR10 - Conditional bail")
+      })
+      cy.get("table tbody:nth-child(4)").within(() => {
+        cy.get(".defendant-name").contains("PENNYWORTH Alfred")
+        cy.get(".trigger-description").contains("PR20 - Breach")
+      })
+      cy.get("table tbody:nth-child(5)").within(() => {
+        cy.get(".defendant-name").contains("GRAYSON Richard")
+        cy.get(".trigger-description").contains("PR30 - Pre-charge bail application")
+      })
       // Custody
-      cy.get("tbody").contains("SAVAGE Pete")
-      cy.get("tbody").contains("FALCONE Carmine")
-      cy.get("tbody").contains("GORDON James")
-      cy.get("tbody").contains("COLSON Gil")
-      cy.get("tbody").contains("KYKLE Selina")
+      cy.get("table tbody:nth-child(6)").within(() => {
+        cy.get(".defendant-name").contains("SAVAGE Pete")
+        cy.get(".trigger-description").contains("PR01 - Disqualified driver")
+      })
+      cy.get("table tbody:nth-child(7)").within(() => {
+        cy.get(".defendant-name").contains("FALCONE Carmine")
+        cy.get(".trigger-description").contains("PR05 - Remand in custody")
+      })
+      cy.get("table tbody:nth-child(8)").within(() => {
+        cy.get(".defendant-name").contains("GORDON James")
+        cy.get(".trigger-description").contains("PR06 - Imprisoned")
+      })
+      cy.get("table tbody:nth-child(9)").within(() => {
+        cy.get(".defendant-name").contains("COLSON Gil")
+        cy.get(".trigger-description").contains("PR19 - Bail direction")
+      })
+      cy.get("table tbody:nth-child(10)").within(() => {
+        cy.get(".defendant-name").contains("KYKLE Selina")
+        cy.get(".trigger-description").contains("PR21 - Disq. non-motoring")
+      })
       // Orders
-      cy.get("tbody").contains("COOPER Harriet")
-      cy.get("tbody").contains("REID Britt")
-      cy.get("tbody").contains("BENNETT Ethan")
-      cy.get("tbody").contains("ROJAS Angel")
-      cy.get("tbody").contains("YIN Ellen")
-      cy.get("tbody").contains("KARLO Basil")
+      cy.get("table tbody:nth-child(11)").within(() => {
+        cy.get(".defendant-name").contains("COOPER Harriet")
+        cy.get(".trigger-description").contains("PR03 - Order issues")
+      })
+      cy.get("table tbody:nth-child(12)").within(() => {
+        cy.get(".defendant-name").contains("REID Britt")
+        cy.get(".trigger-description").contains("PR16 - Forfeiture order")
+      })
+      cy.get("table tbody:nth-child(13)").within(() => {
+        cy.get(".defendant-name").contains("BENNETT Ethan")
+        cy.get(".trigger-description").contains("PR25 - Case reopened")
+      })
+      cy.get("table tbody:nth-child(14)").within(() => {
+        cy.get(".defendant-name").contains("ROJAS Angel")
+        cy.get(".trigger-description").contains("PR26 - Disq. Suspended")
+      })
+      cy.get("table tbody:nth-child(15)").within(() => {
+        cy.get(".defendant-name").contains("YIN Ellen")
+        cy.get(".trigger-description").contains("PR29 - Civil Proceedings")
+      })
+      cy.get("table tbody:nth-child(16)").within(() => {
+        cy.get(".defendant-name").contains("KARLO Basil")
+        cy.get(".trigger-description").contains("PS08 - Curfew order")
+      })
       // Warrants
-      cy.get("tbody").contains("GRAVES Mercy")
-      cy.get("tbody").contains("GREY Francis")
+      cy.get("table tbody:nth-child(17)").within(() => {
+        cy.get(".defendant-name").contains("GRAVES Mercy")
+        cy.get(".trigger-description").contains("PR02 - Warrant issued")
+      })
+      cy.get("table tbody:nth-child(18)").within(() => {
+        cy.get(".defendant-name").contains("GREY Francis")
+        cy.get(".trigger-description").contains("PR12 - Warrant withdrawn")
+      })
       // Other
-      cy.get("tbody").contains("QUINN Harley")
-      cy.get("tbody").contains("KATSU Hideto")
-      cy.get("tbody").contains("LUTHOR Lex")
+      cy.get("table tbody:nth-child(19)").within(() => {
+        cy.get(".defendant-name").contains("QUINN Harley")
+        cy.get(".trigger-description").contains("PR17 - Adjourned sine die")
+      })
+      cy.get("table tbody:nth-child(20)").within(() => {
+        cy.get(".defendant-name").contains("KATSU Hideto")
+        cy.get(".trigger-description").contains("PR17 - Adjourned sine die")
+      })
+      cy.get("table tbody:nth-child(21)").within(() => {
+        cy.get(".defendant-name").contains("LUTHOR Lex")
+        cy.get(".trigger-description").contains("PR17 - Adjourned sine die")
+      })
     })
 
     it("filters by group 'Bails'", () => {

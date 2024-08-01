@@ -1,16 +1,16 @@
 import { useCurrentUser } from "context/CurrentUserContext"
 import { useRouter } from "next/router"
 import { encode } from "querystring"
+import getLongTriggerCode from "services/entities/transformers/getLongTriggerCode"
 import Permission from "types/Permission"
 import { DisplayPartialCourtCase } from "types/display/CourtCases"
 import { deleteQueryParamsByName } from "utils/deleteQueryParam"
 import groupErrorsFromReport from "utils/formatReasons/groupErrorsFromReport"
+import getResolutionStatus from "../../../utils/getResolutionStatus"
 import { CaseDetailsRow } from "./CaseDetailsRow/CaseDetailsRow"
 import { ExceptionsLockTag, ExceptionsReasonCell } from "./ExceptionsColumns"
 import { ExtraReasonRow } from "./ExtraReasonRow"
 import { TriggersLockTag, TriggersReasonCell } from "./TriggersColumns"
-import getResolutionStatus from "../../../utils/getResolutionStatus"
-import getLongTriggerCode from "services/entities/transformers/getLongTriggerCode"
 
 interface Props {
   courtCase: DisplayPartialCourtCase
