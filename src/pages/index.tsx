@@ -74,7 +74,8 @@ type Props = {
 
 const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param === "desc"
 
-const sanitise = (value: string) => value.replace(/[\\%_^]/g, "\\$&")
+// Remove characters the have impact of queries.
+const sanitise = (value: string) => value.replace(/[\\%_^]/g, "")
 
 const extractSearchParamsFromQuery = (query: ParsedUrlQuery, currentUser: User): CaseListQueryParams => {
   // TODO: Actual validation of content with zod
