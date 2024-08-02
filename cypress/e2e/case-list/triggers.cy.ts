@@ -51,11 +51,11 @@ describe("When I can see triggers on cases", () => {
     cy.task("insertTriggers", { caseId: 0, triggers })
     loginAndVisit("TriggerHandler")
 
-    cy.get(".trigger-description:contains('TRPR0001')")
+    cy.get(".trigger-description:contains('PR01')")
       .contains(/\(\d+\)/) // any number between parentheses
       .should("exist")
 
-    cy.get(".trigger-description:not(:contains('TRPR0001'))")
+    cy.get(".trigger-description:not(:contains('PR01'))")
       .contains(/\(\d+\)/)
       .should("not.exist")
   })
@@ -65,7 +65,7 @@ describe("When I can see triggers on cases", () => {
     cy.task("insertTriggers", { caseId: 0, triggers })
     loginAndVisit("TriggerHandler")
 
-    cy.get(".trigger-description:contains('TRPR0001')")
+    cy.get(".trigger-description:contains('PR01')")
       .contains(/\(\d+\)/) // any number between parentheses
       .should("include.text", "(12)")
   })

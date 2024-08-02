@@ -343,6 +343,152 @@ describe("Filter cases by resolution status", () => {
       },
       {
         description:
+          "Should see cases with unresolved triggers when user is a trigger handler and searches for TRPR0010",
+        filters: {
+          reasonCodes: ["TRPR0010"]
+        },
+        user: triggerHandler,
+        expectedCases: [
+          "Exceptions Unresolved/Bails Trigger Unresolved", // Sees this case as it has the reason code
+          "No exceptions/Bails Trigger Unresolved"
+        ]
+      },
+      {
+        description:
+          "Should see cases with unresolved exception when user is a exception handler and searches for HO100300",
+        filters: {
+          reasonCodes: ["HO100300"]
+        },
+        user: exceptionHandler,
+        expectedCases: [
+          "Exceptions Unresolved/Bails Trigger Unresolved",
+          "Exceptions Unresolved/No triggers",
+          "Exceptions Unresolved/Trigger Resolved by someoneElse",
+          "Exceptions Unresolved/Trigger Unresolved"
+        ]
+      },
+
+      {
+        description:
+          "Should see cases with unresolved triggers when user is a general handler and searches for TRPR0010",
+        filters: {
+          reasonCodes: ["TRPR0010"]
+        },
+        user: generalHandler,
+        expectedCases: [
+          "Exceptions Unresolved/Bails Trigger Unresolved", // Sees this case as it has the reason code
+          "No exceptions/Bails Trigger Unresolved"
+        ]
+      },
+      {
+        description:
+          "Should see cases with unresolved exceptions when user is a general handler and searches for HO100300",
+        filters: {
+          reasonCodes: ["HO100300"]
+        },
+        user: generalHandler,
+        expectedCases: [
+          "Exceptions Unresolved/Bails Trigger Unresolved",
+          "Exceptions Unresolved/No triggers",
+          "Exceptions Unresolved/Trigger Resolved by someoneElse",
+          "Exceptions Unresolved/Trigger Unresolved"
+        ]
+      },
+      {
+        description:
+          "Should see cases with unresolved exceptions when user is a general handler and searches for HO100300 and TRPR0010",
+        filters: {
+          reasonCodes: ["HO100300", "TRPR0010"]
+        },
+        user: generalHandler,
+        expectedCases: [
+          "No exceptions/Bails Trigger Unresolved",
+          "Exceptions Unresolved/Bails Trigger Unresolved",
+          "Exceptions Unresolved/No triggers",
+          "Exceptions Unresolved/Trigger Resolved by someoneElse",
+          "Exceptions Unresolved/Trigger Unresolved",
+          "Exceptions Resolved by exceptionHandler/Trigger Unresolved"
+        ]
+      },
+      {
+        description:
+          "Should see cases with resolved exceptions and triggers when user is a general handler and searches for HO100300 and TRPR0010",
+        filters: {
+          reasonCodes: ["HO100300", "TRPR0010"],
+          caseState: "Resolved"
+        },
+        user: generalHandler,
+        expectedCases: [
+          "Exceptions Resolved by generalHandler/Bails Trigger Resolved by someoneElse",
+          "Exceptions Resolved by generalHandler/No triggers",
+          "Exceptions Resolved by generalHandler/Trigger Resolved by generalHandler",
+          "Exceptions Resolved by generalHandler/Trigger Resolved by someoneElse",
+          "Exceptions Resolved by someoneElse/Trigger Resolved by generalHandler",
+          "No exceptions/Bails Trigger Resolved by generalHandler"
+        ]
+      },
+      {
+        description:
+          "Should see cases with resolved exceptions when user is a general handler and searches for HO100300",
+        filters: {
+          reasonCodes: ["HO100300"],
+          caseState: "Resolved"
+        },
+        user: generalHandler,
+        expectedCases: [
+          "Exceptions Resolved by generalHandler/Bails Trigger Resolved by someoneElse",
+          "Exceptions Resolved by generalHandler/No triggers",
+          "Exceptions Resolved by generalHandler/Trigger Resolved by generalHandler",
+          "Exceptions Resolved by generalHandler/Trigger Resolved by someoneElse",
+          "Exceptions Resolved by someoneElse/Trigger Resolved by generalHandler"
+        ]
+      },
+      {
+        description: "Should see cases with resolved triggers when user is a general handler and searches for TRPR0010",
+        filters: {
+          reasonCodes: ["TRPR0010"],
+          caseState: "Resolved"
+        },
+        user: generalHandler,
+        expectedCases: [
+          "Exceptions Resolved by generalHandler/Bails Trigger Resolved by someoneElse",
+          "No exceptions/Bails Trigger Resolved by generalHandler"
+        ]
+      },
+      {
+        description: "Should see all cases with resolved triggers when user is a supervisor and searches for TRPR0010",
+        filters: {
+          reasonCodes: ["TRPR0010"],
+          caseState: "Resolved"
+        },
+        user: supervisor,
+        expectedCases: [
+          "Exceptions Resolved by generalHandler/Bails Trigger Resolved by someoneElse",
+          "No exceptions/Bails Trigger Resolved by generalHandler",
+          "No exceptions/Bails Trigger Resolved by someoneElse",
+          "No exceptions/Bails Trigger Resolved by triggerHandler"
+        ]
+      },
+      {
+        description:
+          "Should see all cases with resolved exceptions when user is a supervisor and searches for HO100300",
+        filters: {
+          reasonCodes: ["HO100300"],
+          caseState: "Resolved"
+        },
+        user: supervisor,
+        expectedCases: [
+          "Exceptions Resolved by exceptionHandler/Trigger Resolved by triggerHandler",
+          "Exceptions Resolved by exceptionHandler/Trigger Unresolved",
+          "Exceptions Resolved by generalHandler/Bails Trigger Resolved by someoneElse",
+          "Exceptions Resolved by generalHandler/No triggers",
+          "Exceptions Resolved by generalHandler/Trigger Resolved by generalHandler",
+          "Exceptions Resolved by generalHandler/Trigger Resolved by someoneElse",
+          "Exceptions Resolved by someoneElse/Trigger Resolved by generalHandler"
+        ]
+      },
+      {
+        description:
           "Should see cases with resolved triggers when user is a trigger handler and resolved filter applied",
         filters: {
           caseState: "Resolved"

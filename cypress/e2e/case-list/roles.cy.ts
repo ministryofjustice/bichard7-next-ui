@@ -144,8 +144,8 @@ describe("Shows relevant information to a user's role", () => {
   it("Should only show triggers in the reason column to a trigger handler", () => {
     loginAndVisit("TriggerHandler")
 
-    confirmReasonDisplayed("TRPR0010")
-    confirmReasonDisplayed("TRPR0011")
+    confirmReasonDisplayed("PR10")
+    confirmReasonDisplayed("PR11")
 
     confirmReasonNotDisplayed("HO100301")
     confirmReasonNotDisplayed("HO100310")
@@ -154,8 +154,8 @@ describe("Shows relevant information to a user's role", () => {
   it("Should only show exceptions in the reason column to an exception handler", () => {
     loginAndVisit("ExceptionHandler")
 
-    confirmReasonNotDisplayed("TRPR0010")
-    confirmReasonNotDisplayed("TRPR0011")
+    confirmReasonNotDisplayed("PR10")
+    confirmReasonNotDisplayed("PR11")
 
     confirmReasonDisplayed("HO100301")
     confirmReasonDisplayed("HO100310")
@@ -164,8 +164,8 @@ describe("Shows relevant information to a user's role", () => {
   it("Should show both triggers and exceptions in the reason column to a general handler", () => {
     loginAndVisit("GeneralHandler")
 
-    confirmReasonDisplayed("TRPR0010")
-    confirmReasonDisplayed("TRPR0011")
+    confirmReasonDisplayed("PR10")
+    confirmReasonDisplayed("PR11")
 
     confirmReasonDisplayed("HO100301")
     confirmReasonDisplayed("HO100310")

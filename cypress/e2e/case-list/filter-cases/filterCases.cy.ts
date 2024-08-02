@@ -49,6 +49,7 @@ function tableRowShouldNotContain(tableRow: number, ...reasonCodes: string[]) {
 describe("Filtering cases", () => {
   beforeEach(() => {
     cy.task("clearCourtCases")
+    cy.task("clearTriggers")
     cy.loginAs("GeneralHandler")
   })
 
@@ -308,16 +309,16 @@ describe("Filtering cases", () => {
 
     cy.visit("/bichard")
 
-    tableRowShouldContain(0, "HO200212", "HO200200", "TRPR0015 - Personal details changed", "TRPR0017")
-    tableRowShouldContain(1, "HO200212", "HO200239", "TRPR0015 - Personal details changed", "TRPR0017")
-    tableRowShouldContain(2, "HO200247", "HO200212", "TRPR0015 - Personal details changed", "TRPR0017")
+    tableRowShouldContain(0, "HO200212", "HO200200", "PR15 - Personal details changed", "PR17")
+    tableRowShouldContain(1, "HO200212", "HO200239", "PR15 - Personal details changed", "PR17")
+    tableRowShouldContain(2, "HO200247", "HO200212", "PR15 - Personal details changed", "PR17")
 
     visitBasePath()
     inputAndSearch("reasonCodes", "HO200212")
 
     confirmFiltersAppliedContains("HO200212")
     tableRowShouldContain(0, "HO200212")
-    tableRowShouldNotContain(0, "HO200200", "TRPR0015 - Personal details changed", "TRPR0017")
+    tableRowShouldNotContain(0, "HO200200", "PR15 - Personal details changed", "PR17")
     cy.get(".moj-filter-tags").contains("HO200212").click({ force: true })
 
     visitBasePath()
@@ -325,7 +326,7 @@ describe("Filtering cases", () => {
 
     confirmFiltersAppliedContains("HO200200")
     tableRowShouldContain(0, "HO200200")
-    tableRowShouldNotContain(0, "HO200212", "TRPR0015 - Personal details changed", "TRPR0017")
+    tableRowShouldNotContain(0, "HO200212", "PR15 - Personal details changed", "PR17")
     cy.get(".moj-filter-tags").contains("HO200200").click({ force: true })
 
     visitBasePath()
@@ -333,19 +334,19 @@ describe("Filtering cases", () => {
 
     confirmFiltersAppliedContains("HO200247")
     tableRowShouldContain(0, "HO200247")
-    tableRowShouldNotContain(0, "HO200212", "TRPR0015 - Personal details changed", "TRPR0017")
+    tableRowShouldNotContain(0, "HO200212", "PR15 - Personal details changed", "PR17")
     cy.get(".moj-filter-tags").contains("HO200247").click({ force: true })
 
     visitBasePath()
-    inputAndSearch("reasonCodes", "TRPR0015")
+    inputAndSearch("reasonCodes", "PR15")
 
-    confirmFiltersAppliedContains("TRPR0015")
-    tableRowShouldContain(0, "TRPR0015")
-    tableRowShouldContain(1, "TRPR0015")
-    tableRowShouldContain(2, "TRPR0015")
-    tableRowShouldNotContain(0, "HO200212", "HO200200", "TRPR0017")
-    tableRowShouldNotContain(1, "HO200212", "HO200239", "TRPR0017")
-    tableRowShouldNotContain(2, "HO200247", "HO200212", "TRPR0017")
+    confirmFiltersAppliedContains("PR15")
+    tableRowShouldContain(0, "PR15")
+    tableRowShouldContain(1, "PR15")
+    tableRowShouldContain(2, "PR15")
+    tableRowShouldNotContain(0, "HO200212", "HO200200", "PR17")
+    tableRowShouldNotContain(1, "HO200212", "HO200239", "PR17")
+    tableRowShouldNotContain(2, "HO200247", "HO200212", "PR17")
   })
 
   it("Should display cases filtered by short reason code", () => {
@@ -377,22 +378,22 @@ describe("Filtering cases", () => {
 
     cy.contains("Case00000")
     cy.get("tbody tr.caseDetailsRow").should("have.length", 1)
-    tableRowShouldContain(0, "TRPR0017")
+    tableRowShouldContain(0, "PR17")
     confirmFiltersAppliedContains("PR17")
 
     visitBasePath()
     inputAndSearch("reasonCodes", "PR17 PR11")
-    tableRowShouldContain(0, "TRPR0017", "TRPR0011")
+    tableRowShouldContain(0, "PR17", "PR11")
 
     visitBasePath()
-    inputAndSearch("reasonCodes", "TRPR0017 PR11")
-    tableRowShouldContain(0, "TRPR0017", "TRPR0011")
+    inputAndSearch("reasonCodes", "PR17 PR11")
+    tableRowShouldContain(0, "PR17", "PR11")
 
     visitBasePath()
-    inputAndSearch("reasonCodes", "TRPR0017 PR17")
+    inputAndSearch("reasonCodes", "PR17 PR17")
     confirmFiltersAppliedContains("PR17")
-    cy.get(".moj-filter-tags").get("TRPR0017").should("not.exist")
-    tableRowShouldContain(0, "TRPR0017")
+    cy.get(".moj-filter-tags").get("PR17").should("not.exist")
+    tableRowShouldContain(0, "PR17")
   })
 
   it("Should display cases filtered by multiple reason codes", () => {
@@ -415,19 +416,19 @@ describe("Filtering cases", () => {
 
     visitBasePath()
 
-    inputAndSearch("reasonCodes", "TRPR0017 HO200212")
+    inputAndSearch("reasonCodes", "PR17 HO200212")
     cy.contains("Case00000")
     cy.contains("Case00001")
     confirmMultipleFieldsNotDisplayed(["Case00002"])
     cy.get("tbody tr.caseDetailsRow").should("have.length", 2)
-    confirmFiltersAppliedContains("TRPR0017")
+    confirmFiltersAppliedContains("PR17")
     confirmFiltersAppliedContains("HO200212")
 
     visitBasePath()
-    inputAndSearch("reasonCodes", "TRPR0017 TRPR0017")
-    confirmFiltersAppliedContains("TRPR0017")
+    inputAndSearch("reasonCodes", "PR17 PR17")
+    confirmFiltersAppliedContains("PR17")
     cy.get(".moj-filter-tags").should("have.length", 1)
-    tableRowShouldContain(0, "TRPR0017")
+    tableRowShouldContain(0, "PR17")
   })
 
   it("Should let users use all search fields", () => {
@@ -454,6 +455,16 @@ describe("Filtering cases", () => {
     visitBasePath()
 
     inputAndSearch("defendantName", "Bruce")
+    confirmMultipleFieldsNotDisplayed(["PENNYWORTH Alfred", "WAYNE Bruce", "GORDON Bruce", "PENNYWORTH Bruce"])
+    cy.get("tr").should("have.length", 0)
+    confirmMultipleFieldsDisplayed([])
+
+    inputAndSearch("defendantName", "*Bruce")
+    confirmMultipleFieldsNotDisplayed(["PENNYWORTH Alfred"])
+    cy.get("tr").should("have.length", 4)
+    confirmMultipleFieldsDisplayed(["WAYNE Bruce", "GORDON Bruce", "PENNYWORTH Bruce"])
+
+    inputAndSearch("defendantName", " Bruce")
     confirmMultipleFieldsNotDisplayed(["PENNYWORTH Alfred"])
     cy.get("tr").should("have.length", 4)
     confirmMultipleFieldsDisplayed(["WAYNE Bruce", "GORDON Bruce", "PENNYWORTH Bruce"])

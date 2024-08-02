@@ -1,9 +1,8 @@
 import { IncomingMessage } from "http"
 import QueryString from "qs"
 import { isError } from "types/Result"
-import parseFormToken from "./parseFormToken"
-import parseCookieToken from "./parseCookieToken"
 import parseFormData from "utils/parseFormData"
+import parseFormToken from "./parseFormToken"
 
 interface VerifyCsrfTokenResult {
   isValid: boolean
@@ -23,15 +22,9 @@ export default async (request: IncomingMessage): Promise<VerifyCsrfTokenResult> 
     return { isValid: false, formData }
   }
 
-  const { formToken, cookieName } = formTokenResult
+  const { formToken } = formTokenResult
 
-  const cookieToken = parseCookieToken(request, cookieName)
-
-  if (isError(cookieToken)) {
-    return { isValid: false, formData }
-  }
-
-  const isValid = formToken === cookieToken
+  const isValid = !!formToken
 
   return { isValid, formData }
 }
