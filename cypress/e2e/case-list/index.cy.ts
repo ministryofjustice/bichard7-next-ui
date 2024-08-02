@@ -338,8 +338,8 @@ describe("Case list", () => {
 
       cy.get("tr").not(":first").get("td:nth-child(7)").contains("HO100310 (2)")
       cy.get("tr").not(":first").get("td:nth-child(7)").contains("HO100322")
-      cy.get("tr").not(":first").get("td:nth-child(7)").contains("TRPR0010 - Conditional bail")
-      cy.get("tr").not(":first").get("td:nth-child(7)").contains("TRPR0015 - Personal details changed")
+      cy.get("tr").not(":first").get("td:nth-child(7)").contains("PR10 - Conditional bail")
+      cy.get("tr").not(":first").get("td:nth-child(7)").contains("PR15 - Personal details changed")
     })
 
     it("Should only display error reason when the exceptions are not resolved (showing unresolved cases by default)", () => {
@@ -440,10 +440,10 @@ describe("Case list", () => {
 
       loginAndVisit()
 
-      cy.get("tr").not(":first").get("td:nth-child(7)").contains("TRPR0001")
-      cy.get("tr").not(":first").get("td:nth-child(7)").contains("TRPR0002").should("not.exist")
-      cy.get("tr").not(":first").get("td:nth-child(7)").contains("TRPR0003")
-      cy.get("tr").not(":first").get("td:nth-child(7)").contains("TRPR0004").should("not.exist")
+      cy.get("tr").not(":first").get("td:nth-child(7)").contains("PR01")
+      cy.get("tr").not(":first").get("td:nth-child(7)").contains("PR02").should("not.exist")
+      cy.get("tr").not(":first").get("td:nth-child(7)").contains("PR03")
+      cy.get("tr").not(":first").get("td:nth-child(7)").contains("PR04").should("not.exist")
     })
 
     it("Should display resolved reason when the exceptions are resolved and filtering resolved cases", () => {
@@ -516,8 +516,8 @@ describe("Case list", () => {
 
       cy.get("tr").not(":first").get("td:nth-child(7)").contains("HO100310 (2)")
       cy.get("tr").not(":first").get("td:nth-child(7)").contains("HO100322")
-      cy.get("tr").not(":first").get("td:nth-child(7)").contains("TRPR0001")
-      cy.get("tr").not(":first").get("td:nth-child(7)").contains("TRPR0002")
+      cy.get("tr").not(":first").get("td:nth-child(7)").contains("PR01")
+      cy.get("tr").not(":first").get("td:nth-child(7)").contains("PR02")
     })
   })
 
