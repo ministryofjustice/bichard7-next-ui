@@ -5,6 +5,7 @@ import { FilterAction, ReasonCode } from "types/CourtCaseFilter"
 import allGroupedTriggers from "utils/triggerGroups/allGroupedTriggers"
 import filteredReasonCodes from "utils/triggerGroups/filteredReasonCodes"
 import TriggerGroup from "./TriggerGroup"
+import { ScrollableFieldset } from "./TriggerGroups.styles"
 
 interface TriggerGroupProps {
   dispatch: Dispatch<FilterAction>
@@ -13,7 +14,7 @@ interface TriggerGroupProps {
 
 const TriggerGroups = ({ dispatch, reasonCodes }: TriggerGroupProps): JSX.Element => {
   return (
-    <fieldset className="govuk-fieldset">
+    <ScrollableFieldset className="govuk-fieldset">
       <legend className="govuk-fieldset__legend govuk-fieldset__legend--s">
         <Legend>{"Trigger groups"}</Legend>
       </legend>
@@ -26,7 +27,7 @@ const TriggerGroups = ({ dispatch, reasonCodes }: TriggerGroupProps): JSX.Elemen
           dispatch={dispatch}
         />
       ))}
-    </fieldset>
+    </ScrollableFieldset>
   )
 }
 

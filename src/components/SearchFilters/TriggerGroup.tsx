@@ -1,5 +1,4 @@
 import TriggerCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/TriggerCode"
-import ConditionalRender from "components/ConditionalRender"
 import IndeterminateCheckbox from "components/IndeterminateCheckbox"
 import { Dispatch } from "react"
 import getShortTriggerCode from "services/entities/transformers/getShortTriggerCode"
@@ -22,7 +21,7 @@ const TriggerGroup = ({ name, allGroupTriggers, filteredReasonCodes, dispatch }:
   const allSelected = allTriggersSelected(allGroupTriggers, filteredReasonCodes)
 
   return (
-    <fieldset className="govuk-fieldset">
+    <div id={`${name.toLowerCase()}-group`}>
       <IndeterminateCheckbox
         id={name.toLowerCase()}
         checkedValue={allSelected}
@@ -32,8 +31,8 @@ const TriggerGroup = ({ name, allGroupTriggers, filteredReasonCodes, dispatch }:
         dispatch={dispatch}
       />
 
-      <ConditionalRender isRendered={allSelected || someSelected}>
-        <TriggerGroupList>
+      <TriggerGroupList hidden={!(allSelected || someSelected)}>
+        <div className="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
           {allGroupTriggers.map((triggerCode) => (
             <TriggerCheckbox
               key={triggerCode}
@@ -42,9 +41,9 @@ const TriggerGroup = ({ name, allGroupTriggers, filteredReasonCodes, dispatch }:
               dispatch={dispatch}
             />
           ))}
-        </TriggerGroupList>
-      </ConditionalRender>
-    </fieldset>
+        </div>
+      </TriggerGroupList>
+    </div>
   )
 }
 
