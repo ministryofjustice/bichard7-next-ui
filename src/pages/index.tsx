@@ -16,13 +16,14 @@ import Head from "next/head"
 import { useRouter } from "next/router"
 import { ParsedUrlQuery } from "querystring"
 import { useEffect, useState } from "react"
+import getCountOfCasesByCaseAge from "services/courtCasesIndex/getCountOfCasesByCaseAge"
+import getCountOfCasesByTriggerCode from "services/courtCasesIndex/getCountOfCasesByTriggerCode"
+import listCourtCases from "services/courtCasesIndex/listCourtCases"
 import { courtCaseToDisplayPartialCourtCaseDto } from "services/dto/courtCaseDto"
 import { userToDisplayFullUserDto } from "services/dto/userDto"
 import User from "services/entities/User"
-import getCountOfCasesByCaseAge from "services/getCountOfCasesByCaseAge"
 import getDataSource from "services/getDataSource"
 import getLastSwitchingFormSubmission from "services/getLastSwitchingFormSubmission"
-import listCourtCases from "services/listCourtCases"
 import unlockCourtCase from "services/unlockCourtCase"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import {
@@ -61,6 +62,7 @@ type Props = {
   build: string | null
   caseAge: string[]
   caseAgeCounts: Record<string, number>
+  triggerCodeCounts: Record<string, number>
   courtCases: DisplayPartialCourtCase[]
   csrfToken: string
   dateRange: SerializedCourtDateRange | null
@@ -166,13 +168,18 @@ export const getServerSideProps = withMultipleServerSideProps(
       }
     }
 
-    const [caseAgeCounts, courtCases] = await Promise.all([
+    const [caseAgeCounts, triggerCodeCounts, courtCases] = await Promise.all([
       getCountOfCasesByCaseAge(dataSource, currentUser),
+      getCountOfCasesByTriggerCode(dataSource, currentUser, caseListQueryParams.caseState),
       listCourtCases(dataSource, caseListQueryParams, currentUser)
     ])
 
     if (isError(caseAgeCounts)) {
       throw caseAgeCounts
+    }
+
+    if (isError(triggerCodeCounts)) {
+      throw triggerCodeCounts
     }
 
     if (isError(courtCases)) {
@@ -208,7 +215,8 @@ export const getServerSideProps = withMultipleServerSideProps(
       props: {
         build: process.env.NEXT_PUBLIC_BUILD || null,
         caseAge: caseAges,
-        caseAgeCounts: caseAgeCounts,
+        caseAgeCounts,
+        triggerCodeCounts,
         courtCases: courtCases.result.map((courtCase) => courtCaseToDisplayPartialCourtCaseDto(courtCase, currentUser)),
         csrfToken,
         dateRange:

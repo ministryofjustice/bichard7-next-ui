@@ -5,12 +5,12 @@ import Permission from "types/Permission"
 import PromiseResult from "types/PromiseResult"
 
 import { isError } from "types/Result"
-import CourtCase from "./entities/CourtCase"
-import getLongTriggerCode from "./entities/transformers/getLongTriggerCode"
-import User from "./entities/User"
-import filterByReasonAndResolutionStatus from "./filters/filterByReasonAndResolutionStatus"
-import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
-import leftJoinAndSelectTriggersQuery from "./queries/leftJoinAndSelectTriggersQuery"
+import CourtCase from "../entities/CourtCase"
+import getLongTriggerCode from "../entities/transformers/getLongTriggerCode"
+import User from "../entities/User"
+import filterByReasonAndResolutionStatus from "../filters/filterByReasonAndResolutionStatus"
+import courtCasesByOrganisationUnitQuery from "../queries/courtCasesByOrganisationUnitQuery"
+import leftJoinAndSelectTriggersQuery from "../queries/leftJoinAndSelectTriggersQuery"
 
 const listCourtCases = async (
   connection: DataSource,

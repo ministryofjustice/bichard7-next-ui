@@ -9,23 +9,34 @@ import TriggerGroup from "./TriggerGroup"
 interface TriggerGroupProps {
   dispatch: Dispatch<FilterAction>
   reasonCodes: ReasonCode[]
+  triggerCodeCounts: Record<string, number>
 }
 
-const TriggerGroups = ({ dispatch, reasonCodes }: TriggerGroupProps): JSX.Element => {
+const TriggerGroups = ({ dispatch, reasonCodes, triggerCodeCounts }: TriggerGroupProps): JSX.Element => {
   return (
     <fieldset className="govuk-fieldset">
       <legend className="govuk-fieldset__legend govuk-fieldset__legend--s">
         <Legend>{"Trigger groups"}</Legend>
       </legend>
-      {Object.keys(GroupedTriggerCodes).map((key, i) => (
-        <TriggerGroup
-          key={`trigger-group-${i}`}
-          name={key}
-          allGroupTriggers={allGroupedTriggers(key)}
-          filteredReasonCodes={filteredReasonCodes(allGroupedTriggers(key), reasonCodes)}
-          dispatch={dispatch}
-        />
-      ))}
+      {Object.keys(GroupedTriggerCodes).map((key, i) => {
+        const groupedTriggers = allGroupedTriggers(key)
+        const groupTriggerCodesCount = groupedTriggers.reduce(
+          (acc, triggerCode) => (acc += parseInt(`${triggerCodeCounts[triggerCode]}`, 10)),
+          0
+        )
+
+        return (
+          <TriggerGroup
+            key={`trigger-group-${i}`}
+            name={key}
+            allGroupTriggers={groupedTriggers}
+            filteredReasonCodes={filteredReasonCodes(groupedTriggers, reasonCodes)}
+            groupTriggerCodesCount={groupTriggerCodesCount}
+            allTriggerCodesCount={triggerCodeCounts}
+            dispatch={dispatch}
+          />
+        )
+      })}
     </fieldset>
   )
 }

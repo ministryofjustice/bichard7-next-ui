@@ -1,7 +1,7 @@
+import listCourtCases from "services/courtCasesIndex/listCourtCases"
 import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
 import getDataSource from "services/getDataSource"
-import listCourtCases from "services/listCourtCases"
 import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
 import leftJoinAndSelectTriggersQuery from "services/queries/leftJoinAndSelectTriggersQuery"
 import { DataSource } from "typeorm"

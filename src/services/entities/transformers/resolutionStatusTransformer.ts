@@ -22,4 +22,5 @@ const resolutionStatusTransformer: ValueTransformer = {
   }
 }
 
+export { getResolutionStatusCodeByText }
 export default resolutionStatusTransformer

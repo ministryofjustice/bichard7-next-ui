@@ -14,10 +14,19 @@ interface TriggerGroupProps {
   name: string
   allGroupTriggers: TriggerCode[]
   filteredReasonCodes: ReasonCode[]
+  groupTriggerCodesCount: number
+  allTriggerCodesCount: Record<string, number>
   dispatch: Dispatch<FilterAction>
 }
 
-const TriggerGroup = ({ name, allGroupTriggers, filteredReasonCodes, dispatch }: TriggerGroupProps): JSX.Element => {
+const TriggerGroup = ({
+  name,
+  allGroupTriggers,
+  filteredReasonCodes,
+  groupTriggerCodesCount,
+  allTriggerCodesCount,
+  dispatch
+}: TriggerGroupProps): JSX.Element => {
   const someSelected = someTriggersSelected(allGroupTriggers, filteredReasonCodes)
   const allSelected = allTriggersSelected(allGroupTriggers, filteredReasonCodes)
 
@@ -26,7 +35,7 @@ const TriggerGroup = ({ name, allGroupTriggers, filteredReasonCodes, dispatch }:
       <IndeterminateCheckbox
         id={name.toLowerCase()}
         checkedValue={allSelected}
-        labelText={name}
+        labelText={`${name} (${groupTriggerCodesCount})`}
         indeterminate={someSelected}
         value={allGroupTriggers.map((trigger) => getShortTriggerCode(trigger) ?? "")}
         dispatch={dispatch}
@@ -34,14 +43,19 @@ const TriggerGroup = ({ name, allGroupTriggers, filteredReasonCodes, dispatch }:
 
       <ConditionalRender isRendered={allSelected || someSelected}>
         <TriggerGroupList>
-          {allGroupTriggers.map((triggerCode) => (
-            <TriggerCheckbox
-              key={triggerCode}
-              triggerCode={triggerCode}
-              selectedTrigger={selectedTrigger(triggerCode, filteredReasonCodes)}
-              dispatch={dispatch}
-            />
-          ))}
+          {allGroupTriggers.map((triggerCode) => {
+            const triggerCodeCount = allTriggerCodesCount[triggerCode]
+
+            return (
+              <TriggerCheckbox
+                key={triggerCode}
+                triggerCode={triggerCode}
+                selectedTrigger={selectedTrigger(triggerCode, filteredReasonCodes)}
+                triggerCodeCount={triggerCodeCount}
+                dispatch={dispatch}
+              />
+            )
+          })}
         </TriggerGroupList>
       </ConditionalRender>
     </fieldset>

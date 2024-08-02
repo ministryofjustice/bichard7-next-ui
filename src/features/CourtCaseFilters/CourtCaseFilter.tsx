@@ -26,6 +26,7 @@ const Divider = () => (
 type Props = CaseListQueryParams & {
   caseAge: string[]
   caseAgeCounts: Record<string, number>
+  triggerCodeCounts: Record<string, number>
   dateRange: SerializedCourtDateRange | null
 }
 
@@ -37,6 +38,7 @@ const CourtCaseFilter: React.FC<Props> = ({
   reasonCodes,
   caseAge,
   caseAgeCounts,
+  triggerCodeCounts,
   dateRange,
   lockedState,
   caseState,
@@ -114,7 +116,7 @@ const CourtCaseFilter: React.FC<Props> = ({
 
           <ConditionalRender isRendered={currentUser.hasAccessTo[Permission.Triggers]}>
             <Divider />
-            <TriggerGroups dispatch={dispatch} reasonCodes={state.reasonCodes} />
+            <TriggerGroups dispatch={dispatch} reasonCodes={state.reasonCodes} triggerCodeCounts={triggerCodeCounts} />
             <Divider />
             <ReasonFilter reason={state.reasonFilter.value} reasonOptions={reasonOptions} dispatch={dispatch} />
           </ConditionalRender>

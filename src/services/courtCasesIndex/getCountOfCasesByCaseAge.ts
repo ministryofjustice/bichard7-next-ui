@@ -3,9 +3,9 @@ import PromiseResult from "types/PromiseResult"
 import { isError } from "types/Result"
 import { CaseAgeOptions } from "utils/caseAgeOptions"
 import { formatFormInputDateString } from "utils/date/formattedDate"
-import CourtCase from "./entities/CourtCase"
-import User from "./entities/User"
-import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
+import CourtCase from "../entities/CourtCase"
+import User from "../entities/User"
+import courtCasesByOrganisationUnitQuery from "../queries/courtCasesByOrganisationUnitQuery"
 
 const asKey = (caseAgeOption: string) => "_" + caseAgeOption.toLowerCase().replace(/ /g, "")
 

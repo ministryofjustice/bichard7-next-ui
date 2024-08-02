@@ -3,21 +3,27 @@ import { ChangeEvent, Dispatch } from "react"
 import getShortTriggerCode from "services/entities/transformers/getShortTriggerCode"
 import { FilterAction } from "types/CourtCaseFilter"
 import getTriggerWithDescription from "utils/formatReasons/getTriggerWithDescription"
-import { TriggerCheckboxLabel } from "./TriggerCheckbox.styles"
+import { CheckboxWrapper, TriggerCheckboxLabel } from "./TriggerCheckbox.styles"
 
 interface TriggerCheckboxProps {
   triggerCode: TriggerCode
   selectedTrigger?: boolean
+  triggerCodeCount: number
   dispatch: Dispatch<FilterAction>
 }
 
-const TriggerCheckbox = ({ triggerCode, selectedTrigger, dispatch }: TriggerCheckboxProps): JSX.Element => {
+const TriggerCheckbox = ({
+  triggerCode,
+  selectedTrigger,
+  triggerCodeCount,
+  dispatch
+}: TriggerCheckboxProps): JSX.Element => {
   const triggerShortCode = getShortTriggerCode(triggerCode) ?? ""
 
   return (
     <fieldset className="govuk-fieldset">
       <div className="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-        <div className="govuk-checkboxes__item">
+        <CheckboxWrapper className="govuk-checkboxes__item">
           <input
             className="govuk-checkboxes__input"
             id={triggerCode.toLowerCase()}
@@ -33,9 +39,10 @@ const TriggerCheckbox = ({ triggerCode, selectedTrigger, dispatch }: TriggerChec
             }}
           ></input>
           <TriggerCheckboxLabel className="govuk-label govuk-checkboxes__label" htmlFor={triggerCode.toLowerCase()}>
-            {getTriggerWithDescription(triggerCode, true)}
+            <div className="trigger-description">{`${getTriggerWithDescription(triggerCode, true)}`}</div>
+            <div className="trigger-count">{`(${triggerCodeCount})`}</div>
           </TriggerCheckboxLabel>
-        </div>
+        </CheckboxWrapper>
       </div>
     </fieldset>
   )

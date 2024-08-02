@@ -12,7 +12,7 @@ describe("Filtering cases by trigger groups", () => {
   })
 
   after(() => {
-    cy.task("clearTriggers")
+    // cy.task("clearTriggers")
   })
 
   it("Should be accessible with trigger group is unchecked", () => {
@@ -158,6 +158,35 @@ describe("Filtering cases by trigger groups", () => {
       })
     })
 
+    it("shows the group 'Bails' with 4 triggers", () => {
+      cy.visit("/bichard")
+
+      cy.get("label[for=bails]").should("have.text", "Bails (4)")
+      cy.get("label[for=bails]").click()
+
+      cy.injectAxe()
+
+      cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
+    })
+
+    it("shows the group 'Custody' with 5 triggers", () => {
+      cy.visit("/bichard")
+
+      cy.get("label[for=custody]").should("have.text", "Custody (5)")
+    })
+
+    it("shows the group 'Orders' with 6 triggers", () => {
+      cy.visit("/bichard")
+
+      cy.get("label[for=orders]").should("have.text", "Orders (6)")
+    })
+
+    it("shows the group 'Warrants' with 2 triggers", () => {
+      cy.visit("/bichard")
+
+      cy.get("label[for=warrants]").should("have.text", "Warrants (2)")
+    })
+
     it("shows all cases before we filter them", () => {
       cy.visit("/bichard")
 
@@ -194,6 +223,12 @@ describe("Filtering cases by trigger groups", () => {
       cy.visit("/bichard")
 
       cy.get("input#bails").click()
+
+      cy.get("input#trpr0008 + label").contains("(1)")
+      cy.get("input#trpr0010 + label").contains("(1)")
+      cy.get("input#trpr0020 + label").contains("(1)")
+      cy.get("input#trpr0030 + label").contains("(1)")
+
       cy.get("button#search").click()
 
       cy.get("tbody").should("have.length", "4")
@@ -241,6 +276,13 @@ describe("Filtering cases by trigger groups", () => {
       cy.visit("/bichard")
 
       cy.get("input#custody").click()
+
+      cy.get("input#trpr0001 + label").contains("(1)")
+      cy.get("input#trpr0005 + label").contains("(1)")
+      cy.get("input#trpr0006 + label").contains("(1)")
+      cy.get("input#trpr0019 + label").contains("(1)")
+      cy.get("input#trpr0021 + label").contains("(1)")
+
       cy.get("button#search").click()
 
       cy.get("tbody").should("have.length", "5")
@@ -292,6 +334,14 @@ describe("Filtering cases by trigger groups", () => {
       cy.visit("/bichard")
 
       cy.get("input#orders").click()
+
+      cy.get("input#trpr0003 + label").contains("(1)")
+      cy.get("input#trpr0016 + label").contains("(1)")
+      cy.get("input#trpr0025 + label").contains("(1)")
+      cy.get("input#trpr0026 + label").contains("(1)")
+      cy.get("input#trpr0029 + label").contains("(1)")
+      cy.get("input#trps0008 + label").contains("(1)")
+
       cy.get("button#search").click()
 
       cy.get("tbody").should("have.length", "6")
@@ -351,6 +401,10 @@ describe("Filtering cases by trigger groups", () => {
       cy.visit("/bichard")
 
       cy.get("input#warrants").click()
+
+      cy.get("input#trpr0002 + label").contains("(1)")
+      cy.get("input#trpr0012 + label").contains("(1)")
+
       cy.get("button#search").click()
 
       cy.get("tbody").should("have.length", "2")

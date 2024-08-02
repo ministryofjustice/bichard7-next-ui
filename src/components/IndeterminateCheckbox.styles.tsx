@@ -5,6 +5,10 @@ const IndeterminateCheckboxWrapper = styled.div`
   display: flex;
   width: 100%;
 
+  .govuk-checkboxes__label {
+    width: 100%;
+  }
+
   .govuk-checkboxes__input:indeterminate + .govuk-checkboxes__label::after {
     transform: rotate(0);
     border: none;
