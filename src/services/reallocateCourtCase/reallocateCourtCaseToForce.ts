@@ -10,15 +10,15 @@ import storeAuditLogEvents from "../storeAuditLogEvents"
 import EventCategory from "@moj-bichard7-developers/bichard7-next-core/common/types/EventCategory"
 import { AUDIT_LOG_EVENT_SOURCE, REALLOCATE_CASE_TRIGGER_CODE } from "../../config"
 import getCourtCaseByOrganisationUnit from "../getCourtCaseByOrganisationUnit"
-import generateTriggers from "@moj-bichard7-developers/bichard7-next-core/core/phase1/triggers/generate"
-import type { Trigger } from "@moj-bichard7-developers/bichard7-next-core/core/phase1/types/Trigger"
+import generateTriggers from "@moj-bichard7-developers/bichard7-next-core/core/lib/triggers/generateTriggers"
+import type { Trigger } from "@moj-bichard7-developers/bichard7-next-core/core/types/Trigger"
 import Phase from "@moj-bichard7-developers/bichard7-next-core/core/types/Phase"
 import recalculateTriggers from "./recalculateTriggers"
 import updateCourtCase from "./updateCourtCase"
 import updateTriggers from "./updateTriggers"
 import parseHearinOutcome from "../../utils/parseHearingOutcome"
 import EventCode from "@moj-bichard7-developers/bichard7-next-core/common/types/EventCode"
-import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/core/phase1/lib/auditLog/getAuditLogEvent"
+import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/core/lib/getAuditLogEvent"
 
 const reallocateCourtCaseToForce = async (
   dataSource: DataSource | EntityManager,

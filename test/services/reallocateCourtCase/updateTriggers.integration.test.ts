@@ -1,5 +1,5 @@
 import { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/common/types/AuditLogEvent"
-import { Trigger } from "@moj-bichard7-developers/bichard7-next-core/core/phase1/types/Trigger"
+import { Trigger } from "@moj-bichard7-developers/bichard7-next-core/core/types/Trigger"
 import TriggerCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/TriggerCode"
 import MockDate from "mockdate"
 import { DataSource, Repository } from "typeorm"
