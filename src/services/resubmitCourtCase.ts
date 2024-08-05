@@ -1,5 +1,5 @@
 import { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/common/types/AuditLogEvent"
-import serialiseToXml from "@moj-bichard7-developers/bichard7-next-core/core/phase1/serialise/ahoXml/serialiseToXml"
+import serialiseToXml from "@moj-bichard7-developers/bichard7-next-core/core/lib/serialise/ahoXml/serialiseToXml"
 import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import amendCourtCase from "services/amendCourtCase"
 import User from "services/entities/User"

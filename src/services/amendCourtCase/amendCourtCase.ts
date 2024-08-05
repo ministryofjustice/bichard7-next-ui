@@ -9,8 +9,8 @@ import type User from "../entities/User"
 import insertNotes from "services/insertNotes"
 import getSystemNotes from "utils/amendments/getSystemNotes"
 import CourtCase from "../entities/CourtCase"
-import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/core/phase1/parse/parseAhoXml/parseAhoXml"
-import serialiseToXml from "@moj-bichard7-developers/bichard7-next-core/core/phase1/serialise/ahoXml/serialiseToXml"
+import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/core/lib/parse/parseAhoXml/parseAhoXml"
+import serialiseToXml from "@moj-bichard7-developers/bichard7-next-core/core/lib/serialise/ahoXml/serialiseToXml"
 import Phase from "@moj-bichard7-developers/bichard7-next-core/core/types/Phase"
 
 const amendCourtCase = async (
