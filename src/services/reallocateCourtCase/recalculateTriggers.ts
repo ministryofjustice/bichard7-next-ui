@@ -1,4 +1,4 @@
-import { Trigger } from "@moj-bichard7-developers/bichard7-next-core/core/phase1/types/Trigger"
+import { Trigger } from "@moj-bichard7-developers/bichard7-next-core/core/types/Trigger"
 import { OUT_OF_AREA_TRIGGER_CODE, REALLOCATE_CASE_TRIGGER_CODE } from "../../config"
 import { TriggersOutcome } from "../../types/TriggersOutcome"
 import { default as TriggerEntity } from "../entities/Trigger"

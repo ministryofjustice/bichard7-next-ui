@@ -2,7 +2,7 @@ import parseAnnotatedPNCUpdateDatasetXml from "@moj-bichard7-developers/bichard7
 import { isPncUpdateDataset } from "./isPncUpdateDataset"
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { isError } from "../types/Result"
-import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/core/phase1/parse/parseAhoXml/parseAhoXml"
+import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/core/lib/parse/parseAhoXml/parseAhoXml"
 
 const parseHearingOutcome = (hearingOutcome: string): AnnotatedHearingOutcome | Error => {
   let aho: AnnotatedHearingOutcome | Error
