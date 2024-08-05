@@ -4,7 +4,7 @@ import {
 } from "@moj-bichard7-developers/bichard7-next-core/common/types/AuditLogEvent"
 import EventCategory from "@moj-bichard7-developers/bichard7-next-core/common/types/EventCategory"
 import EventCode from "@moj-bichard7-developers/bichard7-next-core/common/types/EventCode"
-import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/core/phase1/lib/auditLog/getAuditLogEvent"
+import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/core/lib/getAuditLogEvent"
 import axios from "axios"
 import getDataSource from "services/getDataSource"
 import storeAuditLogEvents from "services/storeAuditLogEvents"
