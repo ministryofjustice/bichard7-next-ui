@@ -44,7 +44,9 @@ export const OffencesListRow = ({ offence, offenceIndex, onClick }: OffencesList
 
   return (
     <Table.Row>
-      <Table.Cell>{currentUser.featureFlags?.exceptionsEnabled && offenceAlertIcon}</Table.Cell>
+      <Table.Cell>
+        {currentUser.featureFlags?.exceptionsEnabled && courtCase.errorStatus === "Unresolved" && offenceAlertIcon}
+      </Table.Cell>
       <Table.Cell>{offence.CourtOffenceSequenceNumber}</Table.Cell>
       <Table.Cell>{formatDisplayedDate(offence.ActualOffenceStartDate.StartDate).toString()}</Table.Cell>
       <Table.Cell>{getOffenceCode(offence)}</Table.Cell>

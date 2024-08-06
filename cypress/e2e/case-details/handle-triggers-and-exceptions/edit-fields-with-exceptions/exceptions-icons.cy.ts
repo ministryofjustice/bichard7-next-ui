@@ -4,7 +4,12 @@ import nextHearingDateAndLocationExceptions from "../../../../../test/test-data/
 import nextHearingDateExceptions from "../../../../../test/test-data/NextHearingDateExceptions.json"
 import nextHearingLocationExceptions from "../../../../../test/test-data/NextHearingLocationExceptions.json"
 import offenceMatchingException from "../../offence-matching/fixtures/HO100310.json"
-import { clickTab, loginAndVisit, submitAndConfirmExceptions } from "../../../../support/helpers"
+import {
+  clickTab,
+  loginAndVisit,
+  resolveExceptionsManually,
+  submitAndConfirmExceptions
+} from "../../../../support/helpers"
 import multipleHearingResultsOnOffence from "../../../../../test/test-data/multipleHearingResultsOnOffence.json"
 import multipleEditableFieldsExceptions from "../../../../../test/test-data/multipleEditableFieldsExceptions.json"
 
@@ -106,10 +111,7 @@ describe("Tabs exceptions icons", () => {
 
       cy.get("ul.moj-sub-navigation__list>li").eq(0).contains("Defendant 1").should("exist")
 
-      cy.get("button").contains("Mark as manually resolved").click()
-      cy.get("H1").should("have.text", "Resolve Case")
-      cy.get('select[name="reason"]').select("PNCRecordIsAccurate")
-      cy.get("button").contains("Resolve").click()
+      resolveExceptionsManually()
 
       cy.visit("/bichard/court-cases/0")
 
@@ -243,10 +245,7 @@ describe("Tabs exceptions icons", () => {
 
       cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences 1").should("exist")
 
-      cy.get("button").contains("Mark as manually resolved").click()
-      cy.get("H1").should("have.text", "Resolve Case")
-      cy.get('select[name="reason"]').select("PNCRecordIsAccurate")
-      cy.get("button").contains("Resolve").click()
+      resolveExceptionsManually()
 
       cy.visit("/bichard/court-cases/0")
 
@@ -394,10 +393,7 @@ describe("Tabs exceptions icons", () => {
 
       cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences 3").should("exist")
 
-      cy.get("button").contains("Mark as manually resolved").click()
-      cy.get("H1").should("have.text", "Resolve Case")
-      cy.get('select[name="reason"]').select("PNCRecordIsAccurate")
-      cy.get("button").contains("Resolve").click()
+      resolveExceptionsManually()
 
       cy.visit("/bichard/court-cases/0")
 
@@ -421,10 +417,7 @@ describe("Tabs exceptions icons", () => {
       cy.get("ul.moj-sub-navigation__list>li").eq(0).contains("Defendant 1").should("exist")
       cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences 4").should("exist")
 
-      cy.get("button").contains("Mark as manually resolved").click()
-      cy.get("H1").should("have.text", "Resolve Case")
-      cy.get('select[name="reason"]').select("PNCRecordIsAccurate")
-      cy.get("button").contains("Resolve").click()
+      resolveExceptionsManually()
 
       cy.visit("/bichard/court-cases/0")
 
@@ -767,5 +760,31 @@ describe("Offences exceptions icons", () => {
 
     cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences").contains("2").should("not.exist")
     cy.get("ul.moj-sub-navigation__list>li").eq(3).find(".checkmark-icon").should("exist")
+  })
+
+  it("Should not display exceptions warning icons when exceptions resolved manually", () => {
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: nextHearingDateExceptions.hearingOutcomeXmlHO100102,
+        updatedHearingOutcome: nextHearingDateExceptions.hearingOutcomeXmlHO100102,
+        errorCount: 1,
+        errorLockedByUsername: "GeneralHandler"
+      }
+    ])
+
+    loginAndVisit("/bichard/court-cases/0")
+
+    clickTab("Offences")
+    cy.get("#offences tbody tr:nth-child(1)").find(".warning-icon").should("exist")
+    cy.get("#offences tbody tr:nth-child(1)").find(".checkmark-icon").should("not.exist")
+
+    resolveExceptionsManually()
+
+    cy.visit("/bichard/court-cases/0")
+
+    clickTab("Offences")
+    cy.get("#offences tbody tr:nth-child(1)").find(".warning-icon").should("not.exist")
+    cy.get("#offences tbody tr:nth-child(1)").find(".checkmark-icon").should("not.exist")
   })
 })
