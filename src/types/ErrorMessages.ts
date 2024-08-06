@@ -9,7 +9,9 @@ enum ErrorMessages {
   HO200113 = "The PNC cannot be updated automatically because there are new remands together with sentencing. Please resolve this exception by manually updating the PNC with correct code.",
   HO200114 = "The PNC cannot be updated automatically because there are changes to existing disposals together with sentencing. Please resolve this exception by manually updating the PNC with correct code.",
   HO100307 = "This code could not be found via look-up, report the issue to Bichard 7 team and the courts for the correct so that they can investigate this issue and advise.",
-  HO100304 = "If offences appear to match, then check if offence dates match also. After this manually result on the PNC, to deal with error."
+  HO100304 = "If offences appear to match, then check if offence dates match also. After this manually result on the PNC, to deal with error.",
+  HO100328 = "Court offences match both a CCR and a PCR. This needs to be manually result on the PNC, to deal with error.",
+  HO100507 = "Offences have been added in court to a Penalty case. This needs to be manually result on the PNC, to deal with error."
 }
 
 const findExceptions = (
