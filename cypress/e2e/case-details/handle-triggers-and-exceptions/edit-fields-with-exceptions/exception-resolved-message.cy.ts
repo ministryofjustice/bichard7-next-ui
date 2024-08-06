@@ -52,7 +52,7 @@ describe("Exception resolution message", () => {
     cy.get("#exceptions-resolved-tag").should("have.text", "ExceptionsManually Resolved")
   })
 
-  it("displays 'Exceptions resolved' when resubmitted the case", () => {
+  it("displays 'Exceptions Submitted' when resubmitted the case", () => {
     cy.task("insertCourtCasesWithFields", [
       {
         orgForPoliceFilter: "01",
@@ -75,8 +75,6 @@ describe("Exception resolution message", () => {
     ).should("exist")
     cy.get("button").contains("Submit exception(s)").click()
 
-    cy.visit("/bichard/court-cases/0")
-
-    cy.get("#exceptions-resolved-tag").should("have.text", "Exceptions Submitted")
+    cy.get("#exceptions-submitted-tag").should("have.text", "ExceptionsSubmitted")
   })
 })
