@@ -13,10 +13,15 @@ interface StatusTagProps extends StyledComponentPropsWithRef<typeof ResolutionSt
 const ResolutionStatusTag = ({ itemName, resolutionStatus, ...rest }: StatusTagProps) => {
   const { courtCase } = useCourtCase()
 
-  const resolutionMessage: string =
-    courtCase.aho.Exceptions.length > 0 && resolutionStatus === "Resolved"
-      ? `Manually ${resolutionStatus}`
-      : resolutionStatus
+  let resolutionMessage
+  if (itemName === "Triggers") {
+    resolutionMessage = resolutionStatus
+  } else {
+    resolutionMessage =
+      courtCase.aho.Exceptions.length > 0 && resolutionStatus === "Resolved"
+        ? `Manually ${resolutionStatus}`
+        : resolutionStatus
+  }
 
   return (
     <ResolutionStatusTagContainer {...rest} id={`${itemName.toLowerCase()}-${resolutionStatus.toLowerCase()}-tag`}>
