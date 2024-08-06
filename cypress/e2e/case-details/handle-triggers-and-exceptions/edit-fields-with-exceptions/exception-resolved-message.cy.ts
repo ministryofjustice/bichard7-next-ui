@@ -1,6 +1,6 @@
 import AsnExceptionHO100206 from "../../../../../test/test-data/AsnExceptionHo100206.json"
 import multipleEditableFieldsExceptions from "../../../../../test/test-data/multipleEditableFieldsExceptions.json"
-import { loginAndVisit } from "../../../../support/helpers"
+import { loginAndVisit, resolveExceptionsManually } from "../../../../support/helpers"
 
 describe("Exception resolution message", () => {
   beforeEach(() => {
@@ -20,10 +20,7 @@ describe("Exception resolution message", () => {
 
     loginAndVisit("/bichard/court-cases/0")
 
-    cy.get("button").contains("Mark as manually resolved").click()
-    cy.get("H1").should("have.text", "Resolve Case")
-    cy.get('select[name="reason"]').select("PNCRecordIsAccurate")
-    cy.get("button").contains("Resolve").click()
+    resolveExceptionsManually()
 
     cy.visit("/bichard/court-cases/0")
 
@@ -42,10 +39,7 @@ describe("Exception resolution message", () => {
 
     loginAndVisit("/bichard/court-cases/0")
 
-    cy.get("button").contains("Mark as manually resolved").click()
-    cy.get("H1").should("have.text", "Resolve Case")
-    cy.get('select[name="reason"]').select("PNCRecordIsAccurate")
-    cy.get("button").contains("Resolve").click()
+    resolveExceptionsManually()
 
     cy.visit("/bichard/court-cases/0")
 
