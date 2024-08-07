@@ -175,7 +175,7 @@ describe("Triggers and exceptions", () => {
       cy.task("insertTriggers", { caseId: 0, triggers: unresolvedTriggers })
       cy.visit(caseURL)
       cy.get("section#triggers").find(".triggers-locked-tag").should("exist")
-      cy.get("section#exceptions").find("#exceptions-locked-tag").should("exist")
+      cy.get("section#exceptions").find(".exceptions-locked-tag").should("exist")
     })
 
     it("Should display the resolution status if the triggers or exceptions are resolved", () => {
