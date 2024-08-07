@@ -69,6 +69,6 @@ describe("Exception resolution message", () => {
     ).should("exist")
     cy.get("button").contains("Submit exception(s)").click()
 
-    cy.get("#exceptions-submitted-tag").should("have.text", "ExceptionsSubmitted")
+    cy.get(".exceptions-submitted-tag").should("have.text", "ExceptionsSubmitted")
   })
 })

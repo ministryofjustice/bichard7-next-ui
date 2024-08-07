@@ -201,8 +201,8 @@ describe("View court case details header", () => {
         loginAndVisit("GeneralHandler", "/bichard/court-cases/0")
         cy.get("#exceptions-locked-tag").should("exist")
         cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Locked to you")
-        cy.get("#triggers-locked-tag").should("exist")
-        cy.get("#triggers-locked-tag-lockee").should("contain.text", "Locked to you")
+        cy.get(".triggers-locked-tag").should("exist")
+        cy.get(".triggers-locked-tag-lockee").should("contain.text", "Locked to you")
       })
 
       it("When we have one lock and someone else has the other, it shows both lock components correctly", () => {
@@ -219,8 +219,8 @@ describe("View court case details header", () => {
         cy.get("#exceptions-locked-tag").should("exist")
         cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Locked to you")
 
-        cy.get("#triggers-locked-tag").should("exist")
-        cy.get("#triggers-locked-tag-lockee").should("contain.text", "Trigger Handler User")
+        cy.get(".triggers-locked-tag").should("exist")
+        cy.get(".triggers-locked-tag-lockee").should("contain.text", "Trigger Handler User")
       })
 
       it("When someone else has both locks, it shows both lock components correctly", () => {
@@ -237,8 +237,8 @@ describe("View court case details header", () => {
         cy.get("#exceptions-locked-tag").should("exist")
         cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Trigger Handler User")
 
-        cy.get("#triggers-locked-tag").should("exist")
-        cy.get("#triggers-locked-tag-lockee").should("contain.text", "Trigger Handler User")
+        cy.get(".triggers-locked-tag").should("exist")
+        cy.get(".triggers-locked-tag-lockee").should("contain.text", "Trigger Handler User")
       })
     })
 
@@ -254,8 +254,8 @@ describe("View court case details header", () => {
         loginAndVisit("TriggerHandler", "/bichard/court-cases/0")
 
         cy.get("#exceptions-locked-tag").should("not.exist")
-        cy.get("#triggers-locked-tag").should("exist")
-        cy.get("#triggers-locked-tag-lockee").should("contain.text", "Locked to you")
+        cy.get(".triggers-locked-tag").should("exist")
+        cy.get(".triggers-locked-tag-lockee").should("contain.text", "Locked to you")
       })
 
       it("When somebody else has the triggers locked, it shows only the trigger lock", () => {
@@ -269,8 +269,8 @@ describe("View court case details header", () => {
         loginAndVisit("TriggerHandler", "/bichard/court-cases/0")
 
         cy.get("#exceptions-locked-tag").should("not.exist")
-        cy.get("#triggers-locked-tag").should("exist")
-        cy.get("#triggers-locked-tag-lockee").should("contain.text", "General Handler User")
+        cy.get(".triggers-locked-tag").should("exist")
+        cy.get(".triggers-locked-tag-lockee").should("contain.text", "General Handler User")
       })
     })
 
@@ -287,7 +287,7 @@ describe("View court case details header", () => {
 
         cy.get("#exceptions-locked-tag").should("exist")
         cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Locked to you")
-        cy.get("#triggers-locked-tag").should("not.exist")
+        cy.get(".triggers-locked-tag").should("not.exist")
       })
 
       it("When somebody else has the exceptions locked, it shows only the exception lock", () => {
@@ -302,7 +302,7 @@ describe("View court case details header", () => {
 
         cy.get("#exceptions-locked-tag").should("exist")
         cy.get("#exceptions-locked-tag-lockee").should("contain.text", "General Handler User")
-        cy.get("#triggers-locked-tag").should("not.exist")
+        cy.get(".triggers-locked-tag").should("not.exist")
       })
     })
   })
