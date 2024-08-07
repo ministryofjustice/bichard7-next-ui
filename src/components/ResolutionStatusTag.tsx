@@ -24,7 +24,10 @@ const ResolutionStatusTag = ({ itemName, resolutionStatus, ...rest }: StatusTagP
   }
 
   return (
-    <ResolutionStatusTagContainer {...rest} id={`${itemName.toLowerCase()}-${resolutionStatus.toLowerCase()}-tag`}>
+    <ResolutionStatusTagContainer
+      {...rest}
+      className={`${itemName.toLowerCase()}-${resolutionStatus.toLowerCase()}-tag`}
+    >
       {itemName}
       <Image src={TICK_ICON_URL} width={18} height={18} alt="Check icon" />
       {resolutionMessage}
