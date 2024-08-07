@@ -200,7 +200,7 @@ describe("View court case details header", () => {
 
         loginAndVisit("GeneralHandler", "/bichard/court-cases/0")
         cy.get(".exceptions-locked-tag").should("exist")
-        cy.get(".exceptions-locked-tag-lockee").should("contain.text", "Locked to you")
+        cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Locked to you")
         cy.get(".triggers-locked-tag").should("exist")
         cy.get("#triggers-locked-tag-lockee").should("contain.text", "Locked to you")
       })
@@ -217,7 +217,7 @@ describe("View court case details header", () => {
         loginAndVisit("GeneralHandler", "/bichard/court-cases/0")
 
         cy.get(".exceptions-locked-tag").should("exist")
-        cy.get(".exceptions-locked-tag-lockee").should("contain.text", "Locked to you")
+        cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Locked to you")
 
         cy.get(".triggers-locked-tag").should("exist")
         cy.get("#triggers-locked-tag-lockee").should("contain.text", "Trigger Handler User")
@@ -235,7 +235,7 @@ describe("View court case details header", () => {
         loginAndVisit("GeneralHandler", "/bichard/court-cases/0")
 
         cy.get(".exceptions-locked-tag").should("exist")
-        cy.get(".exceptions-locked-tag-lockee").should("contain.text", "Trigger Handler User")
+        cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Trigger Handler User")
 
         cy.get(".triggers-locked-tag").should("exist")
         cy.get("#triggers-locked-tag-lockee").should("contain.text", "Trigger Handler User")
@@ -286,7 +286,7 @@ describe("View court case details header", () => {
         loginAndVisit("ExceptionHandler", "/bichard/court-cases/0")
 
         cy.get(".exceptions-locked-tag").should("exist")
-        cy.get(".exceptions-locked-tag-lockee").should("contain.text", "Locked to you")
+        cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Locked to you")
         cy.get(".triggers-locked-tag").should("not.exist")
       })
 
@@ -301,7 +301,7 @@ describe("View court case details header", () => {
         loginAndVisit("ExceptionHandler", "/bichard/court-cases/0")
 
         cy.get(".exceptions-locked-tag").should("exist")
-        cy.get(".exceptions-locked-tag-lockee").should("contain.text", "General Handler User")
+        cy.get("#exceptions-locked-tag-lockee").should("contain.text", "General Handler User")
         cy.get(".triggers-locked-tag").should("not.exist")
       })
     })

@@ -24,7 +24,8 @@ describe("Exception resolution message", () => {
 
     cy.visit("/bichard/court-cases/0")
 
-    cy.get("#exceptions-resolved-tag").should("have.text", "ExceptionsManually Resolved")
+    cy.get("#header-container .exceptions-resolved-tag").should("have.text", "ExceptionsManually Resolved")
+    cy.get("#exceptions .exceptions-resolved-tag").should("have.text", "ExceptionsManually Resolved")
   })
 
   it("displays 'Exceptions Manually resolved' when resolved multiple exceptions manually", () => {
@@ -43,7 +44,8 @@ describe("Exception resolution message", () => {
 
     cy.visit("/bichard/court-cases/0")
 
-    cy.get("#exceptions-resolved-tag").should("have.text", "ExceptionsManually Resolved")
+    cy.get("#header-container .exceptions-resolved-tag").should("have.text", "ExceptionsManually Resolved")
+    cy.get("#exceptions .exceptions-resolved-tag").should("have.text", "ExceptionsManually Resolved")
   })
 
   it("displays 'Exceptions Submitted' when resubmitted the case", () => {
@@ -69,6 +71,7 @@ describe("Exception resolution message", () => {
     ).should("exist")
     cy.get("button").contains("Submit exception(s)").click()
 
-    cy.get(".exceptions-submitted-tag").should("have.text", "ExceptionsSubmitted")
+    cy.get("#header-container .exceptions-submitted-tag").should("have.text", "ExceptionsSubmitted")
+    cy.get("#exceptions .exceptions-submitted-tag").should("have.text", "ExceptionsSubmitted")
   })
 })
