@@ -54,7 +54,7 @@ export const OffenceMatching = ({
     ExceptionCode.HO100507
   )
 
-  const doNotDisplayNoPncSequenceBox = exceptions.some((e) =>
+  const doNotDisplayPncSequenceBox = exceptions.some((e) =>
     [ExceptionCode.HO100304, ExceptionCode.HO100328, ExceptionCode.HO100507].includes(e.code)
   )
 
@@ -108,7 +108,7 @@ export const OffenceMatching = ({
             badgeText={offenceMatchingException.badge}
             label={"PNC sequence number"}
             value={
-              doNotDisplayNoPncSequenceBox ? undefined : (
+              doNotDisplayPncSequenceBox ? undefined : (
                 <PncInput type="text" maxLength={3} className={"pnc-sequence-number"} />
               )
             }
