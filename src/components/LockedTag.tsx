@@ -9,7 +9,7 @@ interface LockedTagProps extends StyledComponentPropsWithRef<typeof LockedTagCon
 }
 
 const LockedTag = ({ lockName, lockedBy, ...rest }: LockedTagProps) => (
-  <LockedTagContainer {...rest} id={`${lockName.toLowerCase()}-locked-tag`}>
+  <LockedTagContainer {...rest} className={`${lockName.toLowerCase()}-locked-tag`}>
     <span className="govuk-body">
       <b>{lockName}</b>
     </span>

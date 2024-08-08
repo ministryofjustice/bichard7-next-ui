@@ -118,3 +118,10 @@ export const verifyUpdatedMessage = (args: {
     }
   })
 }
+
+export const resolveExceptionsManually = () => {
+  cy.get("button").contains("Mark as manually resolved").click()
+  cy.get("H1").should("have.text", "Resolve Case")
+  cy.get('select[name="reason"]').select("PNCRecordIsAccurate")
+  cy.get("button").contains("Resolve").click()
+}

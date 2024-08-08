@@ -37,9 +37,9 @@ describe("Lock court cases", () => {
     cy.contains("a", "NAME Defendant").click()
 
     cy.get(".view-only-badge").should("not.exist")
-    cy.get("#triggers-locked-tag").should("exist")
+    cy.get(".triggers-locked-tag").should("exist")
     cy.get("#triggers-locked-tag-lockee").should("contain.text", "Locked to you")
-    cy.get("#exceptions-locked-tag").should("exist")
+    cy.get(".exceptions-locked-tag").should("exist")
     cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Locked to you")
   })
 
@@ -59,9 +59,9 @@ describe("Lock court cases", () => {
     cy.findByText("NAME Defendant").click()
 
     cy.get(".view-only-badge").should("exist")
-    cy.get("#triggers-locked-tag").should("exist")
+    cy.get(".triggers-locked-tag").should("exist")
     cy.get("#triggers-locked-tag-lockee").should("contain.text", "Bichard Test User Force 04")
-    cy.get("#exceptions-locked-tag").should("exist")
+    cy.get(".exceptions-locked-tag").should("exist")
     cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Bichard Test User Force 04")
   })
 
@@ -79,7 +79,7 @@ describe("Lock court cases", () => {
     cy.visit("/bichard")
     cy.findByText("NAME Defendant").click()
 
-    cy.get("#exceptions-locked-tag").should("not.exist")
+    cy.get(".exceptions-locked-tag").should("not.exist")
   })
 
   it("should only lock exceptions on an unlocked case if triggers are already resolved", () => {
@@ -98,8 +98,8 @@ describe("Lock court cases", () => {
     loginAndVisit()
     cy.findByText("NAME Defendant").click()
 
-    cy.get("#triggers-resolved-tag").should("exist").should("contain.text", "Resolved")
-    cy.get("#triggers-locked-tag").should("not.exist")
+    cy.get(".triggers-resolved-tag").should("exist").should("contain.text", "Resolved")
+    cy.get(".triggers-locked-tag").should("not.exist")
     cy.get("#exceptions-locked-tag-lockee").should("exist")
     cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Locked to you")
   })
@@ -120,9 +120,9 @@ describe("Lock court cases", () => {
     loginAndVisit()
     cy.findByText("NAME Defendant").click()
 
-    cy.get("#exceptions-resolved-tag").should("exist").should("contain.text", "Resolved")
-    cy.get("#exceptions-locked-tag").should("not.exist")
-    cy.get("#triggers-locked-tag").should("exist")
+    cy.get(".exceptions-resolved-tag").should("exist").should("contain.text", "Resolved")
+    cy.get(".exceptions-locked-tag").should("not.exist")
+    cy.get(".triggers-locked-tag").should("exist")
     cy.get("#triggers-locked-tag-lockee").should("contain.text", "Locked to you")
   })
 
@@ -142,9 +142,9 @@ describe("Lock court cases", () => {
     loginAndVisit()
     cy.findByText("NAME Defendant").click()
 
-    cy.get("#exceptions-submitted-tag").should("exist").should("contain.text", "Submitted")
-    cy.get("#exceptions-locked-tag").should("not.exist")
-    cy.get("#triggers-resolved-tag").should("not.exist")
+    cy.get(".exceptions-submitted-tag").should("exist").should("contain.text", "Submitted")
+    cy.get(".exceptions-locked-tag").should("not.exist")
+    cy.get(".triggers-resolved-tag").should("not.exist")
     cy.get("#triggers-locked-tag-lockee").should("contain.text", "Locked to you")
   })
 
@@ -165,10 +165,10 @@ describe("Lock court cases", () => {
     loginAndVisit()
     cy.findByText("NAME Defendant").click()
 
-    cy.get("#exceptions-submitted-tag").should("exist").should("contain.text", "Submitted")
-    cy.get("#exceptions-locked-tag").should("not.exist")
-    cy.get("#triggers-resolved-tag").should("exist").should("contain.text", "Resolved")
-    cy.get("#triggers-locked-tag").should("not.exist")
+    cy.get(".exceptions-submitted-tag").should("exist").should("contain.text", "Submitted")
+    cy.get(".exceptions-locked-tag").should("not.exist")
+    cy.get(".triggers-resolved-tag").should("exist").should("contain.text", "Resolved")
+    cy.get(".triggers-locked-tag").should("not.exist")
   })
 
   it("shouldn't lock either triggers nor exceptions on an unlocked case if both are already resolved", () => {
@@ -187,10 +187,10 @@ describe("Lock court cases", () => {
 
     loginAndVisit("/bichard/court-cases/0")
 
-    cy.get("#exceptions-resolved-tag").should("exist").should("contain.text", "Resolved")
-    cy.get("#exceptions-locked-tag").should("not.exist")
-    cy.get("#triggers-resolved-tag").should("exist").should("contain.text", "Resolved")
-    cy.get("#triggers-locked-tag").should("not.exist")
+    cy.get(".exceptions-resolved-tag").should("exist").should("contain.text", "Resolved")
+    cy.get(".exceptions-locked-tag").should("not.exist")
+    cy.get(".triggers-resolved-tag").should("exist").should("contain.text", "Resolved")
+    cy.get(".triggers-locked-tag").should("not.exist")
   })
 })
 

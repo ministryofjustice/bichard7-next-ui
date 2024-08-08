@@ -174,8 +174,8 @@ describe("Triggers and exceptions", () => {
       ])
       cy.task("insertTriggers", { caseId: 0, triggers: unresolvedTriggers })
       cy.visit(caseURL)
-      cy.get("section#triggers").find("#triggers-locked-tag").should("exist")
-      cy.get("section#exceptions").find("#exceptions-locked-tag").should("exist")
+      cy.get("section#triggers").find(".triggers-locked-tag").should("exist")
+      cy.get("section#exceptions").find(".exceptions-locked-tag").should("exist")
     })
 
     it("Should display the resolution status if the triggers or exceptions are resolved", () => {
@@ -189,8 +189,8 @@ describe("Triggers and exceptions", () => {
       ])
       cy.task("insertTriggers", { caseId: 0, triggers: resolvedTriggers })
       cy.visit(caseURL)
-      cy.get("section#triggers").find("#triggers-resolved-tag").should("exist")
-      cy.get("section#exceptions").find("#exceptions-resolved-tag").should("exist")
+      cy.get("section#triggers").find(".triggers-resolved-tag").should("exist")
+      cy.get("section#exceptions").find(".exceptions-resolved-tag").should("exist")
     })
 
     it("Should display the submitted status when exceptions are submitted", () => {
@@ -202,7 +202,7 @@ describe("Triggers and exceptions", () => {
         }
       ])
       cy.visit(caseURL)
-      cy.get("section#exceptions").find("#exceptions-submitted-tag").should("exist")
+      cy.get("section#exceptions").find(".exceptions-submitted-tag").should("exist")
     })
 
     it("Should display a lock icon when someone else has the triggers locked", () => {
@@ -215,7 +215,7 @@ describe("Triggers and exceptions", () => {
       ])
       cy.task("insertTriggers", { caseId: 0, triggers: unresolvedTriggers })
       cy.visit(caseURL)
-      cy.get("#triggers-locked-tag img").should("exist")
+      cy.get(".triggers-locked-tag img").should("exist")
     })
 
     it("Should display the lock holders username when someone else has the triggers locked", () => {
