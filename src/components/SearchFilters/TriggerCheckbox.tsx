@@ -15,29 +15,25 @@ const TriggerCheckbox = ({ triggerCode, selectedTrigger, dispatch }: TriggerChec
   const triggerShortCode = getShortTriggerCode(triggerCode) ?? ""
 
   return (
-    <fieldset className="govuk-fieldset">
-      <div className="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-        <div className="govuk-checkboxes__item">
-          <input
-            className="govuk-checkboxes__input"
-            id={triggerCode.toLowerCase()}
-            type="checkbox"
-            value={triggerCode}
-            checked={selectedTrigger}
-            onChange={(event: ChangeEvent<HTMLInputElement>) => {
-              dispatch({
-                method: event.currentTarget.checked ? "add" : "remove",
-                type: "reasonCodesCheckbox",
-                value: triggerShortCode
-              })
-            }}
-          ></input>
-          <TriggerCheckboxLabel className="govuk-label govuk-checkboxes__label" htmlFor={triggerCode.toLowerCase()}>
-            {getTriggerWithDescription(triggerCode, true)}
-          </TriggerCheckboxLabel>
-        </div>
-      </div>
-    </fieldset>
+    <div className="govuk-checkboxes__item">
+      <input
+        className="govuk-checkboxes__input"
+        id={triggerCode.toLowerCase()}
+        type="checkbox"
+        value={triggerCode}
+        checked={selectedTrigger}
+        onChange={(event: ChangeEvent<HTMLInputElement>) => {
+          dispatch({
+            method: event.currentTarget.checked ? "add" : "remove",
+            type: "reasonCodesCheckbox",
+            value: triggerShortCode
+          })
+        }}
+      ></input>
+      <TriggerCheckboxLabel className="govuk-label govuk-checkboxes__label" htmlFor={triggerCode.toLowerCase()}>
+        {getTriggerWithDescription(triggerCode, true)}
+      </TriggerCheckboxLabel>
+    </div>
   )
 }
 
