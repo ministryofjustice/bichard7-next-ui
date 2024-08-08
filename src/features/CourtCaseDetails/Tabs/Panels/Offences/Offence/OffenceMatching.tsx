@@ -11,9 +11,9 @@ import { findExceptions } from "types/ErrorMessages"
 import { DisplayFullUser } from "types/display/Users"
 import { Exception } from "types/exceptions"
 import { getOffenceMatchingException } from "utils/exceptions/getOffenceMatchingException"
+import findCandidates from "../../../../../../utils/offenceMatcher/findCandidates"
 import { TableRow } from "../../TableRow"
 import { PncInput } from "./OffenceDetails.styles"
-import findCandidates from "../../../../../../utils/offenceMatcher/findCandidates"
 
 const enabled = (user: DisplayFullUser) => {
   const enabledInProduction = true // change this if we need to disable in production for everyone
@@ -46,7 +46,17 @@ export const OffenceMatching = ({
   const currentUser = useCurrentUser()
 
   const offenceMatchingException = isCaseUnresolved && getOffenceMatchingException(exceptions, offenceIndex)
-  const offenceMatchingExceptionMessage = findExceptions(courtCase, courtCase.aho.Exceptions, ExceptionCode.HO100304)
+  const offenceMatchingExceptionMessage = findExceptions(
+    courtCase,
+    courtCase.aho.Exceptions,
+    ExceptionCode.HO100304,
+    ExceptionCode.HO100328,
+    ExceptionCode.HO100507
+  )
+
+  const doNotDisplayPncSequenceBox = exceptions.some((e) =>
+    [ExceptionCode.HO100304, ExceptionCode.HO100328, ExceptionCode.HO100507].includes(e.code)
+  )
 
   const displayOffenceMatcher =
     enabled(currentUser) && exceptions.some((e) => [ExceptionCode.HO100310, ExceptionCode.HO100332].includes(e.code))
@@ -97,7 +107,12 @@ export const OffenceMatching = ({
           <ExceptionFieldTableRow
             badgeText={offenceMatchingException.badge}
             label={"PNC sequence number"}
-            value={<PncInput type="text" maxLength={3} className={"pnc-sequence-number"} />}
+            value={
+              doNotDisplayPncSequenceBox ? undefined : (
+                <PncInput type="text" maxLength={3} className={"pnc-sequence-number"} />
+              )
+            }
+            message={offenceMatchingExceptionMessage}
           >
             {" "}
             <>
