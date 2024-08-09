@@ -64,7 +64,7 @@
         "react/require-default-props": ["off"],
         "@next/next/no-html-link-for-pages": "off",
         "@typescript-eslint/ban-ts-comment": "off",
-        "@typescript-eslint/explicit-module-boundary-types": ["off"],
+        "@typescript-eslint/explicit-module-boundary-types": "off",
         "@typescript-eslint/naming-convention": [
           "warn",
           {
