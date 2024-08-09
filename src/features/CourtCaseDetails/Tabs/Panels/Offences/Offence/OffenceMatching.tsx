@@ -2,9 +2,11 @@ import { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/
 import ExceptionCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/ExceptionCode"
 import Badge, { BadgeColours } from "components/Badge"
 import ConditionalRender from "components/ConditionalRender"
+import InitialValueAndCorrectionField from "components/EditableFields/InitialValueAndCorrectionField"
 import ErrorPromptMessage from "components/ErrorPromptMessage"
 import ExceptionFieldTableRow from "components/ExceptionFieldTableRow"
 import { OffenceMatcher } from "components/OffenceMatcher"
+import PncSequenceNumber from "components/PncSequenceNumber"
 import { useCourtCase } from "context/CourtCaseContext"
 import { useCurrentUser } from "context/CurrentUserContext"
 import { findExceptions } from "types/ErrorMessages"
@@ -13,7 +15,7 @@ import { Exception } from "types/exceptions"
 import { getOffenceMatchingException } from "utils/exceptions/getOffenceMatchingException"
 import findCandidates from "../../../../../../utils/offenceMatcher/findCandidates"
 import { TableRow } from "../../TableRow"
-import { PncInput } from "./OffenceDetails.styles"
+import { UpdatedPncSequenceNumber } from "./UpdatedPncSequenceNumber.styles"
 
 const enabled = (user: DisplayFullUser) => {
   const enabledInProduction = true // change this if we need to disable in production for everyone
@@ -69,8 +71,8 @@ export const OffenceMatching = ({
     <>
       {/* If we don't display the exception matcher,
       we should display the PNC sequence number input box below. */}
-      <ConditionalRender isRendered={displayOffenceMatcher}>
-        {offenceMatchingException && userCanMatchOffence ? (
+      <ConditionalRender isRendered={displayOffenceMatcher && userCanMatchOffence}>
+        {offenceMatchingException ? (
           <ExceptionFieldTableRow
             label={"Matched PNC offence"}
             value={
@@ -103,13 +105,13 @@ export const OffenceMatching = ({
 
       {/* PNC sequence number */}
       <ConditionalRender isRendered={!displayOffenceMatcher}>
-        {offenceMatchingException ? (
+        {offenceMatchingException && userCanMatchOffence ? (
           <ExceptionFieldTableRow
             badgeText={offenceMatchingException.badge}
             label={"PNC sequence number"}
             value={
               doNotDisplayPncSequenceBox ? undefined : (
-                <PncInput type="text" maxLength={3} className={"pnc-sequence-number"} />
+                <PncSequenceNumber offenceIndex={offenceIndex} exception={offenceMatchingException} />
               )
             }
             message={offenceMatchingExceptionMessage}
@@ -126,8 +128,24 @@ export const OffenceMatching = ({
             label="PNC sequence number"
             value={
               <>
-                <div>{offence.CriminalProsecutionReference.OffenceReasonSequence}</div>
-                <Badge isRendered={true} colour={BadgeColours.Purple} label="Matched" className="moj-badge--large" />
+                <div>
+                  {updatedOffence ? (
+                    <UpdatedPncSequenceNumber>
+                      <InitialValueAndCorrectionField
+                        value={offence.CriminalProsecutionReference.OffenceReasonSequence}
+                        updatedValue={updatedOffence.value}
+                      />
+                    </UpdatedPncSequenceNumber>
+                  ) : (
+                    offence.CriminalProsecutionReference.OffenceReasonSequence
+                  )}
+                </div>
+                <Badge
+                  isRendered={true}
+                  colour={BadgeColours.Purple}
+                  label={offenceMatchingException ? offenceMatchingException.badge : "Matched"}
+                  className="moj-badge--large"
+                />
               </>
             }
           />

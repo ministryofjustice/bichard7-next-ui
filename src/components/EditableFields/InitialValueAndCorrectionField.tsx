@@ -2,7 +2,7 @@ import { CorrectionBadge, InitialInputValueBadge } from "./Badges"
 
 interface InitialValueAndCorrectionFieldProps {
   value?: string | React.ReactNode
-  updatedValue?: string | null
+  updatedValue?: string | number | null
 }
 
 const InitialValueAndCorrectionField: React.FC<InitialValueAndCorrectionFieldProps> = ({ value, updatedValue }) => {
