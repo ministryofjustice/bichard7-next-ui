@@ -1,5 +1,3 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
 import { ReactNode } from "react"
 import { blue } from "../../utils/colours"
 import { Content, Icon, IconContainer } from "./ColumnOrderIcons.styles"

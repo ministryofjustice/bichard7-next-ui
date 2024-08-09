@@ -1,5 +1,3 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
 import ConditionalRender from "components/ConditionalRender"
 import { ReactNode, useState } from "react"
 import { Container, IconButton, Legend, LegendContainer } from "./ExpandingFilters.styles"
