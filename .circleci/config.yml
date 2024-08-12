@@ -241,6 +241,7 @@ jobs:
           condition:
             equal: [true, << parameters.ms-edge >>]
           steps:
+            - checkout_core
             - install_ms_edge
       - node_install
       - node/install-packages:
