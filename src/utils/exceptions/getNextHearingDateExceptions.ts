@@ -1,5 +1,5 @@
 import { Exception } from "types/exceptions"
-import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
+import ExceptionCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/ExceptionCode"
 
 const getNextHearingDateExceptions = (exceptions: Exception[]): Exception[] => {
   const nextHearingDateExceptions = [ExceptionCode.HO100102, ExceptionCode.HO100323]

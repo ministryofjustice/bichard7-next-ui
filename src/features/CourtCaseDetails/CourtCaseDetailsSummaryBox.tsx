@@ -1,5 +1,5 @@
 import { useCourtCase } from "context/CourtCaseContext"
-import { formatDisplayedDate } from "utils/formattedDate"
+import { formatDisplayedDate } from "utils/date/formattedDate"
 import {
   StyledSummaryBoxFieldInside,
   StyledSummaryBoxFieldOutside,

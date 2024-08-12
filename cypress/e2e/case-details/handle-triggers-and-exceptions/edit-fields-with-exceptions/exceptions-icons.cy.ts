@@ -3,8 +3,15 @@ import AsnExceptionHO100321 from "../../../../../test/test-data/AsnExceptionHo10
 import nextHearingDateAndLocationExceptions from "../../../../../test/test-data/NextHearingDateAndLocationExceptions.json"
 import nextHearingDateExceptions from "../../../../../test/test-data/NextHearingDateExceptions.json"
 import nextHearingLocationExceptions from "../../../../../test/test-data/NextHearingLocationExceptions.json"
-import { clickTab, loginAndVisit, submitAndConfirmExceptions } from "../../../../support/helpers"
+import offenceMatchingException from "../../offence-matching/fixtures/HO100310.json"
+import {
+  clickTab,
+  loginAndVisit,
+  resolveExceptionsManually,
+  submitAndConfirmExceptions
+} from "../../../../support/helpers"
 import multipleHearingResultsOnOffence from "../../../../../test/test-data/multipleHearingResultsOnOffence.json"
+import multipleEditableFieldsExceptions from "../../../../../test/test-data/multipleEditableFieldsExceptions.json"
 
 describe("Tabs exceptions icons", () => {
   beforeEach(() => {
@@ -88,6 +95,27 @@ describe("Tabs exceptions icons", () => {
       loginAndVisit("NoExceptionsFeatureFlag", "/bichard/court-cases/0")
 
       cy.get("ul.moj-sub-navigation__list>li").eq(0).contains("Defendant").contains("1").should("not.exist")
+    })
+
+    it("Should not display exceptions count icon when exception is resolved manually", () => {
+      cy.task("insertCourtCasesWithFields", [
+        {
+          orgForPoliceFilter: "01",
+          hearingOutcome: AsnExceptionHO100206.hearingOutcomeXml,
+          updatedHearingOutcome: AsnExceptionHO100206.hearingOutcomeXml,
+          errorCount: 1
+        }
+      ])
+
+      loginAndVisit("/bichard/court-cases/0")
+
+      cy.get("ul.moj-sub-navigation__list>li").eq(0).contains("Defendant 1").should("exist")
+
+      resolveExceptionsManually()
+
+      cy.visit("/bichard/court-cases/0")
+
+      cy.get("ul.moj-sub-navigation__list>li").eq(0).contains("Defendant 1").should("not.exist")
     })
   })
 
@@ -201,6 +229,27 @@ describe("Tabs exceptions icons", () => {
       loginAndVisit("NoExceptionsFeatureFlag", "/bichard/court-cases/0")
 
       cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences").contains("3").should("not.exist")
+    })
+
+    it("Should not display exceptions count icon when exception is resolved manually", () => {
+      cy.task("insertCourtCasesWithFields", [
+        {
+          orgForPoliceFilter: "01",
+          hearingOutcome: nextHearingDateExceptions.hearingOutcomeXmlHO100102,
+          updatedHearingOutcome: nextHearingDateExceptions.hearingOutcomeXmlHO100102,
+          errorCount: 1
+        }
+      ])
+
+      loginAndVisit("/bichard/court-cases/0")
+
+      cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences 1").should("exist")
+
+      resolveExceptionsManually()
+
+      cy.visit("/bichard/court-cases/0")
+
+      cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences 1").should("not.exist")
     })
   })
 
@@ -327,6 +376,53 @@ describe("Tabs exceptions icons", () => {
       loginAndVisit("NoExceptionsFeatureFlag", "/bichard/court-cases/0")
 
       cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences").contains("3").should("not.exist")
+    })
+
+    it("Should not display exceptions count icon when exception is resolved manually", () => {
+      cy.task("insertCourtCasesWithFields", [
+        {
+          orgForPoliceFilter: "01",
+          hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXml,
+          updatedHearingOutcome: nextHearingLocationExceptions.updatedHearingOutcomeXml,
+          errorCount: 1,
+          errorLockedByUsername: "GeneralHandler"
+        }
+      ])
+
+      loginAndVisit("/bichard/court-cases/0")
+
+      cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences 3").should("exist")
+
+      resolveExceptionsManually()
+
+      cy.visit("/bichard/court-cases/0")
+
+      cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences 3").should("not.exist")
+    })
+  })
+
+  describe("multiple exceptions", () => {
+    it("Should not display exceptions count icon when multiple exceptions are resolved manually", () => {
+      cy.task("insertCourtCasesWithFields", [
+        {
+          orgForPoliceFilter: "01",
+          hearingOutcome: multipleEditableFieldsExceptions.hearingOutcomeXml,
+          updatedHearingOutcome: multipleEditableFieldsExceptions.updatedHearingOutcomeXml,
+          errorCount: 1
+        }
+      ])
+
+      loginAndVisit("/bichard/court-cases/0")
+
+      cy.get("ul.moj-sub-navigation__list>li").eq(0).contains("Defendant 1").should("exist")
+      cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences 4").should("exist")
+
+      resolveExceptionsManually()
+
+      cy.visit("/bichard/court-cases/0")
+
+      cy.get("ul.moj-sub-navigation__list>li").eq(0).contains("Defendant 1").should("not.exist")
+      cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences 4").should("not.exist")
     })
   })
 })
@@ -616,5 +712,79 @@ describe("Offences exceptions icons", () => {
 
     clickTab("Offences")
     cy.get("#offences tbody tr:nth-child(1)").find(".warning-icon").should("not.exist")
+  })
+
+  it("Should display 2 next to the Offences tab text when HO100310 is raised", () => {
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: offenceMatchingException,
+        updatedHearingOutcome: offenceMatchingException,
+        errorCount: 2,
+        errorLockedByUsername: "GeneralHandler"
+      }
+    ])
+
+    loginAndVisit("/bichard/court-cases/0")
+
+    cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences").contains("2")
+    cy.get("ul.moj-sub-navigation__list>li").eq(0).contains("Defendant").contains("2").should("not.exist")
+    cy.get("ul.moj-sub-navigation__list>li").eq(1).contains("Hearing").contains("2").should("not.exist")
+    cy.get("ul.moj-sub-navigation__list>li").eq(2).contains("Case").contains("2").should("not.exist")
+    cy.get("ul.moj-sub-navigation__list>li").eq(4).contains("Notes").contains("2").should("not.exist")
+  })
+
+  it("Should display checkmark next to Offences tab text when offence matching exception is resolved", () => {
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: offenceMatchingException,
+        updatedHearingOutcome: offenceMatchingException,
+        errorCount: 2
+      }
+    ])
+
+    loginAndVisit("/bichard/court-cases/0")
+
+    cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences").contains("2").should("exist")
+    clickTab("Offences")
+
+    cy.get("button").contains("Offence 1").click()
+    cy.get("select.offence-matcher").select("001 - TH68006")
+
+    cy.get("button").contains("Next offence").click()
+    cy.get("button").contains("Offence 4").click()
+    cy.get("select.offence-matcher").select("Added in court")
+
+    submitAndConfirmExceptions()
+
+    cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences").contains("2").should("not.exist")
+    cy.get("ul.moj-sub-navigation__list>li").eq(3).find(".checkmark-icon").should("exist")
+  })
+
+  it("Should not display exceptions warning icons when exceptions resolved manually", () => {
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: nextHearingDateExceptions.hearingOutcomeXmlHO100102,
+        updatedHearingOutcome: nextHearingDateExceptions.hearingOutcomeXmlHO100102,
+        errorCount: 1,
+        errorLockedByUsername: "GeneralHandler"
+      }
+    ])
+
+    loginAndVisit("/bichard/court-cases/0")
+
+    clickTab("Offences")
+    cy.get("#offences tbody tr:nth-child(1)").find(".warning-icon").should("exist")
+    cy.get("#offences tbody tr:nth-child(1)").find(".checkmark-icon").should("not.exist")
+
+    resolveExceptionsManually()
+
+    cy.visit("/bichard/court-cases/0")
+
+    clickTab("Offences")
+    cy.get("#offences tbody tr:nth-child(1)").find(".warning-icon").should("not.exist")
+    cy.get("#offences tbody tr:nth-child(1)").find(".checkmark-icon").should("not.exist")
   })
 })

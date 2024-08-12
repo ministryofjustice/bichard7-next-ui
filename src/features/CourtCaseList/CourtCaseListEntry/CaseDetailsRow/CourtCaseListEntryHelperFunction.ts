@@ -1,5 +1,5 @@
 import { DisplayNote } from "types/display/Notes"
-import { formatDisplayedDate } from "../../../../utils/formattedDate"
+import { formatDisplayedDate } from "../../../../utils/date/formattedDate"
 
 export const filterUserNotes = (notes: DisplayNote[]) => {
   const userNotes = notes.filter((note) => note.userId !== "System")

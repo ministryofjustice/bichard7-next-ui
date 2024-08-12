@@ -1,18 +1,21 @@
+import { PrimaryButton } from "components/Buttons"
 import ConditionalRender from "components/ConditionalRender"
+import CaseStateFilter from "components/SearchFilters/CaseStateFilter"
 import LockedFilter, { lockedStateShortLabels } from "components/SearchFilters/LockedFilter"
 import ReasonCodeFilter from "components/SearchFilters/ReasonCodeFilter"
 import ReasonFilter from "components/SearchFilters/ReasonFilterOptions/ReasonFilter"
 import TextFilter from "components/SearchFilters/TextFilter"
+import TriggerGroups from "components/SearchFilters/TriggerGroups"
 import { useCurrentUser } from "context/CurrentUserContext"
 import { FormGroup } from "govuk-react"
-import { ChangeEvent, useReducer } from "react"
+import { useReducer } from "react"
 import { CaseListQueryParams, LockedState, SerializedCourtDateRange } from "types/CaseListQueryParams"
 import type { Filter } from "types/CourtCaseFilter"
 import Permission from "types/Permission"
 import { anyFilterChips } from "utils/filterChips"
 import { reasonOptions } from "utils/reasonOptions"
 import CourtDateFilter from "../../components/SearchFilters/CourtDateFilter"
-import { SelectedFiltersContainer } from "./CourtCaseFilter.styles"
+import { FilterOptionsContainer, SelectedFiltersContainer } from "./CourtCaseFilter.styles"
 import FilterChipSection from "./FilterChipSection"
 import { filtersReducer } from "./reducers/filters"
 
@@ -84,10 +87,10 @@ const CourtCaseFilter: React.FC<Props> = ({
             </SelectedFiltersContainer>
           </div>
         </div>
-        <div className="moj-filter__options">
-          <button className="govuk-button" data-module="govuk-button" id="search">
+        <FilterOptionsContainer className="moj-filter__options">
+          <PrimaryButton className="govuk-button" dataModule="govuk-button" id={"search"}>
             {"Apply filters"}
-          </button>
+          </PrimaryButton>
 
           <input type="hidden" id="order" name="order" value={order || ""} />
           <input type="hidden" id="orderBy" name="orderBy" value={orderBy || ""} />
@@ -107,49 +110,31 @@ const CourtCaseFilter: React.FC<Props> = ({
             </div>
           </FormGroup>
 
+          <CaseStateFilter dispatch={dispatch} value={state.caseStateFilter.value} />
+
           <ConditionalRender isRendered={currentUser.hasAccessTo[Permission.Triggers]}>
+            <Divider />
+            <TriggerGroups dispatch={dispatch} reasonCodes={state.reasonCodes} />
             <Divider />
             <ReasonFilter reason={state.reasonFilter.value} reasonOptions={reasonOptions} dispatch={dispatch} />
           </ConditionalRender>
-
           <Divider />
+
           <CourtDateFilter
             caseAges={state.caseAgeFilter.map((slaDate) => slaDate.value as string)}
             caseAgeCounts={caseAgeCounts}
             dispatch={dispatch}
             dateRange={{ from: state.dateFrom.value, to: state.dateTo.value }}
           />
-
           <Divider />
-          <fieldset className="govuk-fieldset">
-            <legend className="govuk-fieldset__legend govuk-body">{"Case state"}</legend>
-            <div className="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-              <div className="govuk-checkboxes__item">
-                <input
-                  className="govuk-checkboxes__input"
-                  id="resolved"
-                  name="state"
-                  type="checkbox"
-                  value={state.caseStateFilter.value}
-                  checked={state.caseStateFilter.value == "Resolved"}
-                  onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                    dispatch({
-                      method: event.currentTarget.checked ? "add" : "remove",
-                      type: "caseState",
-                      value: "Resolved"
-                    })
-                  }}
-                ></input>
-                <label className="govuk-label govuk-checkboxes__label" htmlFor="resolved">
-                  {"View resolved cases"}
-                </label>
-              </div>
-            </div>
-          </fieldset>
 
-          <Divider />
           <LockedFilter lockedState={state.lockedStateFilter.value} dispatch={dispatch} />
-        </div>
+          <Divider />
+
+          <PrimaryButton className="govuk-button" dataModule="govuk-button" id={"search-bottom"}>
+            {"Apply filters"}
+          </PrimaryButton>
+        </FilterOptionsContainer>
       </div>
     </form>
   )

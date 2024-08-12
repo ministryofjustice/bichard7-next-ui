@@ -2,6 +2,7 @@ import { createContext, Dispatch, SetStateAction, useCallback, useContext, useSt
 import { Amender, AmendmentKeys, Amendments, OffenceField, ResultField, ResultQualifierCode } from "types/Amendments"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
 import getAmendmentsByComparison from "utils/getAmendmentsByComparison"
+import parseCourtCaseWithDateObjects from "../utils/date/parseCourtCaseWithDateObjects"
 
 export interface CourtCaseContextType {
   courtCase: DisplayFullCourtCase
@@ -88,16 +89,8 @@ const useCourtCase = (): CourtCaseContextResult => {
     [setContext]
   )
 
-  const isDateString = (value: string): boolean =>
-    typeof value === "string" && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value)
-
-  const parseCourtCaseWithDates = (courtCase: DisplayFullCourtCase) =>
-    JSON.parse(JSON.stringify(courtCase), (_, value) => {
-      return isDateString(value) ? new Date(value) : value
-    })
-
   return {
-    courtCase: parseCourtCaseWithDates(context.courtCase),
+    courtCase: parseCourtCaseWithDateObjects(context.courtCase),
     amendments: context.amendments,
     savedAmendments: context.savedAmendments,
     amend,

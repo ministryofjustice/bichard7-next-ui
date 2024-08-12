@@ -1,5 +1,5 @@
 import { Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
-import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
+import ExceptionCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/ExceptionCode"
 import Phase from "@moj-bichard7-developers/bichard7-next-core/core/types/Phase"
 import ConditionalRender from "components/ConditionalRender"
 import ErrorPromptMessage from "components/ErrorPromptMessage"
@@ -10,7 +10,7 @@ import { findExceptions } from "types/ErrorMessages"
 import { ResolutionStatus } from "types/ResolutionStatus"
 import { Exception } from "types/exceptions"
 import { ExceptionBadgeType } from "utils/exceptions/exceptionBadgeType"
-import { formatDisplayedDate } from "utils/formattedDate"
+import { formatDisplayedDate } from "utils/date/formattedDate"
 import {
   capitaliseExpression,
   formatDuration,
@@ -71,7 +71,7 @@ export const HearingResult = ({
         />
         <TableRow
           label="Result hearing date"
-          value={result.ResultHearingDate && formatDisplayedDate(new Date(result.ResultHearingDate))}
+          value={result.ResultHearingDate && formatDisplayedDate(result.ResultHearingDate)}
         />
         <ConditionalRender isRendered={typeof result.Duration !== "undefined" && result.Duration?.length > 0}>
           <TableRow

@@ -6,11 +6,11 @@ export default async (
   caseId: number,
   exceptionCode: string,
   errorReport?: string,
-  exceptionResolved?: ResolutionStatus,
+  errorStatus?: ResolutionStatus,
   username?: string
 ): Promise<boolean> => {
   const dataSource = await getDataSource()
-
+  const isExceptionResolved = errorStatus === "Resolved"
   await dataSource
     .createQueryBuilder()
     .update(CourtCase)
@@ -21,9 +21,9 @@ export default async (
         errorReport: () =>
           `(CASE WHEN (error_report = '') THEN '${errorReport}' ELSE error_report || ', ' || '${errorReport}' END)`
       }),
-      errorResolvedBy: exceptionResolved === "Resolved" ? username ?? "BichardForce03" : null,
-      errorResolvedTimestamp: exceptionResolved === "Resolved" ? new Date() : null,
-      errorStatus: exceptionResolved ?? "Unresolved"
+      errorResolvedBy: isExceptionResolved ? (username ?? "BichardForce03") : null,
+      errorResolvedTimestamp: isExceptionResolved ? new Date() : null,
+      errorStatus: errorStatus ?? "Unresolved"
     })
     .where("errorId = :id", { id: caseId })
     .execute()

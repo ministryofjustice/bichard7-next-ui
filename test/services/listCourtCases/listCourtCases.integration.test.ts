@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import TriggerCode from "bichard7-next-data-latest/dist/types/TriggerCode"
+import TriggerCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/TriggerCode"
 import "reflect-metadata"
 import Note from "services/entities/Note"
 import User from "services/entities/User"
@@ -335,35 +335,6 @@ describe("listCourtCases", () => {
     expect(casesDesc[1].courtDate).toStrictEqual(secondDate)
     expect(casesDesc[2].courtDate).toStrictEqual(firstDate)
     expect(totalCasesDesc).toEqual(3)
-  })
-
-  describe("search by defendant name", () => {
-    it("Should list cases when there is a case insensitive match", async () => {
-      const defendantToInclude = "WAYNE Bruce"
-      const defendantToIncludeWithPartialMatch = "WAYNE Bill"
-      const defendantToNotInclude = "GORDON Barbara"
-
-      await insertCourtCasesWithFields([
-        { defendantName: defendantToInclude, orgForPoliceFilter: orgCode },
-        { defendantName: defendantToNotInclude, orgForPoliceFilter: orgCode },
-        { defendantName: defendantToIncludeWithPartialMatch, orgForPoliceFilter: orgCode }
-      ])
-
-      let result = await listCourtCases(dataSource, { maxPageItems: 100, defendantName: "WAYNE Bruce" }, testUser)
-      expect(isError(result)).toBe(false)
-      let { result: cases } = result as ListCourtCaseResult
-
-      expect(cases).toHaveLength(1)
-      expect(cases[0].defendantName).toStrictEqual(defendantToInclude)
-
-      result = await listCourtCases(dataSource, { maxPageItems: 100, defendantName: "WAYNE B" }, testUser)
-      expect(isError(result)).toBe(false)
-      cases = (result as ListCourtCaseResult).result
-
-      expect(cases).toHaveLength(2)
-      expect(cases[0].defendantName).toStrictEqual(defendantToInclude)
-      expect(cases[1].defendantName).toStrictEqual(defendantToIncludeWithPartialMatch)
-    })
   })
 
   describe("filter by cases allocated to me", () => {

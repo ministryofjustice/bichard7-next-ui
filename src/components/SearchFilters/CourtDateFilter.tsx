@@ -6,7 +6,7 @@ import type { Dispatch } from "react"
 import { SerializedCourtDateRange } from "types/CaseListQueryParams"
 import type { FilterAction } from "types/CourtCaseFilter"
 import { CaseAgeOptions } from "utils/caseAgeOptions"
-import { formatDisplayedDate } from "utils/formattedDate"
+import { formatDisplayedDate } from "utils/date/formattedDate"
 import { mapCaseAges } from "utils/validators/validateCaseAges"
 import { CaseAgeContainer, ScrollableCaseAgesContainer } from "./CourtDateFilter.styles"
 

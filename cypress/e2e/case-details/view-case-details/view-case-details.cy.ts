@@ -1,4 +1,4 @@
-import TriggerCode from "bichard7-next-data-latest/dist/types/TriggerCode"
+import TriggerCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/TriggerCode"
 import DummyMultipleOffencesNoErrorAho from "../../../../test/test-data/AnnotatedHO1.json"
 import DummyHO100200Aho from "../../../../test/test-data/HO100200_1.json"
 import DummyHO100302Aho from "../../../../test/test-data/HO100302_1.json"
@@ -430,7 +430,7 @@ describe("View case details", () => {
 
     cy.get(".moj-tab-panel-triggers").should("not.be.visible")
     cy.get(".moj-tab-panel-exceptions").should("be.visible")
-    cy.get(".triggers-and-exceptions-sidebar a").contains("Triggers").click()
+    cy.get(".case-details-sidebar a").contains("Triggers").click()
 
     cy.get(".moj-tab-panel-triggers .moj-trigger-row").should("not.exist")
     cy.get(".moj-tab-panel-triggers").contains("There are no triggers for this case.")
@@ -454,7 +454,7 @@ describe("View case details", () => {
     cy.get(".moj-tab-panel-triggers").should("be.visible")
     cy.get(".moj-tab-panel-exceptions").should("not.be.visible")
 
-    cy.get(".triggers-and-exceptions-sidebar a").contains("Exceptions").click()
+    cy.get(".case-details-sidebar a").contains("Exceptions").click()
 
     cy.get(".moj-tab-panel-triggers").should("not.be.visible")
     cy.get(".moj-tab-panel-exceptions").should("be.visible")
@@ -470,7 +470,7 @@ describe("View case details", () => {
 
     loginAndVisit("/bichard/court-cases/0")
 
-    cy.get(".triggers-and-exceptions-sidebar a").contains("Exceptions").click()
+    cy.get(".case-details-sidebar a").contains("Exceptions").click()
 
     cy.get(".moj-tab-panel-triggers").should("not.be.visible")
     cy.get(".moj-tab-panel-exceptions").should("be.visible")
@@ -514,7 +514,7 @@ describe("View case details", () => {
     loginAndVisit("/bichard/court-cases/0")
 
     cy.get("h3").should("not.have.text", "Offence 1 of 3")
-    cy.get(".triggers-and-exceptions-sidebar a").contains("Exceptions").click()
+    cy.get(".case-details-sidebar a").contains("Exceptions").click()
     cy.get(".moj-tab-panel-exceptions .moj-exception-row").eq(0).contains("Next hearing date / Offence 1")
     cy.get(".exception-header .exception-location").click()
     cy.get("h3:visible").should("have.text", "Offence 1 of 3")
@@ -526,7 +526,7 @@ describe("View case details", () => {
     loginAndVisit("/bichard/court-cases/0")
 
     cy.get("h3").should("not.have.text", "Offence 1 of 3")
-    cy.get(".triggers-and-exceptions-sidebar a").contains("Exceptions").click()
+    cy.get(".case-details-sidebar a").contains("Exceptions").click()
     cy.get(".moj-tab-panel-exceptions .moj-exception-row").eq(0).contains("Next hearing date / Offence 1")
     cy.get(".exception-header .exception-location").click()
     cy.get("h3:visible").should("have.text", "Offence 1 of 3")
@@ -543,7 +543,7 @@ describe("View case details", () => {
     loginAndVisit("/bichard/court-cases/0")
 
     cy.get("h3").should("not.have.text", "Case")
-    cy.get(".triggers-and-exceptions-sidebar a").contains("Exceptions").click()
+    cy.get(".case-details-sidebar a").contains("Exceptions").click()
     cy.get(".moj-tab-panel-exceptions .moj-exception-row").eq(0).contains("Organisation unit code / Case Details")
     cy.get(".exception-header .exception-location").click()
     cy.get("h3:visible").should("have.text", "Case")
@@ -596,7 +596,7 @@ describe("View case details", () => {
     loginAndVisit("/bichard/court-cases/0")
 
     cy.get("h3").should("not.have.text", "Case")
-    cy.get(".triggers-and-exceptions-sidebar a").contains("Exceptions").click()
+    cy.get(".case-details-sidebar a").contains("Exceptions").click()
     cy.get(".exception-help a")
       .contains("More information")
       .should("exist")
@@ -611,7 +611,7 @@ describe("View case details", () => {
     loginAndVisit("/bichard/court-cases/0")
 
     cy.get("h3").should("not.have.text", "Case")
-    cy.get(".triggers-and-exceptions-sidebar a").contains("Exceptions").click()
+    cy.get(".case-details-sidebar a").contains("Exceptions").click()
     cy.get(".exception-row__help a")
       .contains("More information")
       .should("exist")

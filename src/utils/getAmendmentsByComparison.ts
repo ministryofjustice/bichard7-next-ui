@@ -1,6 +1,6 @@
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { Amendments } from "types/Amendments"
-import { formatFormInputDateString } from "utils/formattedDate"
+import { formatFormInputDateString } from "utils/date/formattedDate"
 
 const getAmendmentsByComparison = (aho: AnnotatedHearingOutcome, updatedAho?: AnnotatedHearingOutcome): Amendments => {
   const amendments: Amendments = {}

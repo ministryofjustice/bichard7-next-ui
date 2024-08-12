@@ -1,10 +1,9 @@
+import { unsign } from "cookie-signature"
 import QueryString from "qs"
 import { Result } from "types/Result"
-import { unsign } from "cookie-signature"
 import { CSRF } from "../../config"
 
 export interface ParseFormTokenResult {
-  cookieName: string
   formToken: string
 }
 
@@ -28,7 +27,6 @@ export default (formData: QueryString.ParsedQs): Result<ParseFormTokenResult> =>
   }
 
   const formTokenParts = unsignedFormToken.split("=")
-  const cookieName = formTokenParts[0]
   const formTokenValue = formTokenParts.splice(1).join("=")
 
   const formTokenValueParts = formTokenValue.split(".")
@@ -40,5 +38,5 @@ export default (formData: QueryString.ParsedQs): Result<ParseFormTokenResult> =>
 
   const csrfFormToken = formTokenValueParts.splice(1).join(".")
 
-  return { cookieName, formToken: csrfFormToken }
+  return { formToken: csrfFormToken }
 }

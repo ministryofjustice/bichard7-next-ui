@@ -4,25 +4,21 @@ import generateCsrfToken from "../../../src/middleware/withCsrf/generateCsrfToke
 
 const request = <IncomingMessage>{ url: "/login" }
 
-it("should generate both form and cookie tokens", () => {
-  const { formToken, cookieToken, cookieName } = generateCsrfToken(request)
+it("should generate form token", () => {
+  const formToken = generateCsrfToken(request)
+
+  expect(formToken).toBeDefined()
 
   const formTokenParts = formToken.split("=")
   expect(formTokenParts).toHaveLength(2)
 
-  const formTokenCookieName = formTokenParts[0]
+  const formTokenEncodedTokenName = formTokenParts[0]
   const actualFormToken = formTokenParts[1]
-  expect(cookieName).toBe("CSRFToken%2Flogin")
-  expect(cookieName).toBe(formTokenCookieName)
-  expect(cookieToken).toBeDefined()
 
-  const cookieTokenParts = cookieToken.split(".")
-  expect(cookieTokenParts).toHaveLength(2)
-
-  expect(formToken).toBeDefined()
+  expect(formTokenEncodedTokenName).toBe("CSRFToken%2Flogin")
 
   const actualFormTokenParts = actualFormToken.split(".")
   expect(Number(actualFormTokenParts[0])).not.toBeNaN()
-  expect(actualFormTokenParts[1]).toBe(cookieTokenParts[0])
-  expect(actualFormTokenParts[2]).not.toBe(cookieTokenParts[1])
+  expect(actualFormTokenParts[1]).toBeDefined()
+  expect(actualFormTokenParts[2]).toBeDefined()
 })

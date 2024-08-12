@@ -3,7 +3,7 @@ import WarningIcon from "components/WarningIcon"
 import { useCourtCase } from "context/CourtCaseContext"
 import { Table } from "govuk-react"
 import Image from "next/image"
-import { formatDisplayedDate } from "utils/formattedDate"
+import { formatDisplayedDate } from "utils/date/formattedDate"
 import getOffenceAlertsDetails from "utils/getOffenceAlertsDetails"
 import getOffenceCode from "utils/getOffenceCode"
 import { CHECKMARK_ICON_URL } from "utils/icons"
@@ -44,9 +44,11 @@ export const OffencesListRow = ({ offence, offenceIndex, onClick }: OffencesList
 
   return (
     <Table.Row>
-      <Table.Cell>{currentUser.featureFlags?.exceptionsEnabled && offenceAlertIcon}</Table.Cell>
+      <Table.Cell>
+        {currentUser.featureFlags?.exceptionsEnabled && courtCase.errorStatus !== "Resolved" && offenceAlertIcon}
+      </Table.Cell>
       <Table.Cell>{offence.CourtOffenceSequenceNumber}</Table.Cell>
-      <Table.Cell>{formatDisplayedDate(new Date(offence.ActualOffenceStartDate.StartDate)).toString()}</Table.Cell>
+      <Table.Cell>{formatDisplayedDate(offence.ActualOffenceStartDate.StartDate).toString()}</Table.Cell>
       <Table.Cell>{getOffenceCode(offence)}</Table.Cell>
       <Table.Cell>
         <a

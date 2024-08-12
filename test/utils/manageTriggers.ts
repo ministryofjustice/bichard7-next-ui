@@ -1,4 +1,4 @@
-import TriggerCode from "bichard7-next-data-latest/dist/types/TriggerCode"
+import TriggerCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/TriggerCode"
 import { ResolutionStatus } from "types/ResolutionStatus"
 import CourtCase from "../../src/services/entities/CourtCase"
 import Trigger from "../../src/services/entities/Trigger"
@@ -25,7 +25,7 @@ const insertTriggers = async (caseId: number, triggers: TestTrigger[], username?
     .values(
       triggers.map((t) => ({
         resolvedAt: t.status === "Resolved" ? new Date() : null,
-        resolvedBy: t.status === "Resolved" ? username ?? "GeneralHandler" : null,
+        resolvedBy: t.status === "Resolved" ? (username ?? "GeneralHandler") : null,
         errorId: caseId,
         ...t
       }))
@@ -35,7 +35,7 @@ const insertTriggers = async (caseId: number, triggers: TestTrigger[], username?
   const triggerResolutionUser = triggers.map((t) => t.resolvedBy)[0] ?? "GeneralHandler"
   const allResolvedTriggers = triggers.filter((t) => t.status === "Resolved")
   const allTriggersResolved = allResolvedTriggers.length === triggers.length
-  const triggerResolvedBy = allTriggersResolved ? username ?? triggerResolutionUser : null
+  const triggerResolvedBy = allTriggersResolved ? (username ?? triggerResolutionUser) : null
 
   await dataSource
     .createQueryBuilder()

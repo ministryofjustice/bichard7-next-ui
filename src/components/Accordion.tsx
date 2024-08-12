@@ -26,7 +26,7 @@ const Accordion = ({ id, heading, children }: Props) => {
             type="button"
             aria-controls={`${id}-content`}
             className="govuk-accordion__section-button b7-accordion__button"
-            aria-expanded="false"
+            aria-expanded={isContentVisible}
             aria-label={heading}
             onClick={toggleContentVisibility}
           >
@@ -41,7 +41,11 @@ const Accordion = ({ id, heading, children }: Props) => {
           </AccordionButton>
         </AccordionHeading>
       </AccordionHeader>
-      {isContentVisible && <AccordionContent className="accordion__content">{children}</AccordionContent>}
+      {isContentVisible && (
+        <AccordionContent id={`${id}-content`} className="accordion__content">
+          {children}
+        </AccordionContent>
+      )}
     </div>
   )
 }

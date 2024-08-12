@@ -1,15 +1,16 @@
 import { useCurrentUser } from "context/CurrentUserContext"
 import { useRouter } from "next/router"
 import { encode } from "querystring"
+import getLongTriggerCode from "services/entities/transformers/getLongTriggerCode"
 import Permission from "types/Permission"
 import { DisplayPartialCourtCase } from "types/display/CourtCases"
 import { deleteQueryParamsByName } from "utils/deleteQueryParam"
 import groupErrorsFromReport from "utils/formatReasons/groupErrorsFromReport"
+import getResolutionStatus from "../../../utils/getResolutionStatus"
 import { CaseDetailsRow } from "./CaseDetailsRow/CaseDetailsRow"
 import { ExceptionsLockTag, ExceptionsReasonCell } from "./ExceptionsColumns"
 import { ExtraReasonRow } from "./ExtraReasonRow"
 import { TriggersLockTag, TriggersReasonCell } from "./TriggersColumns"
-import getResolutionStatus from "../../../utils/getResolutionStatus"
 
 interface Props {
   courtCase: DisplayPartialCourtCase
@@ -26,6 +27,7 @@ const CourtCaseListEntry: React.FC<Props> = ({
 }: Props) => {
   const {
     errorId,
+    errorStatus,
     errorLockedByUsername,
     errorLockedByUserFullName,
     errorReport,
@@ -37,6 +39,13 @@ const CourtCaseListEntry: React.FC<Props> = ({
   const { basePath, query } = useRouter()
   const searchParams = new URLSearchParams(encode(query))
   const currentUser = useCurrentUser()
+  const reasonCodes =
+    typeof query.reasonCodes === "string"
+      ? query.reasonCodes
+          .split(" ")
+          .map((reasonCode) => getLongTriggerCode(reasonCode))
+          .join(" ")
+      : query.reasonCodes?.map((reasonCode) => getLongTriggerCode(reasonCode))
 
   const unlockCaseWithReasonPath = (reason: "Trigger" | "Exception", caseId: string) => {
     deleteQueryParamsByName(["unlockException", "unlockTrigger"], searchParams)
@@ -54,14 +63,15 @@ const CourtCaseListEntry: React.FC<Props> = ({
 
   let exceptionsReasonCell, exceptionsLockTag, triggersReasonCell, triggersLockTag
   if (hasExceptions && currentUser.hasAccessTo[Permission.Exceptions]) {
+    const displayExceptions = (query.state === "Resolved" && errorStatus === "Resolved") || errorStatus === "Unresolved"
     const exceptions = groupErrorsFromReport(errorReport)
     const filteredExceptions = Object.fromEntries(
-      Object.entries(exceptions).filter(([error]) => query.reasonCodes?.includes(error))
+      Object.entries(exceptions).filter(([error]) => reasonCodes?.includes(error))
     )
-    exceptionsReasonCell = (
-      <ExceptionsReasonCell exceptionCounts={query.reasonCodes ? filteredExceptions : exceptions} />
+    exceptionsReasonCell = displayExceptions && (
+      <ExceptionsReasonCell exceptionCounts={reasonCodes ? filteredExceptions : exceptions} />
     )
-    exceptionsLockTag = (
+    exceptionsLockTag = displayExceptions && (
       <ExceptionsLockTag
         errorLockedByUsername={errorLockedByUsername}
         errorLockedByFullName={errorLockedByUserFullName}
@@ -74,9 +84,7 @@ const CourtCaseListEntry: React.FC<Props> = ({
   if (hasTriggers && currentUser.hasAccessTo[Permission.Triggers]) {
     triggersReasonCell = (
       <TriggersReasonCell
-        triggers={
-          query.reasonCodes ? triggers.filter((trigger) => query.reasonCodes?.includes(trigger.triggerCode)) : triggers
-        }
+        triggers={reasonCodes ? triggers.filter((trigger) => reasonCodes?.includes(trigger.triggerCode)) : triggers}
       />
     )
     triggersLockTag = (

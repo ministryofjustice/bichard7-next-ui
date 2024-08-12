@@ -1,5 +1,5 @@
 import type { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
-import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
+import ExceptionCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/ExceptionCode"
 import offenceCategory from "@moj-bichard7-developers/bichard7-next-data/dist/data/offence-category.json"
 import yesNo from "@moj-bichard7-developers/bichard7-next-data/dist/data/yes-no.json"
 import ConditionalRender from "components/ConditionalRender"
@@ -11,7 +11,7 @@ import { Heading, Table } from "govuk-react"
 import ErrorMessages from "types/ErrorMessages"
 import { Exception } from "types/exceptions"
 import { ExceptionBadgeType } from "utils/exceptions/exceptionBadgeType"
-import { formatDisplayedDate } from "utils/formattedDate"
+import { formatDisplayedDate } from "utils/date/formattedDate"
 import getOffenceCode from "utils/getOffenceCode"
 import { capitaliseExpression, getPleaStatus, getVerdict, getYesOrNo } from "utils/valueTransformers"
 import { TableRow } from "../../TableRow"
@@ -118,14 +118,8 @@ export const OffenceDetails = ({
           }
           <TableRow label="Title" value={offence.OffenceTitle} />
           <TableRow label="Category" value={offenceCategoryWithDescription} />
-          <TableRow
-            label="Arrest date"
-            value={offence.ArrestDate && formatDisplayedDate(new Date(offence.ArrestDate))}
-          />
-          <TableRow
-            label="Charge date"
-            value={offence.ChargeDate && formatDisplayedDate(new Date(offence.ChargeDate))}
-          />
+          <TableRow label="Arrest date" value={offence.ArrestDate && formatDisplayedDate(offence.ArrestDate)} />
+          <TableRow label="Charge date" value={offence.ChargeDate && formatDisplayedDate(offence.ChargeDate)} />
           <TableRow label="Start date" value={<StartDate offence={offence} />} />
           <TableRow label="Location" value={offence.LocationOfOffence} />
           <TableRow label="Wording" value={offence.ActualOffenceWording} />
@@ -134,7 +128,7 @@ export const OffenceDetails = ({
           <TableRow label="Home Office classification" value={offence.HomeOfficeClassification} />
           <TableRow
             label="Conviction date"
-            value={offence.ConvictionDate && formatDisplayedDate(new Date(offence.ConvictionDate))}
+            value={offence.ConvictionDate && formatDisplayedDate(offence.ConvictionDate)}
           />
 
           <OffenceMatching

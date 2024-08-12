@@ -71,7 +71,7 @@ const TriggersList = ({ onNavigate }: Props) => {
 
   return (
     <Form method="post" action={resolveTriggerUrl(selectedTriggerIds)} csrfToken={csrfToken}>
-      {triggers.length === 0 && "There are no triggers for this case."}
+      {!hasTriggers && "There are no triggers for this case."}
       <ConditionalRender isRendered={hasUnresolvedTriggers && !triggersLockedByAnotherUser}>
         <SelectAllTriggersGridRow id={"select-all-triggers"}>
           <GridCol>
@@ -101,13 +101,16 @@ const TriggersList = ({ onNavigate }: Props) => {
           </MarkCompleteGridCol>
         </GridRow>
       </ConditionalRender>
-      <LockStatus>
-        <LockStatusTag
-          isRendered={triggers.length > 0}
-          resolutionStatus={courtCase.triggerStatus}
-          lockName="Triggers"
-        />
-      </LockStatus>
+
+      <ConditionalRender isRendered={hasTriggers}>
+        <LockStatus>
+          <LockStatusTag
+            isRendered={triggers.length > 0}
+            resolutionStatus={courtCase.triggerStatus}
+            lockName="Triggers"
+          />
+        </LockStatus>
+      </ConditionalRender>
     </Form>
   )
 }

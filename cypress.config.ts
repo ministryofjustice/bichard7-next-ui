@@ -14,8 +14,7 @@ import {
   insertMultipleDummyCourtCases
 } from "./test/utils/insertCourtCases"
 import { deleteFeedback, getAllFeedbacksFromDatabase, insertFeedback } from "./test/utils/manageFeedbackSurveys"
-
-import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
+import ExceptionCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/ExceptionCode"
 import SurveyFeedback from "services/entities/SurveyFeedback"
 import { ResolutionStatus } from "types/ResolutionStatus"
 import generateAhoWithPncException, {
@@ -142,8 +141,13 @@ export default defineConfig({
           return true
         },
 
-        insertException(params: { caseId: number; exceptionCode: string; errorReport?: string }) {
-          return insertException(params.caseId, params.exceptionCode, params.errorReport)
+        insertException(params: {
+          caseId: number
+          exceptionCode: string
+          errorReport?: string
+          errorStatus?: ResolutionStatus
+        }) {
+          return insertException(params.caseId, params.exceptionCode, params.errorReport, params.errorStatus)
         },
 
         async getCourtCaseById(params: { caseId: number }) {

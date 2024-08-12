@@ -2,7 +2,7 @@ import type { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/t
 import { DateCode } from "@moj-bichard7-developers/bichard7-next-data/dist/types/types"
 import { DateCodes } from "@moj-bichard7-developers/bichard7-next-data/dist/types/DateCode"
 import { textSecondary } from "utils/colours"
-import { formatDisplayedDate } from "utils/formattedDate"
+import { formatDisplayedDate } from "utils/date/formattedDate"
 import { capitalizeString } from "utils/valueTransformers"
 
 interface StartDateProps {

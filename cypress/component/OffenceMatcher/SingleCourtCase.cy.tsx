@@ -2,29 +2,30 @@ import { OffenceMatcher } from "components/OffenceMatcher"
 import { CourtCaseContext } from "context/CourtCaseContext"
 import { Amendments } from "types/Amendments"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
-import HO100310 from "../../fixtures/HO100310.json"
-import { HearingOutcome, Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { PncOffence } from "@moj-bichard7-developers/bichard7-next-core/core/types/PncQueryResult"
-import getOffenceCode from "utils/getOffenceCode"
+import type { Candidates } from "../../../src/types/OffenceMatching"
 
-const mockIsCaseMatch = (_hearingOutcome: HearingOutcome, pncOffence: PncOffence, offence: Offence, _: string = "") => {
-  const offenceCode = getOffenceCode(offence)
-  return pncOffence.offence.cjsOffenceCode === offenceCode
-}
+const courtCase = {} as unknown as DisplayFullCourtCase
+const candidates: Candidates[] = [
+  {
+    courtCaseReference: "97/1626/008395Q",
+    offences: [
+      {
+        offence: {
+          cjsOffenceCode: "TH68006",
+          sequenceNumber: 1
+        }
+      } as PncOffence
+    ]
+  }
+]
+
 describe("Offence matcher with single court case", () => {
   describe("Without existing amendments", () => {
-    const courtCase = HO100310 as unknown as DisplayFullCourtCase
-    const [offence] = courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence
-
     beforeEach(() => {
       cy.mount(
         <CourtCaseContext.Provider value={[{ courtCase, amendments: {}, savedAmendments: {} }, () => {}]}>
-          <OffenceMatcher
-            offenceIndex={0}
-            offence={offence}
-            isCaseLockedToCurrentUser={true}
-            isCaseMatch={mockIsCaseMatch}
-          />
+          <OffenceMatcher offenceIndex={0} candidates={candidates} isCaseLockedToCurrentUser={true} />
         </CourtCaseContext.Provider>
       )
     })
@@ -61,9 +62,6 @@ describe("Offence matcher with single court case", () => {
 })
 
 describe("With existing amendments", () => {
-  const courtCase = HO100310 as unknown as DisplayFullCourtCase
-  const [offence] = courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence
-
   it("loads amended value", () => {
     const amendments: Amendments = {
       offenceReasonSequence: [
@@ -82,12 +80,7 @@ describe("With existing amendments", () => {
 
     cy.mount(
       <CourtCaseContext.Provider value={[{ courtCase, amendments, savedAmendments: {} }, () => {}]}>
-        <OffenceMatcher
-          offenceIndex={0}
-          offence={offence}
-          isCaseLockedToCurrentUser={true}
-          isCaseMatch={mockIsCaseMatch}
-        />
+        <OffenceMatcher offenceIndex={0} candidates={candidates} isCaseLockedToCurrentUser={true} />
       </CourtCaseContext.Provider>
     )
 
@@ -112,12 +105,7 @@ describe("With existing amendments", () => {
 
     cy.mount(
       <CourtCaseContext.Provider value={[{ courtCase, amendments, savedAmendments: {} }, () => {}]}>
-        <OffenceMatcher
-          offenceIndex={0}
-          offence={offence}
-          isCaseLockedToCurrentUser={true}
-          isCaseMatch={mockIsCaseMatch}
-        />
+        <OffenceMatcher offenceIndex={0} candidates={candidates} isCaseLockedToCurrentUser={true} />
       </CourtCaseContext.Provider>
     )
 

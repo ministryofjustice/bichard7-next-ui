@@ -3,8 +3,10 @@ import { CaseListQueryParams, LockedState } from "types/CaseListQueryParams"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import Permission from "types/Permission"
 import PromiseResult from "types/PromiseResult"
+
 import { isError } from "types/Result"
 import CourtCase from "./entities/CourtCase"
+import getLongTriggerCode from "./entities/transformers/getLongTriggerCode"
 import User from "./entities/User"
 import filterByReasonAndResolutionStatus from "./filters/filterByReasonAndResolutionStatus"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
@@ -82,8 +84,13 @@ const listCourtCases = async (
 
   // Filters
   if (defendantName) {
-    const defendantNameLike = { defendantName: ILike(`%${defendantName}%`) }
-    query.andWhere(defendantNameLike)
+    let splitDefendantName = defendantName.replace(/\*|\s+/g, "%")
+
+    if (!splitDefendantName.endsWith("%")) {
+      splitDefendantName = `${splitDefendantName}%`
+    }
+
+    query.andWhere({ defendantName: ILike(splitDefendantName) })
   }
 
   if (courtName) {
@@ -100,7 +107,7 @@ const listCourtCases = async (
     query.andWhere(
       new Brackets((qb) => {
         qb.where("trigger.trigger_code ilike any(array[:...triggers])", {
-          triggers: reasonCodes
+          triggers: reasonCodes.map((reasonCode) => getLongTriggerCode(reasonCode))
         })
           // match exceptions at the start of the error_report
           .orWhere("courtCase.error_report ilike any(array[:...firstExceptions])", {
@@ -136,7 +143,7 @@ const listCourtCases = async (
     }
   }
 
-  filterByReasonAndResolutionStatus(query, user, reason, caseState, resolvedByUsername)
+  filterByReasonAndResolutionStatus(query, user, reason, reasonCodes, caseState, resolvedByUsername)
 
   if (allocatedToUserName) {
     query.andWhere(

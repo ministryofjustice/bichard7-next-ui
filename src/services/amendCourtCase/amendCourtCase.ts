@@ -9,8 +9,8 @@ import type User from "../entities/User"
 import insertNotes from "services/insertNotes"
 import getSystemNotes from "utils/amendments/getSystemNotes"
 import CourtCase from "../entities/CourtCase"
-import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/core/phase1/parse/parseAhoXml/parseAhoXml"
-import convertAhoToXml from "@moj-bichard7-developers/bichard7-next-core/core/phase1/serialise/ahoXml/generate"
+import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/core/lib/parse/parseAhoXml/parseAhoXml"
+import serialiseToXml from "@moj-bichard7-developers/bichard7-next-core/core/lib/serialise/ahoXml/serialiseToXml"
 import Phase from "@moj-bichard7-developers/bichard7-next-core/core/types/Phase"
 
 const amendCourtCase = async (
@@ -45,7 +45,7 @@ const amendCourtCase = async (
     return updatedAho
   }
 
-  const generatedXml = convertAhoToXml(updatedAho, false)
+  const generatedXml = serialiseToXml(updatedAho, false)
 
   // Depending on the phase, treat the update as either hoUpdate or pncUpdate
   if (courtCase.phase === Phase.HEARING_OUTCOME) {

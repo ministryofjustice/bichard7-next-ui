@@ -8,7 +8,7 @@ import { useState } from "react"
 import { Exception } from "types/exceptions"
 import getNextHearingDateValue from "utils/amendments/getAmendmentValues/getNextHearingDateValue"
 import hasNextHearingDateExceptions from "utils/exceptions/hasNextHearingDateExceptions"
-import { formatDisplayedDate, formatFormInputDateString } from "utils/formattedDate"
+import { formatDisplayedDate, formatFormInputDateString } from "utils/date/formattedDate"
 import isValidNextHearingDate from "utils/validators/isValidNextHearingDate"
 
 interface NextHearingDateFieldProps {
@@ -52,7 +52,7 @@ export const NextHearingDateField = ({
         className="govuk-input"
         id="next-hearing-date"
         type="date"
-        min={result.ResultHearingDate && formatFormInputDateString(new Date(result.ResultHearingDate))}
+        min={result.ResultHearingDate && formatFormInputDateString(result.ResultHearingDate)}
         name={"next-hearing-date"}
         value={amendedNextHearingDate}
         onChange={(event) => {

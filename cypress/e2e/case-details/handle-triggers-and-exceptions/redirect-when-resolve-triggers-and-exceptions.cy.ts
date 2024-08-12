@@ -1,4 +1,4 @@
-import TriggerCode from "bichard7-next-data-latest/dist/types/TriggerCode"
+import TriggerCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/TriggerCode"
 import { TestTrigger } from "../../../../test/utils/manageTriggers"
 import redirectWhenResolveTriggersAndExceptions from "../../../fixtures/redirectWhenResolveTriggersAndExceptions.json"
 import { loginAndVisit } from "../../../support/helpers"
@@ -40,7 +40,7 @@ describe("Redirect when resolve triggers and exceptions", () => {
 
         if (resolveExceptions) {
           if (loggedInAs === "GeneralHandler") {
-            cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").click()
+            cy.get(".case-details-sidebar #exceptions-tab").click()
           }
           cy.get("button").contains("Mark as manually resolved").click()
           cy.get("button").contains("Resolve").click()

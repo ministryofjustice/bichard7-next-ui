@@ -1,4 +1,4 @@
-import TriggerCode from "bichard7-next-data-latest/dist/types/TriggerCode"
+import TriggerCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/TriggerCode"
 
 export const MAX_NOTE_LENGTH = 2000
 export const MAX_FEEDBACK_LENGTH = 2000
@@ -11,7 +11,6 @@ export const SWITCHING_FEEDBACK_FORM_FREQUENCY_IN_HOURS = 3
 export const COOKIES_SECURE_OPTION = (process.env.COOKIES_SECURE ?? "true") === "true"
 export const CSRF = {
   tokenName: "CSRFToken",
-  cookieSecret: process.env.CSRF_COOKIE_SECRET ?? "OliverTwist1",
   formSecret: process.env.CSRF_FORM_SECRET ?? "OliverTwist2",
   maximumTokenAgeInSeconds: parseInt(process.env.CSRF_TOKEN_MAX_AGE ?? "600", 10)
 }

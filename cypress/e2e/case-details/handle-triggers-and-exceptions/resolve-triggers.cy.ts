@@ -1,5 +1,5 @@
-import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
-import TriggerCode from "bichard7-next-data-latest/dist/types/TriggerCode"
+import ExceptionCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/ExceptionCode"
+import TriggerCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/TriggerCode"
 import { ResolutionStatus } from "types/ResolutionStatus"
 import type { TestTrigger } from "../../../../test/utils/manageTriggers"
 import { loginAndVisit } from "../../../support/helpers"
@@ -174,8 +174,8 @@ describe("Triggers and exceptions", () => {
       ])
       cy.task("insertTriggers", { caseId: 0, triggers: unresolvedTriggers })
       cy.visit(caseURL)
-      cy.get("section#triggers").find("#triggers-locked-tag").should("exist")
-      cy.get("section#exceptions").find("#exceptions-locked-tag").should("exist")
+      cy.get("section#triggers").find(".triggers-locked-tag").should("exist")
+      cy.get("section#exceptions").find(".exceptions-locked-tag").should("exist")
     })
 
     it("Should display the resolution status if the triggers or exceptions are resolved", () => {
@@ -189,8 +189,8 @@ describe("Triggers and exceptions", () => {
       ])
       cy.task("insertTriggers", { caseId: 0, triggers: resolvedTriggers })
       cy.visit(caseURL)
-      cy.get("section#triggers").find("#triggers-resolved-tag").should("exist")
-      cy.get("section#exceptions").find("#exceptions-resolved-tag").should("exist")
+      cy.get("section#triggers").find(".triggers-resolved-tag").should("exist")
+      cy.get("section#exceptions").find(".exceptions-resolved-tag").should("exist")
     })
 
     it("Should display the submitted status when exceptions are submitted", () => {
@@ -202,7 +202,7 @@ describe("Triggers and exceptions", () => {
         }
       ])
       cy.visit(caseURL)
-      cy.get("section#exceptions").find("#exceptions-submitted-tag").should("exist")
+      cy.get("section#exceptions").find(".exceptions-submitted-tag").should("exist")
     })
 
     it("Should display a lock icon when someone else has the triggers locked", () => {
@@ -215,7 +215,7 @@ describe("Triggers and exceptions", () => {
       ])
       cy.task("insertTriggers", { caseId: 0, triggers: unresolvedTriggers })
       cy.visit(caseURL)
-      cy.get("#triggers-locked-tag img").should("exist")
+      cy.get(".triggers-locked-tag img").should("exist")
     })
 
     it("Should display the lock holders username when someone else has the triggers locked", () => {
@@ -392,46 +392,57 @@ describe("Triggers and exceptions tabs", () => {
   it("should show neither triggers nor exceptions to a user with no groups", () => {
     loginAndVisit("NoGroups", caseURL)
 
-    cy.get(".triggers-and-exceptions-sidebar #triggers-tab").should("not.exist")
-    cy.get(".triggers-and-exceptions-sidebar #triggers").should("not.exist")
+    cy.get(".case-details-sidebar #triggers-tab").should("not.exist")
+    cy.get(".case-details-sidebar #triggers").should("not.exist")
 
-    cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").should("not.exist")
-    cy.get(".triggers-and-exceptions-sidebar #exceptions").should("not.exist")
+    cy.get(".case-details-sidebar #exceptions-tab").should("not.exist")
+    cy.get(".case-details-sidebar #exceptions").should("not.exist")
   })
 
   it("should only show triggers to Trigger Handlers", () => {
+    cy.task("insertTriggers", {
+      caseId: 0,
+      triggers: [
+        {
+          triggerId: 0,
+          triggerCode: TriggerCode.TRPR0001,
+          status: "Resolved",
+          createdAt: new Date("2022-07-09T10:22:34.000Z")
+        }
+      ]
+    })
     loginAndVisit("TriggerHandler", caseURL)
 
-    cy.get(".triggers-and-exceptions-sidebar #triggers-tab").should("exist")
-    cy.get(".triggers-and-exceptions-sidebar #triggers").should("exist")
-    cy.get(".triggers-and-exceptions-sidebar #triggers").should("be.visible")
+    cy.get(".case-details-sidebar #triggers-tab").should("exist")
+    cy.get(".case-details-sidebar #triggers").should("exist")
+    cy.get(".case-details-sidebar #triggers").should("be.visible")
 
-    cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").should("not.exist")
-    cy.get(".triggers-and-exceptions-sidebar #exceptions").should("not.exist")
+    cy.get(".case-details-sidebar #exceptions-tab").should("not.exist")
+    cy.get(".case-details-sidebar #exceptions").should("not.exist")
   })
 
   it("should only show exceptions to Exception Handlers", () => {
     loginAndVisit("ExceptionHandler", caseURL)
 
-    cy.get(".triggers-and-exceptions-sidebar #triggers-tab").should("not.exist")
-    cy.get(".triggers-and-exceptions-sidebar #triggers").should("not.exist")
+    cy.get(".case-details-sidebar #triggers-tab").should("not.exist")
+    cy.get(".case-details-sidebar #triggers").should("not.exist")
 
-    cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").should("exist")
-    cy.get(".triggers-and-exceptions-sidebar #exceptions").should("exist")
-    cy.get(".triggers-and-exceptions-sidebar #exceptions").should("be.visible")
+    cy.get(".case-details-sidebar #exceptions-tab").should("exist")
+    cy.get(".case-details-sidebar #exceptions").should("exist")
+    cy.get(".case-details-sidebar #exceptions").should("be.visible")
   })
 
   it("should show both trigger and exceptions to General Handlers with triggers tab selected", () => {
     cy.task("insertTriggers", { caseId: 0, triggers: mixedTriggers })
     loginAndVisit("GeneralHandler", caseURL)
 
-    cy.get(".triggers-and-exceptions-sidebar #triggers-tab").should("exist")
-    cy.get(".triggers-and-exceptions-sidebar #triggers").should("exist")
-    cy.get(".triggers-and-exceptions-sidebar #triggers").should("be.visible")
+    cy.get(".case-details-sidebar #triggers-tab").should("exist")
+    cy.get(".case-details-sidebar #triggers").should("exist")
+    cy.get(".case-details-sidebar #triggers").should("be.visible")
 
-    cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").should("exist")
-    cy.get(".triggers-and-exceptions-sidebar #exceptions").should("exist")
-    cy.get(".triggers-and-exceptions-sidebar #exceptions").should("not.be.visible")
+    cy.get(".case-details-sidebar #exceptions-tab").should("exist")
+    cy.get(".case-details-sidebar #exceptions").should("exist")
+    cy.get(".case-details-sidebar #exceptions").should("not.be.visible")
   })
 
   it("should select exceptions tab by default when there aren't any triggers", () => {
@@ -447,13 +458,13 @@ describe("Triggers and exceptions tabs", () => {
 
     loginAndVisit("GeneralHandler", caseURL)
 
-    cy.get(".triggers-and-exceptions-sidebar #triggers-tab").should("exist")
-    cy.get(".triggers-and-exceptions-sidebar #triggers").should("exist")
-    cy.get(".triggers-and-exceptions-sidebar #triggers").should("not.be.visible")
+    cy.get(".case-details-sidebar #triggers-tab").should("exist")
+    cy.get(".case-details-sidebar #triggers").should("exist")
+    cy.get(".case-details-sidebar #triggers").should("not.be.visible")
 
-    cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").should("exist")
-    cy.get(".triggers-and-exceptions-sidebar #exceptions").should("exist")
-    cy.get(".triggers-and-exceptions-sidebar #exceptions").should("be.visible")
+    cy.get(".case-details-sidebar #exceptions-tab").should("exist")
+    cy.get(".case-details-sidebar #exceptions").should("exist")
+    cy.get(".case-details-sidebar #exceptions").should("be.visible")
   })
 })
 
@@ -478,10 +489,10 @@ describe("PNC Exceptions", () => {
 
     loginAndVisit("GeneralHandler", caseURL)
 
-    cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").should("exist")
-    cy.get(".triggers-and-exceptions-sidebar #exceptions").should("exist")
-    cy.get(".triggers-and-exceptions-sidebar #exceptions").should("be.visible")
-    cy.get(".triggers-and-exceptions-sidebar #exceptions .moj-badge").should("have.text", "PNC Error")
+    cy.get(".case-details-sidebar #exceptions-tab").should("exist")
+    cy.get(".case-details-sidebar #exceptions").should("exist")
+    cy.get(".case-details-sidebar #exceptions").should("be.visible")
+    cy.get(".case-details-sidebar #exceptions .moj-badge").should("have.text", "PNC Error")
     cy.get(".b7-accordion__button").should("have.text", "PNC error message").click()
     cy.get(".accordion__content .b7-inset-text__content").should(
       "have.text",
@@ -503,10 +514,10 @@ describe("PNC Exceptions", () => {
 
     loginAndVisit("GeneralHandler", caseURL)
 
-    cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").should("exist")
-    cy.get(".triggers-and-exceptions-sidebar #exceptions").should("exist")
-    cy.get(".triggers-and-exceptions-sidebar #exceptions").should("be.visible")
-    cy.get(".triggers-and-exceptions-sidebar #exceptions .moj-badge").should("have.text", "PNC Error")
+    cy.get(".case-details-sidebar #exceptions-tab").should("exist")
+    cy.get(".case-details-sidebar #exceptions").should("exist")
+    cy.get(".case-details-sidebar #exceptions").should("be.visible")
+    cy.get(".case-details-sidebar #exceptions .moj-badge").should("have.text", "PNC Error")
     cy.get(".b7-accordion").should("not.exist")
   })
 
@@ -526,9 +537,9 @@ describe("PNC Exceptions", () => {
 
     loginAndVisit("GeneralHandler", caseURL)
 
-    cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").should("exist")
-    cy.get(".triggers-and-exceptions-sidebar #exceptions").should("exist")
-    cy.get(".triggers-and-exceptions-sidebar #exceptions").should("be.visible")
+    cy.get(".case-details-sidebar #exceptions-tab").should("exist")
+    cy.get(".case-details-sidebar #exceptions").should("exist")
+    cy.get(".case-details-sidebar #exceptions").should("be.visible")
     cy.get("#exceptions .moj-exception-row").eq(0).find(".moj-badge").should("have.text", "PNC Error")
     cy.get("#exceptions .moj-exception-row").eq(1).should("contain.text", "HO100332 - Offences match more than one CCR")
     cy.get("#exceptions .moj-exception-row").eq(2).should("contain.text", "HO100108")

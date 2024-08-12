@@ -1,5 +1,5 @@
 import { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
-import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
+import ExceptionCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/ExceptionCode"
 import Badge, { BadgeColours } from "components/Badge"
 import ConditionalRender from "components/ConditionalRender"
 import ErrorPromptMessage from "components/ErrorPromptMessage"
@@ -11,6 +11,7 @@ import { findExceptions } from "types/ErrorMessages"
 import { DisplayFullUser } from "types/display/Users"
 import { Exception } from "types/exceptions"
 import { getOffenceMatchingException } from "utils/exceptions/getOffenceMatchingException"
+import findCandidates from "../../../../../../utils/offenceMatcher/findCandidates"
 import { TableRow } from "../../TableRow"
 import { PncInput } from "./OffenceDetails.styles"
 
@@ -45,7 +46,17 @@ export const OffenceMatching = ({
   const currentUser = useCurrentUser()
 
   const offenceMatchingException = isCaseUnresolved && getOffenceMatchingException(exceptions, offenceIndex)
-  const offenceMatchingExceptionMessage = findExceptions(courtCase, courtCase.aho.Exceptions, ExceptionCode.HO100304)
+  const offenceMatchingExceptionMessage = findExceptions(
+    courtCase,
+    courtCase.aho.Exceptions,
+    ExceptionCode.HO100304,
+    ExceptionCode.HO100328,
+    ExceptionCode.HO100507
+  )
+
+  const doNotDisplayPncSequenceBox = exceptions.some((e) =>
+    [ExceptionCode.HO100304, ExceptionCode.HO100328, ExceptionCode.HO100507].includes(e.code)
+  )
 
   const displayOffenceMatcher =
     enabled(currentUser) && exceptions.some((e) => [ExceptionCode.HO100310, ExceptionCode.HO100332].includes(e.code))
@@ -65,7 +76,7 @@ export const OffenceMatching = ({
             value={
               <OffenceMatcher
                 offenceIndex={offenceIndex}
-                offence={offence}
+                candidates={findCandidates(courtCase, offenceIndex)}
                 isCaseLockedToCurrentUser={isCaseLockedToCurrentUser}
               />
             }
@@ -96,7 +107,12 @@ export const OffenceMatching = ({
           <ExceptionFieldTableRow
             badgeText={offenceMatchingException.badge}
             label={"PNC sequence number"}
-            value={<PncInput type="text" maxLength={3} className={"pnc-sequence-number"} />}
+            value={
+              doNotDisplayPncSequenceBox ? undefined : (
+                <PncInput type="text" maxLength={3} className={"pnc-sequence-number"} />
+              )
+            }
+            message={offenceMatchingExceptionMessage}
           >
             {" "}
             <>

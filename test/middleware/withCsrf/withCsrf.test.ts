@@ -3,13 +3,13 @@ jest.mock("middleware/withCsrf/verifyCsrfToken")
 jest.mock("middleware/withCsrf/generateCsrfToken")
 
 import { IncomingMessage, ServerResponse } from "http"
+import generateCsrfToken from "middleware/withCsrf/generateCsrfToken"
+import verifyCsrfToken from "middleware/withCsrf/verifyCsrfToken"
+import withCsrf from "middleware/withCsrf/withCsrf"
 import { GetServerSidePropsContext } from "next"
 import QueryString from "qs"
 import { ParsedUrlQuery } from "querystring"
 import CsrfServerSidePropsContext from "types/CsrfServerSidePropsContext"
-import withCsrf from "middleware/withCsrf/withCsrf"
-import verifyCsrfToken from "middleware/withCsrf/verifyCsrfToken"
-import generateCsrfToken from "middleware/withCsrf/generateCsrfToken"
 
 it("should include form data and CSRF token in the context", async () => {
   const mockedVerifyCsrfToken = verifyCsrfToken as jest.MockedFunction<typeof verifyCsrfToken>
@@ -17,8 +17,8 @@ it("should include form data and CSRF token in the context", async () => {
 
   const dummyFormData = <QueryString.ParsedQs>{ "Dummy-Form-Field": "DummyValue" }
   mockedVerifyCsrfToken.mockResolvedValue({ formData: dummyFormData, isValid: true })
-  const dummyTokens = { formToken: "DummyFormToken", cookieToken: "DummyCookieToken", cookieName: "DummyCookieName" }
-  mockedGenerateCsrfToken.mockReturnValue(dummyTokens)
+  const dummyToken = "DummyFormToken"
+  mockedGenerateCsrfToken.mockReturnValue(dummyToken)
 
   const request = {} as IncomingMessage
   const response = new ServerResponse(request)
@@ -33,8 +33,7 @@ it("should include form data and CSRF token in the context", async () => {
     expect(formData["Dummy-Form-Field"]).toBe("DummyValue")
 
     const cookieValues = response.getHeader("Set-Cookie") as string[]
-    expect(cookieValues).toBeDefined()
-    expect(cookieValues[0]).toContain("DummyCookieName=DummyCookieToken")
+    expect(cookieValues).not.toBeDefined()
 
     return undefined as never
   })

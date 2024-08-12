@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker"
-import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/core/phase1/parse/parseAhoXml/parseAhoXml"
-import convertAhoToXml from "@moj-bichard7-developers/bichard7-next-core/core/phase1/serialise/ahoXml/generate"
+import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/core/lib/parse/parseAhoXml/parseAhoXml"
+import serialiseToXml from "@moj-bichard7-developers/bichard7-next-core/core/lib/serialise/ahoXml/serialiseToXml"
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { subYears } from "date-fns"
 import sample from "lodash.sample"
@@ -73,7 +73,7 @@ export default async (
   let ahoWithExceptionsXml
 
   if (ahoWithExceptions) {
-    ahoWithExceptionsXml = convertAhoToXml(ahoWithExceptions)
+    ahoWithExceptionsXml = serialiseToXml(ahoWithExceptions)
   }
 
   const courtCase = await dataSource.getRepository(CourtCase).save({

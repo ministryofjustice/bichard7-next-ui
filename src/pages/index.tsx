@@ -40,8 +40,9 @@ import { DisplayPartialCourtCase } from "types/display/CourtCases"
 import { DisplayFullUser } from "types/display/Users"
 import { CaseAgeOptions } from "utils/caseAgeOptions"
 import caseStateFilters from "utils/caseStateFilters"
+import { formatFormInputDateString } from "utils/date/formattedDate"
+import dedupeTriggerCodes from "utils/dedupeTriggerCodes"
 import removeBlankQueryParams from "utils/deleteQueryParam/removeBlankQueryParams"
-import { formatFormInputDateString } from "utils/formattedDate"
 import getQueryStringCookieName from "utils/getQueryStringCookieName"
 import { isPost } from "utils/http"
 import { logUiDetails } from "utils/logUiDetails"
@@ -73,6 +74,9 @@ type Props = {
 
 const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param === "desc"
 
+// Remove characters that have an impact on queries.
+const sanitise = (value: string) => value.replace(/[\\%_^]/g, "")
+
 const extractSearchParamsFromQuery = (query: ParsedUrlQuery, currentUser: User): CaseListQueryParams => {
   // TODO: Actual validation of content with zod
   const reason =
@@ -84,12 +88,14 @@ const extractSearchParamsFromQuery = (query: ParsedUrlQuery, currentUser: User):
     from: query.from,
     to: query.to
   })
-  const defendantName = validateQueryParams(query.defendantName) ? query.defendantName : null
-  const courtName = validateQueryParams(query.courtName) ? query.courtName : undefined
+  const defendantName = validateQueryParams(query.defendantName) ? sanitise(query.defendantName) : null
+  const courtName = validateQueryParams(query.courtName) ? sanitise(query.courtName) : undefined
   const reasonCodes = validateQueryParams(query.reasonCodes)
-    ? query.reasonCodes.split(" ").filter((reasonCode) => reasonCode != "")
+    ? dedupeTriggerCodes(query.reasonCodes.split(" ").filter((reasonCode) => reasonCode !== "")).map((reasonCode) =>
+        sanitise(reasonCode)
+      )
     : []
-  const ptiurn = validateQueryParams(query.ptiurn) ? query.ptiurn : undefined
+  const ptiurn = validateQueryParams(query.ptiurn) ? sanitise(query.ptiurn) : undefined
   const lockedState: LockedState = validateQueryParams(query.lockedState)
     ? (query.lockedState as LockedState)
     : LockedState.All
@@ -204,7 +210,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         caseAge: caseAges,
         caseAgeCounts: caseAgeCounts,
         courtCases: courtCases.result.map((courtCase) => courtCaseToDisplayPartialCourtCaseDto(courtCase, currentUser)),
-        csrfToken: csrfToken,
+        csrfToken,
         dateRange:
           !!caseListQueryParams.courtDateRange && !Array.isArray(caseListQueryParams.courtDateRange)
             ? {

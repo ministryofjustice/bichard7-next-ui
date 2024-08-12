@@ -5,13 +5,13 @@ import ResolutionStatusBadge from "features/CourtCaseList/tags/ResolutionStatusB
 import { Link, Table } from "govuk-react"
 import Image from "next/image"
 import { useRouter } from "next/router"
-import { displayedDateFormat } from "utils/formattedDate"
-import { LOCKED_ICON_URL } from "utils/icons"
-import { NotePreviewButton } from "./NotePreviewButton"
 import { useState } from "react"
-import { NotePreviewRow } from "./NotePreviewRow"
 import { DisplayPartialCourtCase } from "types/display/CourtCases"
+import { displayedDateFormat } from "utils/date/formattedDate"
+import { LOCKED_ICON_URL } from "utils/icons"
 import { ResolutionStatus } from "../../../../types/ResolutionStatus"
+import { NotePreviewButton } from "./NotePreviewButton"
+import { NotePreviewRow } from "./NotePreviewRow"
 
 interface CaseDetailsRowProps {
   courtCase: DisplayPartialCourtCase
@@ -49,7 +49,7 @@ export const CaseDetailsRow = ({
           </ConditionalRender>
         </Table.Cell>
         <Table.Cell>
-          <Link href={`${basePath}/court-cases/${errorId}${previousPathWebSafe}`}>
+          <Link href={`${basePath}/court-cases/${errorId}${previousPathWebSafe}`} className="defendant-name">
             {defendantName}
             <br />
             <ResolutionStatusBadge resolutionStatus={resolutionStatus} />

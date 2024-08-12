@@ -1,7 +1,7 @@
 import Note from "services/entities/Note"
 import User from "services/entities/User"
 import { Amendments } from "types/Amendments"
-import { formatDisplayedDate } from "utils/formattedDate"
+import { formatDisplayedDate } from "utils/date/formattedDate"
 
 const formatValueOfUpdatedElement = (value: string | number | boolean | Date): string =>
   value instanceof Date ? formatDisplayedDate(value) : `${value}`
