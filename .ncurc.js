@@ -12,7 +12,14 @@
   - next
     - 13.4.13 causes failures with fetch
 */
-const pinned = ["styled-components", "date-fns", "date-fns-tz", "eslint"]
+const pinned = [
+  "styled-components",
+  "date-fns",
+  "date-fns-tz",
+  "eslint",
+  "@typescript-eslint/eslint-plugin",
+  "@typescript-eslint/parser"
+]
 const ignored = []
 const skipped = [{ package: "next", version: "13.4.13" }]
 
