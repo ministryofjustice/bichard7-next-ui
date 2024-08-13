@@ -5,7 +5,7 @@ import CourtCase from "./entities/CourtCase"
 import insertNotes from "./insertNotes"
 
 const MaxNoteLength = 2000
-const notesRegex = new RegExp(`(.|\\r|\\n){1,${MaxNoteLength}}`, "g")
+const notesRegex = new RegExp(`(.|\\s){1,${MaxNoteLength}}`, "g")
 
 const addNote = async (
   dataSource: DataSource | EntityManager,
@@ -32,8 +32,11 @@ const addNote = async (
       ValidationException: "Case is not locked by the user"
     }
   }
+
+  const wholeNote = noteText.match(notesRegex)
+
   const notes =
-    noteText.match(notesRegex)?.map((text) => ({
+    wholeNote?.map((text) => ({
       noteText: text,
       errorId: courtCaseId,
       userId: username
