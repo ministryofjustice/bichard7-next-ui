@@ -37,7 +37,7 @@ export const NotesTable = ({ notes, displayForce }: Props) => {
             <Table.Cell>
               <DateTime date={note.createdAt} />
             </Table.Cell>
-            <Table.Cell>{note.noteText}</Table.Cell>
+            <Table.Cell style={{ whiteSpace: "pre-wrap" }}>{note.noteText}</Table.Cell>
           </Table.Row>
         )
       })}

@@ -129,4 +129,34 @@ describe("addNote", () => {
       { errorId: 0, noteText: "A".repeat(503), userId: currentUsername }
     ])
   })
+
+  it("Should not add multiple notes when note has a new line", async () => {
+    await insertCourtCasesWithFields([
+      { messageId: uuid(), ...existingCourtCasesDbObject, errorLockedByUsername: currentUsername }
+    ])
+
+    const result = await addNote(dataSource, 0, currentUsername, "A\r\nB")
+    expect(result).toStrictEqual({ isSuccessful: true })
+
+    expect(insertNotes).toHaveBeenCalledTimes(1)
+    expect(insertNotes).toHaveBeenCalledWith(expect.anything(), [
+      { errorId: 0, noteText: "A\r\nB", userId: currentUsername }
+    ])
+  })
+
+  it("Should add multiple notes when text is over 2000 characters and contains new lines (doesn't split on new lines)", async () => {
+    await insertCourtCasesWithFields([
+      { messageId: uuid(), ...existingCourtCasesDbObject, errorLockedByUsername: currentUsername }
+    ])
+
+    const text = "Abba\r\n".repeat(500)
+    const result = await addNote(dataSource, 0, currentUsername, text)
+    expect(result).toStrictEqual({ isSuccessful: true })
+
+    expect(insertNotes).toHaveBeenCalledTimes(1)
+    expect(insertNotes).toHaveBeenCalledWith(expect.anything(), [
+      { errorId: 0, noteText: text.slice(0, 2000), userId: currentUsername },
+      { errorId: 0, noteText: text.slice(2000, 3000), userId: currentUsername }
+    ])
+  })
 })
