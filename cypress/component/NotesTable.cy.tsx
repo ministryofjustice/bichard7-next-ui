@@ -29,6 +29,23 @@ describe("NotesTable", () => {
     cy.contains("06/10/2023 16:48:32")
   })
 
+  it("displays notes on seperate lines", () => {
+    const notes: DisplayNote[] = [
+      {
+        userFullName: "note user 1",
+        userId: "1",
+        noteText: "this\r\nis\r\na\r\nnote",
+
+        createdAt: "Wed Oct 05 2023 16:49:00 GMT+0200"
+      }
+    ]
+    cy.mount(<NotesTable notes={notes} />)
+
+    cy.contains("note user 1")
+    cy.contains("this is a note")
+    cy.contains("05/10/2023 15:49:00")
+  })
+
   it("displays up to three user force codes", () => {
     const date = new Date().toISOString()
     const notes: DisplayNote[] = [
