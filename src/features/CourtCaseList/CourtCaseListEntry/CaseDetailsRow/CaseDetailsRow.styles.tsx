@@ -1,7 +1,7 @@
 import styled from "styled-components"
 
-const StyledDiv = styled.div`
+const CaseListResolutionStatusBadgeWrapper = styled.div`
   margin-top: 5px;
 `
 
-export { StyledDiv }
+export { CaseListResolutionStatusBadgeWrapper }

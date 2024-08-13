@@ -12,7 +12,7 @@ import { LOCKED_ICON_URL } from "utils/icons"
 import { ResolutionStatus } from "../../../../types/ResolutionStatus"
 import { NotePreviewButton } from "./NotePreviewButton"
 import { NotePreviewRow } from "./NotePreviewRow"
-import { StyledDiv } from "./CaseDetailsRow.styles"
+import { CaseListResolutionStatusBadgeWrapper } from "./CaseDetailsRow.styles"
 
 interface CaseDetailsRowProps {
   courtCase: DisplayPartialCourtCase
@@ -53,9 +53,9 @@ export const CaseDetailsRow = ({
           <Link href={`${basePath}/court-cases/${errorId}${previousPathWebSafe}`} className="defendant-name">
             {defendantName}
             <br />
-            <StyledDiv>
+            <CaseListResolutionStatusBadgeWrapper>
               <ResolutionStatusBadge resolutionStatus={resolutionStatus} />
-            </StyledDiv>
+            </CaseListResolutionStatusBadgeWrapper>
           </Link>
         </Table.Cell>
         <Table.Cell>
