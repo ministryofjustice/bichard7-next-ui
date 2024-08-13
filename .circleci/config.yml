@@ -5,15 +5,19 @@ orbs:
 
 commands:
   ################### Helpers
+  checkout_core:
+    steps:
+      - run:
+          name: Clone bichard7-next-core
+          command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-core.git ~/bichard7-next-core
+
   setup:
     steps:
       - checkout
       - node_install
       - node/install-packages:
           include-branch-in-cache-key: true
-      - run:
-          name: Clone bichard7-next-core
-          command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-core.git ~/bichard7-next-core
+      - checkout_core
       - run:
           name: Set GB locale
           working_directory: ~/bichard7-next-core
@@ -97,6 +101,21 @@ commands:
       - store_test_results:
           path: /home/circleci/bichard7-next-tests/test-results.xml
 
+  install_ms_edge:
+    steps:
+      - restore_cache:
+          keys:
+              - ubuntu-package-cache-v1-{{ checksum "~/bichard7-next-core/.circleci/scripts/install-ms-edge-on-linux.sh" }}
+      - run:
+          name: Install MS Edge (dev)
+          working_directory: ~/bichard7-next-core
+          command: bash .circleci/scripts/install-ms-edge-on-linux.sh
+      - save_cache:
+          key: ubuntu-package-cache-v1-{{ checksum "~/bichard7-next-core/.circleci/scripts/install-ms-edge-on-linux.sh" }}
+          paths:
+              - ~/vendor/apt_cache
+              - ~/vendor/apt_lists
+
   ################### Services
   start_bichard7_legacy:
     steps:
@@ -137,6 +156,8 @@ jobs:
     resource_class: xlarge
     steps:
       - checkout
+      - checkout_core
+      - install_ms_edge
       - run: ./.circleci/scripts/build-ui.sh
       - run:
           name: Save Docker image
@@ -175,40 +196,6 @@ jobs:
           name: Run code-based unit tests
           command: npm run test:unit
 
-  cypress_component_test:
-    machine:
-      image: ubuntu-2204:current
-    resource_class: xlarge
-    steps:
-      - checkout
-      - node_install
-      - node/install-packages:
-          include-branch-in-cache-key: true
-      - run:
-          name: Install Cypress
-          command: ./.circleci/scripts/install-cypress.sh 2>&1
-          background: true
-      - run:
-          name: Install GOV.UK Assets
-          command: npm run install:assets
-      - run:
-          name: Wait for cypress install to finish
-          command: until [ -f cypressInstalled ]; do sleep 1; done
-          no_output_timeout: 10m
-      - run:
-          name: Retrying installing Cypress
-          command: ./.circleci/scripts/install-cypress.sh
-      - run:
-          name: Run UI component tests
-          command: npm run cypress:run:component:docker
-          environment:
-            UI_IS_HTTPS: true
-            TZ: "Europe/London"
-      - store_artifacts:
-          path: ./cypress/videos
-      - store_artifacts:
-          path: ./cypress/screenshots
-
   integration_test:
     machine:
       image: ubuntu-2204:current
@@ -241,12 +228,59 @@ jobs:
           name: Run the seed-data script
           command: DEPLOY_NAME=e2e-test npm run seed-data
 
+  cypress_component_test:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: xlarge
+    parameters:
+      ms-edge:
+        type: boolean
+    steps:
+      - checkout
+      - when:
+          condition:
+            equal: [true, << parameters.ms-edge >>]
+          steps:
+            - checkout_core
+            - install_ms_edge
+      - node_install
+      - node/install-packages:
+          include-branch-in-cache-key: true
+      - run:
+          name: Install Cypress
+          command: ./.circleci/scripts/install-cypress.sh 2>&1
+          background: true
+      - run:
+          name: Install GOV.UK Assets
+          command: npm run install:assets
+      - run:
+          name: Wait for cypress install to finish
+          command: until [ -f cypressInstalled ]; do sleep 1; done
+          no_output_timeout: 10m
+      - run:
+          name: Retrying installing Cypress
+          command: ./.circleci/scripts/install-cypress.sh
+      - run:
+          name: Run UI component tests
+          command: sh ./.circleci/scripts/run-component-tests.sh
+          environment:
+            UI_IS_HTTPS: true
+            TZ: "Europe/London"
+            MS_EDGE: << parameters.ms-edge >>
+      - store_artifacts:
+          path: ./cypress/videos
+      - store_artifacts:
+          path: ./cypress/screenshots
+
   cypress_e2e_tests:
     machine:
       image: ubuntu-2204:current
       docker_layer_caching: true
     resource_class: xlarge
     parallelism: 10
+    parameters:
+      ms-edge:
+        type: boolean
     steps:
       - attach_workspace:
           at: .
@@ -255,6 +289,11 @@ jobs:
           command: |
             docker image load < "images/ui:latest"
       - setup
+      - when:
+          condition:
+            equal: [true, << parameters.ms-edge >>]
+          steps:
+            - install_ms_edge
       - run:
           command: ./.circleci/scripts/install-cypress.sh 2>&1
           background: true
@@ -276,12 +315,11 @@ jobs:
           working_directory: ~/bichard7-next-core
       - run:
           name: Run UI tests
-          command: |
-            TEST_FILES="$(circleci tests glob "cypress/e2e/**/*.cy.ts" | circleci tests split --split-by=timings)"
-            npx cypress run --config baseUrl='https://localhost:4443' --spec ${TEST_FILES//$'\n'/','} --reporter cypress-circleci-reporter --reporter-options "resultsDir=./cypress/results"
+          command: bash .circleci/scripts/run-cypress-e2e-tests.sh
           environment:
             UI_IS_HTTPS: true
             TZ: "Europe/London"
+            MS_EDGE: << parameters.ms-edge >>
       - store_test_results:
           path: ./cypress/results
       - store_artifacts:
@@ -295,12 +333,16 @@ jobs:
       docker_layer_caching: true
     resource_class: xlarge
     parallelism: 10
+    parameters:
+      ms-edge:
+        type: boolean
     environment:
       RECORD: "true"
       STACK_TYPE: next
       WORKSPACE: local-next
       AUTH_TYPE: user-service
       TZ: "Europe/London"
+      MS_EDGE: << parameters.ms-edge >>
     steps:
       - attach_workspace:
           at: .
@@ -309,6 +351,11 @@ jobs:
           command: |
             docker image load < "images/ui:latest"
       - setup
+      - when:
+          condition:
+            equal: [true, << parameters.ms-edge >>]
+          steps:
+            - install_ms_edge
       - run:
           name: Clone bichard7-next-tests
           command: bash .circleci/scripts/clone-tests-repo.sh
@@ -321,6 +368,7 @@ jobs:
           ARGS: >-
             NEXTUI="true"
             MESSAGE_ENTRY_POINT="mq"
+            MS_EDGE=<< parameters.ms-edge >>
       - save_artifacts
       - store_test_results:
           working_directory: ~/bichard7-next-tests
@@ -360,17 +408,39 @@ workflows:
   build-and-test:
     jobs:
       - build-ui
-
       - lint
       - unit_test
       - integration_test
-      - cypress_component_test
       - seed_data
 
+      - cypress_component_test:
+          name: cypress_component_test
+          ms-edge: false
+          requires:
+            - build-ui
+      - cypress_component_test:
+          name: cypress_component_test_ms_edge
+          ms-edge: true
+          requires:
+            - build-ui
       - cypress_e2e_tests:
+          name: cypress_e2e_tests
+          ms-edge: false
+          requires:
+            - build-ui
+      - cypress_e2e_tests:
+          name: cypress_e2e_tests_ms_edge
+          ms-edge: true
           requires:
             - build-ui
       - cucumber_e2e_tests:
+          name: cucumber_e2e_tests
+          ms-edge: false
+          requires:
+            - build-ui
+      - cucumber_e2e_tests:
+          name: cucumber_e2e_tests_ms_edge
+          ms-edge: true
           requires:
             - build-ui
       - zap_scanner:
