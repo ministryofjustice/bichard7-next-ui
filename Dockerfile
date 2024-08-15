@@ -1,6 +1,6 @@
 #########################################################
 ARG BUILD_IMAGE="nginx-nodejs-20-2023-supervisord"
-FROM ${BUILD_IMAGE} as builder
+FROM ${BUILD_IMAGE} AS builder
 
 LABEL maintainer="CJSE"
 
@@ -29,7 +29,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 
 #########################################################
-FROM ${BUILD_IMAGE} as runner
+FROM ${BUILD_IMAGE} AS runner
 
 RUN useradd nextjs && \
     groupadd nodejs && \
