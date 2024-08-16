@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
-
 import "reflect-metadata"
 import Note from "services/entities/Note"
 import User from "services/entities/User"
@@ -29,6 +27,16 @@ describe("listCourtCases", () => {
     visibleCourts: ["B42AZ01"],
     hasAccessTo: hasAccessToAll
   } as Partial<User> as User
+  const casesWithExceptions: Partial<CourtCase>[] = Array.from(Array(5)).map((_, index) => ({
+    orgForPoliceFilter: orgCode,
+    errorResolvedTimestamp: new Date(`2024-05-0${index + 1} 11:26:57.853`)
+  }))
+  const casesWithTriggers: Partial<CourtCase>[] = Array.from(Array(5)).map((_, index) => ({
+    orgForPoliceFilter: orgCode,
+    triggerResolvedTimestamp: new Date(`2024-05-0${index + 1} 11:26:57.853`)
+  }))
+  const from = "2024-05-05 11:26:57.853"
+  const to = "2024-06-05 11:26:57.853"
 
   beforeAll(async () => {
     dataSource = await getDataSource()
@@ -46,6 +54,7 @@ describe("listCourtCases", () => {
     ;(leftJoinAndSelectTriggersQuery as jest.Mock).mockImplementation(
       jest.requireActual("services/queries/leftJoinAndSelectTriggersQuery").default
     )
+    await insertCourtCasesWithFields(casesWithExceptions.concat(casesWithTriggers))
   })
 
   afterAll(async () => {
@@ -55,8 +64,6 @@ describe("listCourtCases", () => {
   })
 
   it("Does not return report when user does not have permission", async () => {
-    const from = "2024-05-07 11:26:57.853"
-    const to = "2024-06-07 11:26:57.853"
     const testUserWithoutPermission = {
       visibleForces: [forceCode],
       visibleCourts: ["B42AZ01"],
@@ -80,19 +87,6 @@ describe("listCourtCases", () => {
   })
 
   it("Returns report containing cases with exceptions within date range", async () => {
-    const from = "2024-05-05 11:26:57.853"
-    const to = "2024-06-05 11:26:57.853"
-    const casesWithExceptions: Partial<CourtCase>[] = Array.from(Array(5)).map((_, index) => ({
-      orgForPoliceFilter: orgCode,
-      errorResolvedTimestamp: new Date(`2024-05-0${index + 1} 11:26:57.853`)
-    }))
-    const casesWithTriggers: Partial<CourtCase>[] = Array.from(Array(5)).map((_, index) => ({
-      orgForPoliceFilter: orgCode,
-      triggerResolvedTimestamp: new Date(`2024-05-0${index + 1} 11:26:57.853`)
-    }))
-    const query = await insertCourtCasesWithFields(casesWithExceptions.concat(casesWithTriggers))
-    expect(isError(query)).toBe(false)
-
     const { result, totalCases } = (await getExceptionDetailReport(
       dataSource,
       { from, to },
@@ -107,19 +101,6 @@ describe("listCourtCases", () => {
   })
 
   it("Returns report containing cases with triggers within date range", async () => {
-    const from = "2024-05-05 11:26:57.853"
-    const to = "2024-06-05 11:26:57.853"
-    const casesWithExceptions: Partial<CourtCase>[] = Array.from(Array(5)).map((_, index) => ({
-      orgForPoliceFilter: orgCode,
-      errorResolvedTimestamp: new Date(`2024-05-0${index + 1} 11:26:57.853`)
-    }))
-    const casesWithTriggers: Partial<CourtCase>[] = Array.from(Array(5)).map((_, index) => ({
-      orgForPoliceFilter: orgCode,
-      triggerResolvedTimestamp: new Date(`2024-05-0${index + 1} 11:26:57.853`)
-    }))
-    const query = await insertCourtCasesWithFields(casesWithExceptions.concat(casesWithTriggers))
-    expect(isError(query)).toBe(false)
-
     const { result, totalCases } = (await getExceptionDetailReport(
       dataSource,
       { from, to },
@@ -134,19 +115,6 @@ describe("listCourtCases", () => {
   })
 
   it("Returns report containing cases with exceptions and triggers within date range", async () => {
-    const from = "2024-05-05 11:26:57.853"
-    const to = "2024-06-05 11:26:57.853"
-    const casesWithExceptions: Partial<CourtCase>[] = Array.from(Array(5)).map((_, index) => ({
-      orgForPoliceFilter: orgCode,
-      errorResolvedTimestamp: new Date(`2024-05-0${index + 1} 11:26:57.853`)
-    }))
-    const casesWithTriggers: Partial<CourtCase>[] = Array.from(Array(5)).map((_, index) => ({
-      orgForPoliceFilter: orgCode,
-      triggerResolvedTimestamp: new Date(`2024-05-0${index + 1} 11:26:57.853`)
-    }))
-    const query = await insertCourtCasesWithFields(casesWithExceptions.concat(casesWithTriggers))
-    expect(isError(query)).toBe(false)
-
     const { result, totalCases } = (await getExceptionDetailReport(
       dataSource,
       { from, to },
