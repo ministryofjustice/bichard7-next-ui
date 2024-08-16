@@ -13,7 +13,8 @@ import getDataSource from "../../../src/services/getDataSource"
 import { hasAccessToAll } from "../../helpers/hasAccessTo"
 import deleteFromEntity from "../../utils/deleteFromEntity"
 import getExceptionDetailReport from "services/reports/getExceptionDetailReport"
-import { insertCourtCasesWithFields } from "../../utils/insertCourtCases"
+import { insertMultipleDummyCourtCases } from "../../utils/insertCourtCases"
+import { isError } from "types/Result"
 
 jest.mock("services/queries/courtCasesByOrganisationUnitQuery")
 jest.mock("services/queries/leftJoinAndSelectTriggersQuery")
@@ -55,14 +56,13 @@ describe("listCourtCases", () => {
   it("Does not return report when user does not have permission", async () => {
     const from = "2024-05-07 11:26:57.853"
     const to = "2024-06-07 11:26:57.853"
+    const orgCode = "36FPA1"
 
-    // const query = await insertMultipleDummyCourtCases(10, orgCode, {
-    //   orgForPoliceFilter: orgCode,
-    //   errorResolvedTimestamp: new Date()
-    // })
-    // expect(isError(query)).toBe(false)
-
-    await insertCourtCasesWithFields(Array.from(Array(100)).map(() => ({ orgForPoliceFilter: "36FPA1" })))
+    const query = await insertMultipleDummyCourtCases(10, orgCode, {
+      orgForPoliceFilter: orgCode,
+      errorResolvedTimestamp: new Date("2024-05-07 11:26:57.853")
+    })
+    expect(isError(query)).toBe(false)
 
     const { result, totalCases } = (await getExceptionDetailReport(
       dataSource,
@@ -70,7 +70,7 @@ describe("listCourtCases", () => {
       testUser
     )) as ListCourtCaseResult
 
-    expect(result).toHaveLength(0)
-    expect(totalCases).toBe(0)
+    expect(result).toHaveLength(10)
+    expect(totalCases).toBe(10)
   })
 })
