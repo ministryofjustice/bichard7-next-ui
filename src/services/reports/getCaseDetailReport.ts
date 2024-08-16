@@ -2,17 +2,24 @@ import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
 import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
 import leftJoinAndSelectTriggersQuery from "services/queries/leftJoinAndSelectTriggersQuery"
-import { DataSource, LessThanOrEqual, MoreThanOrEqual } from "typeorm"
+import { Brackets, DataSource, LessThanOrEqual, MoreThanOrEqual } from "typeorm"
 import { ReportQueryParams } from "types/CaseListQueryParams"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import Permission from "types/Permission"
 import PromiseResult from "types/PromiseResult"
 import { isError } from "types/Result"
 
-const getExceptionDetailReport = async (
+export enum CaseDetailsReportType {
+  Exceptions,
+  Triggers,
+  ExceptionsAndTriggers
+}
+
+const getCaseDetailReport = async (
   connection: DataSource,
   { from, to }: ReportQueryParams,
-  user: User
+  user: User,
+  caseDetailsReportType: CaseDetailsReportType = CaseDetailsReportType.ExceptionsAndTriggers
 ): PromiseResult<ListCourtCaseResult> => {
   if (!user.hasAccessTo[Permission.ViewReports]) {
     return {
@@ -41,6 +48,8 @@ const getExceptionDetailReport = async (
       "courtCase.ptiurn",
       "courtCase.courtName",
       "courtCase.resolutionTimestamp",
+      "courtCase.errorResolvedTimestamp",
+      "courtCase.triggerResolvedTimestamp",
       "courtCase.errorResolvedBy",
       "courtCase.triggerResolvedBy",
       "courtCase.defendantName",
@@ -56,9 +65,30 @@ const getExceptionDetailReport = async (
     .addSelect(["triggerLockedByUser.forenames", "triggerLockedByUser.surname"])
 
   // Filters
-  query
-    .andWhere({ errorResolvedTimestamp: MoreThanOrEqual(from) })
-    .andWhere({ errorResolvedTimestamp: LessThanOrEqual(to) })
+  if (caseDetailsReportType === CaseDetailsReportType.Exceptions) {
+    query
+      .andWhere({ errorResolvedTimestamp: MoreThanOrEqual(from) })
+      .andWhere({ errorResolvedTimestamp: LessThanOrEqual(to) })
+  }
+
+  if (caseDetailsReportType === CaseDetailsReportType.Triggers) {
+    query
+      .andWhere({ triggerResolvedTimestamp: MoreThanOrEqual(from) })
+      .andWhere({ triggerResolvedTimestamp: LessThanOrEqual(to) })
+  }
+
+  if (caseDetailsReportType === CaseDetailsReportType.ExceptionsAndTriggers) {
+    query.andWhere(
+      new Brackets((qb) => {
+        qb.where({ errorResolvedTimestamp: MoreThanOrEqual(from) })
+          .andWhere({
+            errorResolvedTimestamp: LessThanOrEqual(to)
+          })
+          .orWhere({ triggerResolvedTimestamp: MoreThanOrEqual(from) })
+          .andWhere({ triggerResolvedTimestamp: LessThanOrEqual(to) })
+      })
+    )
+  }
 
   const result = await query.getManyAndCount().catch((error: Error) => error)
   return isError(result)
@@ -69,4 +99,4 @@ const getExceptionDetailReport = async (
       }
 }
 
-export default getExceptionDetailReport
+export default getCaseDetailReport
