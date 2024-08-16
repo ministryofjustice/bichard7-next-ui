@@ -10,7 +10,7 @@ import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import CourtCase from "../../../src/services/entities/CourtCase"
 import Trigger from "../../../src/services/entities/Trigger"
 import getDataSource from "../../../src/services/getDataSource"
-import { hasAccessToAll } from "../../helpers/hasAccessTo"
+import { exceptionHandlerHasAccessTo } from "../../helpers/hasAccessTo"
 import deleteFromEntity from "../../utils/deleteFromEntity"
 import getExceptionDetailReport from "services/reports/getExceptionDetailReport"
 import { insertMultipleDummyCourtCases } from "../../utils/insertCourtCases"
@@ -23,11 +23,11 @@ jest.setTimeout(100000)
 describe("listCourtCases", () => {
   let dataSource: DataSource
   const forceCode = "036"
-  const testUser = {
-    visibleForces: [forceCode],
-    visibleCourts: ["B42AZ01"],
-    hasAccessTo: hasAccessToAll
-  } as Partial<User> as User
+  // const testUser = {
+  //   visibleForces: [forceCode],
+  //   visibleCourts: ["B42AZ01"],
+  //   hasAccessTo: hasAccessToAll
+  // } as Partial<User> as User
 
   beforeAll(async () => {
     dataSource = await getDataSource()
@@ -57,6 +57,11 @@ describe("listCourtCases", () => {
     const from = "2024-05-07 11:26:57.853"
     const to = "2024-06-07 11:26:57.853"
     const orgCode = "36FPA1"
+    const testUserWithoutPermission = {
+      visibleForces: [forceCode],
+      visibleCourts: ["B42AZ01"],
+      hasAccessTo: exceptionHandlerHasAccessTo
+    } as Partial<User> as User
 
     const query = await insertMultipleDummyCourtCases(10, orgCode, {
       orgForPoliceFilter: orgCode,
@@ -67,10 +72,10 @@ describe("listCourtCases", () => {
     const { result, totalCases } = (await getExceptionDetailReport(
       dataSource,
       { from, to },
-      testUser
+      testUserWithoutPermission
     )) as ListCourtCaseResult
 
-    expect(result).toHaveLength(10)
-    expect(totalCases).toBe(10)
+    expect(result).toHaveLength(0)
+    expect(totalCases).toBe(0)
   })
 })
