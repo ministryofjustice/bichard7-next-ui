@@ -1,5 +1,5 @@
 import { format } from "date-fns"
-import { utcToZonedTime } from "date-fns-tz"
+import { toZonedTime } from "date-fns-tz"
 
 interface Props {
   date?: Date | string | null
@@ -13,7 +13,7 @@ const DateTime = ({ date, prefix, dateFormat = "dd/MM/yyyy HH:mm:ss" }: Props) =
   }
 
   const dateObject = new Date(date)
-  const zonedDate = utcToZonedTime(dateObject, "Europe/London")
+  const zonedDate = toZonedTime(dateObject, "Europe/London")
 
   return (
     <>
