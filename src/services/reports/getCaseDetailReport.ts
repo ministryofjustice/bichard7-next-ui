@@ -3,17 +3,11 @@ import User from "services/entities/User"
 import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
 import leftJoinAndSelectTriggersQuery from "services/queries/leftJoinAndSelectTriggersQuery"
 import { Brackets, DataSource, LessThanOrEqual, MoreThanOrEqual } from "typeorm"
-import { ReportQueryParams } from "types/CaseListQueryParams"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import Permission from "types/Permission"
 import PromiseResult from "types/PromiseResult"
+import { CaseDetailsReportType, ReportQueryParams } from "types/ReportQueryParams"
 import { isError } from "types/Result"
-
-export enum CaseDetailsReportType {
-  Exceptions,
-  Triggers,
-  ExceptionsAndTriggers
-}
 
 const getCaseDetailReport = async (
   connection: DataSource,

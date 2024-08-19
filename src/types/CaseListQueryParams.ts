@@ -41,8 +41,3 @@ export type CaseListQueryParams = {
   reasonCodes?: string[]
   resolvedByUsername?: string
 }
-
-export type ReportQueryParams = {
-  from?: string
-  to?: string
-}

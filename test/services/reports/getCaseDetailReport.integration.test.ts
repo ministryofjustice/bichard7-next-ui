@@ -10,9 +10,10 @@ import Trigger from "../../../src/services/entities/Trigger"
 import getDataSource from "../../../src/services/getDataSource"
 import { exceptionHandlerHasAccessTo, hasAccessToAll } from "../../helpers/hasAccessTo"
 import deleteFromEntity from "../../utils/deleteFromEntity"
-import getExceptionDetailReport, { CaseDetailsReportType } from "services/reports/getCaseDetailReport"
+import getExceptionDetailReport from "services/reports/getCaseDetailReport"
 import { insertCourtCasesWithFields, insertMultipleDummyCourtCases } from "../../utils/insertCourtCases"
 import { isError } from "types/Result"
+import { CaseDetailsReportType } from "types/ReportQueryParams"
 
 jest.mock("services/queries/courtCasesByOrganisationUnitQuery")
 jest.mock("services/queries/leftJoinAndSelectTriggersQuery")
