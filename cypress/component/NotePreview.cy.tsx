@@ -32,4 +32,15 @@ describe("NotePreview", () => {
     cy.mount(<NotePreview latestNote={note} numberOfNotes={10} />)
     cy.get("div > p:nth-child(2)").should("have.text", expectedNoteText)
   })
+
+  it("should keep carriage return and newline chars in notes", () => {
+    const note: DisplayNote = {
+      userId: "dummy.user",
+      noteText: "a\r\nb\r\nc",
+      createdAt: new Date().toISOString()
+    }
+
+    cy.mount(<NotePreview latestNote={note} numberOfNotes={10} />)
+    cy.get("div > p:nth-child(2)").should("have.text", note.noteText)
+  })
 })
