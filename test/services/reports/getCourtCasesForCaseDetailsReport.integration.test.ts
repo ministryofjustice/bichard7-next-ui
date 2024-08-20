@@ -10,7 +10,7 @@ import Trigger from "../../../src/services/entities/Trigger"
 import getDataSource from "../../../src/services/getDataSource"
 import { exceptionHandlerHasAccessTo, hasAccessToAll } from "../../helpers/hasAccessTo"
 import deleteFromEntity from "../../utils/deleteFromEntity"
-import getExceptionDetailReport from "services/reports/getCaseDetailReport"
+import getCourtCasesForCaseDetailsReport from "services/reports/getCourtCasesForCaseDetailsReport"
 import { insertCourtCasesWithFields, insertMultipleDummyCourtCases } from "../../utils/insertCourtCases"
 import { isError } from "types/Result"
 import { CaseDetailsReportType } from "types/ReportQueryParams"
@@ -36,8 +36,9 @@ describe("listCourtCases", () => {
     orgForPoliceFilter: orgCode,
     triggerResolvedTimestamp: new Date(`2024-05-0${index + 1} 11:26:57.853`)
   }))
-  const from = "2024-05-05 11:26:57.853"
-  const to = "2024-06-05 11:26:57.853"
+  const from = new Date("2024-05-05 11:26:57.853")
+  const to = new Date("2024-06-05 11:26:57.853")
+  const reportDateRange = { from, to }
 
   beforeAll(async () => {
     dataSource = await getDataSource()
@@ -77,10 +78,10 @@ describe("listCourtCases", () => {
     })
     expect(isError(query)).toBe(false)
 
-    const { result, totalCases } = (await getExceptionDetailReport(
+    const { result, totalCases } = (await getCourtCasesForCaseDetailsReport(
       dataSource,
-      { from, to },
-      testUserWithoutPermission
+      testUserWithoutPermission,
+      reportDateRange
     )) as ListCourtCaseResult
 
     expect(result).toHaveLength(0)
@@ -88,10 +89,10 @@ describe("listCourtCases", () => {
   })
 
   it("Returns report containing cases with exceptions within date range", async () => {
-    const { result, totalCases } = (await getExceptionDetailReport(
+    const { result, totalCases } = (await getCourtCasesForCaseDetailsReport(
       dataSource,
-      { from, to },
       testUser,
+      reportDateRange,
       CaseDetailsReportType.Exceptions
     )) as ListCourtCaseResult
 
@@ -102,10 +103,10 @@ describe("listCourtCases", () => {
   })
 
   it("Returns report containing cases with triggers within date range", async () => {
-    const { result, totalCases } = (await getExceptionDetailReport(
+    const { result, totalCases } = (await getCourtCasesForCaseDetailsReport(
       dataSource,
-      { from, to },
       testUser,
+      reportDateRange,
       CaseDetailsReportType.Triggers
     )) as ListCourtCaseResult
 
@@ -116,10 +117,10 @@ describe("listCourtCases", () => {
   })
 
   it("Returns report containing cases with exceptions and triggers within date range", async () => {
-    const { result, totalCases } = (await getExceptionDetailReport(
+    const { result, totalCases } = (await getCourtCasesForCaseDetailsReport(
       dataSource,
-      { from, to },
-      testUser
+      testUser,
+      reportDateRange
     )) as ListCourtCaseResult
 
     expect(result).toHaveLength(2)

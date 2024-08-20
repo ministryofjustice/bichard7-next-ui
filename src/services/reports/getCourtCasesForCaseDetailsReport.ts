@@ -9,10 +9,10 @@ import PromiseResult from "types/PromiseResult"
 import { CaseDetailsReportType, ReportDateRange } from "types/ReportQueryParams"
 import { isError } from "types/Result"
 
-const getCaseDetailReport = async (
+const getCourtCasesForCaseDetailsReport = async (
   connection: DataSource,
   user: User,
-  reportDateRange: ReportDateRange,
+  reportDateRange?: ReportDateRange,
   caseDetailsReportType: CaseDetailsReportType = CaseDetailsReportType.ExceptionsAndTriggers
 ): PromiseResult<ListCourtCaseResult> => {
   if (!user.hasAccessTo[Permission.ViewReports]) {
@@ -61,25 +61,25 @@ const getCaseDetailReport = async (
   // Filters
   if (caseDetailsReportType === CaseDetailsReportType.Exceptions) {
     query
-      .andWhere({ errorResolvedTimestamp: MoreThanOrEqual(reportDateRange.from) })
-      .andWhere({ errorResolvedTimestamp: LessThanOrEqual(reportDateRange.to) })
+      .andWhere({ errorResolvedTimestamp: MoreThanOrEqual(reportDateRange?.from) })
+      .andWhere({ errorResolvedTimestamp: LessThanOrEqual(reportDateRange?.to) })
   }
 
   if (caseDetailsReportType === CaseDetailsReportType.Triggers) {
     query
-      .andWhere({ triggerResolvedTimestamp: MoreThanOrEqual(reportDateRange.from) })
-      .andWhere({ triggerResolvedTimestamp: LessThanOrEqual(reportDateRange.to) })
+      .andWhere({ triggerResolvedTimestamp: MoreThanOrEqual(reportDateRange?.from) })
+      .andWhere({ triggerResolvedTimestamp: LessThanOrEqual(reportDateRange?.to) })
   }
 
   if (caseDetailsReportType === CaseDetailsReportType.ExceptionsAndTriggers) {
     query.andWhere(
       new Brackets((qb) => {
-        qb.where({ errorResolvedTimestamp: MoreThanOrEqual(reportDateRange.from) })
+        qb.where({ errorResolvedTimestamp: MoreThanOrEqual(reportDateRange?.from) })
           .andWhere({
-            errorResolvedTimestamp: LessThanOrEqual(reportDateRange.to)
+            errorResolvedTimestamp: LessThanOrEqual(reportDateRange?.to)
           })
-          .orWhere({ triggerResolvedTimestamp: MoreThanOrEqual(reportDateRange.from) })
-          .andWhere({ triggerResolvedTimestamp: LessThanOrEqual(reportDateRange.to) })
+          .orWhere({ triggerResolvedTimestamp: MoreThanOrEqual(reportDateRange?.from) })
+          .andWhere({ triggerResolvedTimestamp: LessThanOrEqual(reportDateRange?.to) })
       })
     )
   }
@@ -93,4 +93,4 @@ const getCaseDetailReport = async (
       }
 }
 
-export default getCaseDetailReport
+export default getCourtCasesForCaseDetailsReport
