@@ -23,10 +23,17 @@ describe("Offence matching HO100320", () => {
     cy.get("a[class*='Link']").contains(fields.defendantName).click()
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
 
-    cy.get("#offences").contains("Aid and abet theft").click()
+    cy.get("#offences tbody tr:nth-child(5)").contains("Text Text Text").click()
   })
 
   it("doesn't display the offence matcher for offences with a HO100320 exception", () => {
     cy.get("select.offence-matcher").should("not.exist")
+  })
+
+  it("should explain what to with a HO100320 exception", () => {
+    cy.get(".error-prompt").should(
+      "have.text",
+      "Go back to Legacy Bichard, fix it and resubmit. Manual sequence number identifies an offence that matches a PNC offence but doesn’t match a court offence (i.e. the offence code or dates do not match correctly"
+    )
   })
 })

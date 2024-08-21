@@ -29,4 +29,11 @@ describe("Offence matching HO100333", () => {
   it("doesn't display the offence matcher for offences with a HO100333 exception", () => {
     cy.get("select.offence-matcher").should("not.exist")
   })
+
+  it("should explain what to with a HO100333 exception", () => {
+    cy.get(".error-prompt").should(
+      "have.text",
+      "Go back to Legacy Bichard, fix it and resubmit. Manual match detected but no case matches upon resubmission, suggesting ASN updated or PNC data updated manually before resubmission."
+    )
+  })
 })

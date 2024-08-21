@@ -29,4 +29,8 @@ describe("Offence matching HO100311", () => {
   it("doesn't display the offence matcher for offences with a HO100311 exception", () => {
     cy.get("select.offence-matcher").should("not.exist")
   })
+
+  it("should explain what to with a HO100311 exception", () => {
+    cy.get(".error-prompt").should("have.text", "Duplicate court Offence Sequence Number")
+  })
 })

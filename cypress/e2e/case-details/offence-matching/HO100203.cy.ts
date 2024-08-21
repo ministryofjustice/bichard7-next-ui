@@ -29,4 +29,11 @@ describe("Offence matching HO100203", () => {
   it("doesn't display the offence matcher for offences with a HO100203 exception", () => {
     cy.get("select.offence-matcher").should("not.exist")
   })
+
+  it("should explain what to with a HO100203 exception", () => {
+    cy.get("#exceptions .exception-details").should(
+      "have.text",
+      "HO100203 - Go back to Legacy Bichard, fix it and resubmit. Bad Court Case Reference Number format"
+    )
+  })
 })
