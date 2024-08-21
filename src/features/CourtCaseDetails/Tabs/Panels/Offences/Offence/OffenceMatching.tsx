@@ -11,9 +11,9 @@ import { findExceptions } from "types/ErrorMessages"
 import { DisplayFullUser } from "types/display/Users"
 import { Exception } from "types/exceptions"
 import { getOffenceMatchingException } from "utils/exceptions/getOffenceMatchingException"
+import getExceptionDefinition from "utils/getExceptionDefinition"
 import findCandidates from "../../../../../../utils/offenceMatcher/findCandidates"
 import { TableRow } from "../../TableRow"
-import { PncInput } from "./OffenceDetails.styles"
 
 const enabled = (user: DisplayFullUser) => {
   const enabledInProduction = true // change this if we need to disable in production for everyone
@@ -45,21 +45,33 @@ export const OffenceMatching = ({
   const { courtCase, savedAmendments } = useCourtCase()
   const currentUser = useCurrentUser()
 
-  const offenceMatchingException = isCaseUnresolved && getOffenceMatchingException(exceptions, offenceIndex)
-  const offenceMatchingExceptionMessage = findExceptions(
-    courtCase,
-    courtCase.aho.Exceptions,
+  const offenceMatchingExceptions = [ExceptionCode.HO100310, ExceptionCode.HO100332]
+  const noneOffenceMatchingExceptions = [
+    ExceptionCode.HO100203,
+    ExceptionCode.HO100228,
     ExceptionCode.HO100304,
+    ExceptionCode.HO100311,
+    ExceptionCode.HO100312,
+    ExceptionCode.HO100320,
     ExceptionCode.HO100328,
+    ExceptionCode.HO100333,
     ExceptionCode.HO100507
-  )
+  ]
 
-  const doNotDisplayPncSequenceBox = exceptions.some((e) =>
-    [ExceptionCode.HO100304, ExceptionCode.HO100328, ExceptionCode.HO100507].includes(e.code)
+  const offenceMatchingException = isCaseUnresolved && getOffenceMatchingException(exceptions, offenceIndex)
+
+  const findExceptionByOffenceNumber = courtCase.aho.Exceptions.filter((exception) =>
+    exception.path.includes(offenceIndex)
   )
+  const offenceMatchingExceptionMessage =
+    findExceptions(
+      courtCase,
+      findExceptionByOffenceNumber.length > 0 ? findExceptionByOffenceNumber : courtCase.aho.Exceptions,
+      ...noneOffenceMatchingExceptions
+    ) || getExceptionDefinition(findExceptionByOffenceNumber[0].code)?.shortDescription
 
   const displayOffenceMatcher =
-    enabled(currentUser) && exceptions.some((e) => [ExceptionCode.HO100310, ExceptionCode.HO100332].includes(e.code))
+    enabled(currentUser) && exceptions.some((e) => offenceMatchingExceptions.includes(e.code))
   const userCanMatchOffence =
     courtCase.errorLockedByUsername === currentUser?.username && courtCase.errorStatus === "Unresolved"
 
@@ -107,11 +119,6 @@ export const OffenceMatching = ({
           <ExceptionFieldTableRow
             badgeText={offenceMatchingException.badge}
             label={"PNC sequence number"}
-            value={
-              doNotDisplayPncSequenceBox ? undefined : (
-                <PncInput type="text" maxLength={3} className={"pnc-sequence-number"} />
-              )
-            }
             message={offenceMatchingExceptionMessage}
           >
             {" "}

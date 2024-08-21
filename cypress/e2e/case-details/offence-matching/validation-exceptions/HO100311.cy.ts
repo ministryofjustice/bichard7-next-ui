@@ -1,5 +1,5 @@
-import { loginAndVisit } from "../../../support/helpers"
-import HO100311 from "./fixtures/HO100311.json"
+import { loginAndVisit } from "../../../../support/helpers"
+import HO100311 from "../fixtures/HO100311.json"
 
 describe("Offence matching HO100311", () => {
   const fields = {

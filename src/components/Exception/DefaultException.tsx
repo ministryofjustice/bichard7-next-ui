@@ -1,5 +1,6 @@
 import ExceptionCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/ExceptionCode"
 import { GridCol, GridRow, Link } from "govuk-react"
+import ErrorMessages from "types/ErrorMessages"
 import NavigationHandler from "../../types/NavigationHandler"
 import getExceptionDefinition from "../../utils/getExceptionDefinition"
 import getExceptionPathDetails from "../../utils/getExceptionPathDetails"
@@ -14,7 +15,8 @@ type Props = {
 
 const DefaultException = ({ path, code, onNavigate }: Props) => {
   const { tab, offenceOrderIndex, formattedFieldName, location } = getExceptionPathDetails(path)
-  const exceptionDefinition = getExceptionDefinition(code)
+  const exceptionDefinition =
+    getExceptionDefinition(code)?.shortDescription || ErrorMessages[code as keyof typeof ErrorMessages]
 
   const handleClick = () => {
     switch (tab) {
@@ -44,7 +46,7 @@ const DefaultException = ({ path, code, onNavigate }: Props) => {
       <GridRow className="exception-details">
         <GridCol>
           {code}
-          {exceptionDefinition?.shortDescription && ` - ${exceptionDefinition.shortDescription}`}
+          {exceptionDefinition ? ` - ${exceptionDefinition}` : ""}
         </GridCol>
       </GridRow>
 
