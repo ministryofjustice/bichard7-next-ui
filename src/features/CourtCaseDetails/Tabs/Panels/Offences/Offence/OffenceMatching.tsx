@@ -68,7 +68,7 @@ export const OffenceMatching = ({
       courtCase,
       findExceptionByOffenceNumber.length > 0 ? findExceptionByOffenceNumber : courtCase.aho.Exceptions,
       ...noneOffenceMatchingExceptions
-    ) || getExceptionDefinition(findExceptionByOffenceNumber[0].code)?.shortDescription
+    ) || getExceptionDefinition(findExceptionByOffenceNumber[0]?.code)?.shortDescription
 
   const displayOffenceMatcher =
     enabled(currentUser) && exceptions.some((e) => offenceMatchingExceptions.includes(e.code))
