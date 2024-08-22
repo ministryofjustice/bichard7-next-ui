@@ -8,7 +8,7 @@ const isDupe = (code: string, codes: string[]): boolean => {
 }
 
 const dedupeTriggerCodes = (reasonCodes: string[]): string[] => {
-  const codes = Array.from(new Set(reasonCodes))
+  const codes = Array.from(new Set(reasonCodes.map((reasonCode) => reasonCode.toUpperCase())))
   const longCodes = codes.map((code) => getLongTriggerCode(code) || code)
 
   const dedupedCodes = codes.reduce<string[]>((filteredCodes, code) => {
