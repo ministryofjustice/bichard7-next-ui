@@ -9,7 +9,7 @@ import CourtCase from "./entities/CourtCase"
 import Trigger from "./entities/Trigger"
 import User from "./entities/User"
 import getCourtCaseByOrganisationUnit from "./getCourtCaseByOrganisationUnit"
-import storeAuditLogEvents from "./storeAuditLogEvents"
+import { storeMessageAuditLogEvents } from "./storeAuditLogEvents"
 import updateLockStatusToUnlocked from "./updateLockStatusToUnlocked"
 import EventCode from "@moj-bichard7-developers/bichard7-next-core/common/types/EventCode"
 
@@ -138,7 +138,7 @@ const resolveTriggers = async (
       }
     }
 
-    const storeAuditLogResponse = await storeAuditLogEvents(courtCase.messageId, events)
+    const storeAuditLogResponse = await storeMessageAuditLogEvents(courtCase.messageId, events)
 
     if (isError(storeAuditLogResponse)) {
       throw storeAuditLogResponse

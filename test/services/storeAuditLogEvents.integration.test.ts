@@ -7,7 +7,7 @@ import EventCode from "@moj-bichard7-developers/bichard7-next-core/common/types/
 import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/core/lib/getAuditLogEvent"
 import axios from "axios"
 import getDataSource from "services/getDataSource"
-import storeAuditLogEvents from "services/storeAuditLogEvents"
+import { storeMessageAuditLogEvents } from "services/storeAuditLogEvents"
 import { DataSource } from "typeorm"
 import { isError } from "types/Result"
 import { v4 as uuid } from "uuid"
@@ -42,7 +42,7 @@ describe("storeAuditLogEvents", () => {
     })
     const auditLog = await createAuditLog()
 
-    const result = await storeAuditLogEvents(auditLog.messageId, [expectedEvent]).catch((error) => error)
+    const result = await storeMessageAuditLogEvents(auditLog.messageId, [expectedEvent]).catch((error) => error)
 
     expect(isError(result)).toBeFalsy()
 
@@ -61,7 +61,7 @@ describe("storeAuditLogEvents", () => {
   })
 
   it("Should return undefined with no error if events array is empty", async () => {
-    const result = await storeAuditLogEvents(uuid(), []).catch((error) => error)
+    const result = await storeMessageAuditLogEvents(uuid(), []).catch((error) => error)
     expect(isError(result)).toBeFalsy()
     expect(result).toBeUndefined()
   })
@@ -69,7 +69,7 @@ describe("storeAuditLogEvents", () => {
   it("should pass through the api key as a header", async () => {
     ;(axios as unknown as jest.Mock).mockResolvedValue({ status: 200 })
 
-    const result = await storeAuditLogEvents("dummy_key", [{} as AuditLogEvent]).catch((error) => error)
+    const result = await storeMessageAuditLogEvents("dummy_key", [{} as AuditLogEvent]).catch((error) => error)
 
     expect(isError(result)).toBeFalsy()
 

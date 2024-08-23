@@ -7,7 +7,7 @@ import CourtCase from "./entities/CourtCase"
 import User from "./entities/User"
 import insertNotes from "./insertNotes"
 import resolveError from "./resolveError"
-import storeAuditLogEvents from "./storeAuditLogEvents"
+import { storeMessageAuditLogEvents } from "./storeAuditLogEvents"
 import updateLockStatusToUnlocked from "./updateLockStatusToUnlocked"
 
 const resolveCourtCase = async (
@@ -52,7 +52,7 @@ const resolveCourtCase = async (
     }
 
     // push audit log events
-    const storeAuditLogResponse = await storeAuditLogEvents(courtCase.messageId, events)
+    const storeAuditLogResponse = await storeMessageAuditLogEvents(courtCase.messageId, events)
     if (isError(storeAuditLogResponse)) {
       throw storeAuditLogResponse
     }
