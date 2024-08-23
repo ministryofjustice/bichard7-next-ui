@@ -2,8 +2,8 @@ import { useCourtCase } from "context/CourtCaseContext"
 import { useCallback, useEffect, useState } from "react"
 import offenceAlreadySelected from "utils/offenceMatcher/offenceAlreadySelected"
 import offenceMatcherSelectValue from "utils/offenceMatcher/offenceMatcherSelectValue"
-import Badge, { BadgeColours } from "./Badge"
-import type { Candidates } from "../types/OffenceMatching"
+import Badge, { BadgeColours } from "../../../../../../components/Badge"
+import type { Candidates } from "../../../../../../types/OffenceMatching"
 
 interface Props {
   offenceIndex: number
@@ -11,7 +11,7 @@ interface Props {
   isCaseLockedToCurrentUser: boolean
 }
 
-export const OffenceMatcher = ({ offenceIndex, candidates, isCaseLockedToCurrentUser }: Props) => {
+const OffenceMatcher = ({ offenceIndex, candidates, isCaseLockedToCurrentUser }: Props) => {
   const { amend, amendments } = useCourtCase()
 
   const findPncOffence = useCallback(() => {
@@ -80,3 +80,5 @@ export const OffenceMatcher = ({ offenceIndex, candidates, isCaseLockedToCurrent
     <Badge isRendered={true} colour={BadgeColours.Purple} label={"Unmatched"} className="moj-badge--large" />
   )
 }
+
+export default OffenceMatcher
