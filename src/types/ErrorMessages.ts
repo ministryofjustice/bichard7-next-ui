@@ -14,7 +14,7 @@ enum ErrorMessages {
   HO100304 = "If offences appear to match, then check if offence dates match also. After this manually resolve on the PNC, to deal with error, and then manually resolved in Bichard.",
   HO100311 = "Duplicate court Offence Sequence Number",
   HO100312 = "Go back to old Bichard, fix it and resubmit. Manual sequence number does not match the sequence number of any PNC offence",
-  HO100320 = "Go back to old Bichard, fix it and resubmit. Manual sequence number identifies an offence that matches a PNC offence but doesn’t match a court offence (i.e. the offence code or dates do not match correctly",
+  HO100320 = "Go back to old Bichard, fix it and resubmit. Manual sequence number identifies an offence that matches a PNC offence but doesn't match a court offence (i.e. the offence code or dates do not match correctly",
   HO100328 = "Court offences match both a CCR and a PCR. This needs to be manually resolved on the PNC to deal with error, and then manually resolved in Bichard.",
   HO100333 = "Go back to old Bichard, fix it and resubmit. Manual match detected but no case matches upon resubmission, suggesting ASN updated or PNC data updated manually before resubmission.",
   HO100507 = "Offences have been added in court to a Penalty case. This needs to be manually resolved on the PNC to deal with error, and then manually resolved in Bichard."
