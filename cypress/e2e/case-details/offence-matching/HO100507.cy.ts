@@ -26,11 +26,11 @@ describe("Offence matching HO100507", () => {
     cy.get("#offences").contains("Theft from a shop").click()
   })
 
-  it("doesn't display the offence matcher for offences with a HO100328 exception", () => {
+  it("doesn't display the offence matcher for offences with a HO100507 exception", () => {
     cy.get("select.offence-matcher").should("not.exist")
   })
 
-  it("should explain what to with a HO100328 exception", () => {
+  it("should explain what to with a HO100507 exception", () => {
     cy.get(".error-prompt").should(
       "have.text",
       "Offences have been added in court to a Penalty case. This needs to be manually resolved on the PNC to deal with error, and then manually resolved in Bichard."
