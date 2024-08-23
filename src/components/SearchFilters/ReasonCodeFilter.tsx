@@ -27,10 +27,12 @@ const ReasonCodeFilter: React.FC<Props> = ({ value, dispatch }: Props) => {
       return
     }
 
-    setRawValue(updated.value)
+    const updateValue = updated.value.toUpperCase()
 
-    if (hasChanged(updated.value)) {
-      dispatch({ ...updated, type: "reasonCodes", value: tokenise(updated.value) })
+    setRawValue(updateValue)
+
+    if (hasChanged(updateValue)) {
+      dispatch({ ...updated, type: "reasonCodes", value: tokenise(updateValue) })
     }
   }
 
