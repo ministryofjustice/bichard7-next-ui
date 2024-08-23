@@ -206,7 +206,7 @@ describe("Case list", () => {
     })
 
     describe("Reason code", () => {
-      it("Should apply the 'Court name' filter chips then remove this chips to the original state", () => {
+      it("Should apply the 'Reason Code' filter chips then remove this chips to the original state", () => {
         cy.get("input[id=reasonCodes]").type("Bar")
 
         cy.get(".govuk-heading-s").contains("Reason").should("exist")
