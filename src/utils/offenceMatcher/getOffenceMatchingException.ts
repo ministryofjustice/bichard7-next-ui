@@ -2,7 +2,7 @@ import errorPaths from "@moj-bichard7-developers/bichard7-next-core/core/lib/exc
 import ExceptionCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/ExceptionCode"
 import { isEqual } from "lodash"
 import { Exception } from "types/exceptions"
-import { ExceptionBadgeType } from "./exceptionBadgeType"
+import { ExceptionBadgeType } from "../exceptions/exceptionBadgeType"
 
 const getOffenceReasonSequencePath = (offenceIndex: number) => errorPaths.offence(offenceIndex).reasonSequence
 const offenceMatchingExceptions = {

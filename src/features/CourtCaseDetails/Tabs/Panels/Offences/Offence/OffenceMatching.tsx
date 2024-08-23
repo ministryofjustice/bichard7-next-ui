@@ -10,10 +10,10 @@ import { useCurrentUser } from "context/CurrentUserContext"
 import { findExceptions } from "types/ErrorMessages"
 import { DisplayFullUser } from "types/display/Users"
 import { Exception } from "types/exceptions"
-import { getOffenceMatchingException } from "utils/exceptions/getOffenceMatchingException"
 import getExceptionDefinition from "utils/getExceptionDefinition"
 import findCandidates from "../../../../../../utils/offenceMatcher/findCandidates"
 import { TableRow } from "../../TableRow"
+import { getOffenceMatchingException } from "utils/offenceMatcher/getOffenceMatchingException"
 
 const enabled = (user: DisplayFullUser) => {
   const enabledInProduction = true // change this if we need to disable in production for everyone
