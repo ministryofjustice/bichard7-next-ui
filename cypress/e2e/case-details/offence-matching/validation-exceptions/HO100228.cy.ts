@@ -29,4 +29,11 @@ describe("Offence matching HO100228", () => {
   it("doesn't display the offence matcher for offences with a HO100228 exception", () => {
     cy.get("select.offence-matcher").should("not.exist")
   })
+
+  it("should explain what to with a HO100228 exception", () => {
+    cy.get(".error-prompt").should(
+      "have.text",
+      "Go back to old Bichard, fix it and resubmit. Manual sequence number is invalid (i.e. it is not a number)"
+    )
+  })
 })
