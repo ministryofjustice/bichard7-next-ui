@@ -33,7 +33,7 @@ describe("Offence matching HO100228", () => {
   it("should explain what to with a HO100228 exception", () => {
     cy.get(".error-prompt").should(
       "have.text",
-      "Go back to Legacy Bichard, fix it and resubmit. Manual sequence number is invalid (i.e. it is not a number)"
+      "Go back to old Bichard, fix it and resubmit. Manual sequence number is invalid (i.e. it is not a number)"
     )
   })
 })

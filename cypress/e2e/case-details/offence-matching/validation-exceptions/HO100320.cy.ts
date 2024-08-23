@@ -33,7 +33,7 @@ describe("Offence matching HO100320", () => {
   it("should explain what to with a HO100320 exception", () => {
     cy.get(".error-prompt").should(
       "have.text",
-      "Go back to Legacy Bichard, fix it and resubmit. Manual sequence number identifies an offence that matches a PNC offence but doesn’t match a court offence (i.e. the offence code or dates do not match correctly"
+      "Go back to old Bichard, fix it and resubmit. Manual sequence number identifies an offence that matches a PNC offence but doesn’t match a court offence (i.e. the offence code or dates do not match correctly"
     )
   })
 })
