@@ -95,4 +95,55 @@ describe("getOffenceMatchingException", () => {
     const result: GetOffenceMatchingExceptionResult = getOffenceMatchingException(exceptions, 1)
     expect(result).toEqual({ code: ExceptionCode.HO100507, badge: ExceptionBadgeType.AddedByCourt })
   })
+
+  it("returns first exception when given exceptions in offenceNotMatched array", () => {
+    const exceptions: Exception[] = [
+      {
+        code: ExceptionCode.HO100310,
+        path: [
+          "HearingOutcome",
+          "Case",
+          "HearingDefendant",
+          "Offence",
+          1,
+          "CriminalProsecutionReference",
+          "OffenceReasonSequence"
+        ]
+      },
+      {
+        code: ExceptionCode.HO100312,
+        path: [
+          "HearingOutcome",
+          "Case",
+          "HearingDefendant",
+          "Offence",
+          2,
+          "CriminalProsecutionReference",
+          "OffenceReasonSequence"
+        ]
+      }
+    ]
+    const result: GetOffenceMatchingExceptionResult = getOffenceMatchingException(exceptions, 2)
+    expect(result).toEqual({ code: ExceptionCode.HO100312, badge: ExceptionBadgeType.Unmatched })
+  })
+
+  it("returns first exception when given exceptions in noOffencesMatched array and offenceNotMatched array", () => {
+    const exceptions: Exception[] = [
+      { code: ExceptionCode.HO100507, path: ["test"] },
+      {
+        code: ExceptionCode.HO100310,
+        path: [
+          "HearingOutcome",
+          "Case",
+          "HearingDefendant",
+          "Offence",
+          1,
+          "CriminalProsecutionReference",
+          "OffenceReasonSequence"
+        ]
+      }
+    ]
+    const result: GetOffenceMatchingExceptionResult = getOffenceMatchingException(exceptions, 1)
+    expect(result).toEqual({ code: ExceptionCode.HO100507, badge: ExceptionBadgeType.AddedByCourt })
+  })
 })
