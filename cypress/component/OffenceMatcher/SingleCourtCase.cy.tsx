@@ -1,8 +1,8 @@
-import { OffenceMatcher } from "components/OffenceMatcher"
+import { PncOffence } from "@moj-bichard7-developers/bichard7-next-core/core/types/PncQueryResult"
 import { CourtCaseContext } from "context/CourtCaseContext"
+import OffenceMatcher from "features/CourtCaseDetails/Tabs/Panels/Offences/Offence/OffenceMatcher"
 import { Amendments } from "types/Amendments"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
-import { PncOffence } from "@moj-bichard7-developers/bichard7-next-core/core/types/PncQueryResult"
 import type { Candidates } from "../../../src/types/OffenceMatching"
 
 const courtCase = {} as unknown as DisplayFullCourtCase

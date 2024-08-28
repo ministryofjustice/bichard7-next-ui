@@ -19,6 +19,16 @@ const getSystemNotes = (amendments: Partial<Amendments>, userDetails: User, cour
 
     if (Array.isArray(value)) {
       value.forEach((field) => {
+        if (key === "offenceReasonSequence" && field.value === 0) {
+          notes.push({
+            noteText: noteText + "Added in court",
+            errorId: courtCaseId,
+            userId: "System"
+          })
+
+          return
+        }
+
         if (!field.value) {
           return
         }

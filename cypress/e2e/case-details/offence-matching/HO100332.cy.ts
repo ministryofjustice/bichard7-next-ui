@@ -1,4 +1,4 @@
-import { loginAndVisit } from "../../../support/helpers"
+import { clickTab, loginAndVisit } from "../../../support/helpers"
 import HO100332 from "./fixtures/HO100332.json"
 
 describe("Offence matching HO100332", () => {
@@ -93,31 +93,26 @@ describe("Offence matching HO100332", () => {
 
   it("sends correct offence matching amendments on submission", () => {
     cy.get("select.offence-matcher").select("001 - OF61016")
+    cy.get(".offence-matcher + .success-message").contains("Input saved").should("exist")
 
     cy.get("a").contains("Back to all offences").click()
     cy.get("a:contains('Section 18 - wounding with intent')").eq(1).click()
     cy.get("select.offence-matcher").select("002 - OF61016")
+    cy.get(".offence-matcher + .success-message").contains("Input saved").should("exist")
 
     cy.intercept("POST", "/bichard/court-cases/0/submit").as("submit")
     cy.get("button#submit").click()
     cy.wait("@submit")
+
+    // AutoSave will save amendments before this step, hence why there's no amendments
     cy.get("@submit")
       .its("request.body")
       .then((body) => {
         const json = Object.fromEntries(new URLSearchParams(body))
-        const { offenceReasonSequence, offenceCourtCaseReferenceNumber } = JSON.parse(json.amendments)
-        return { offenceReasonSequence, offenceCourtCaseReferenceNumber }
+        const amendments = JSON.parse(json.amendments)
+        return amendments
       })
-      .should("deep.equal", {
-        offenceReasonSequence: [
-          { offenceIndex: 0, value: 1 },
-          { offenceIndex: 1, value: 2 }
-        ],
-        offenceCourtCaseReferenceNumber: [
-          { offenceIndex: 0, value: "12/2732/000015R" },
-          { offenceIndex: 1, value: "12/2732/000016T" }
-        ]
-      })
+      .should("deep.equal", {})
   })
 
   describe("when using the exception panel to navigate between exceptions", () => {
@@ -193,6 +188,127 @@ describe("Offence matching HO100332", () => {
       cy.get("a:contains('Section 18 - wounding with intent')").eq(1).click()
 
       cy.get("span.moj-badge").contains("UNMATCHED")
+    })
+  })
+
+  describe("with AutoSave component", () => {
+    const errorId = 0
+
+    it("adds a save message", () => {
+      cy.intercept("PUT", `/bichard/api/court-cases/${errorId}/update`).as("save")
+
+      cy.get("select.offence-matcher").select("001 - OF61016")
+
+      cy.wait("@save")
+
+      cy.get(".offence-matcher + .success-message").contains("Input saved").should("exist")
+    })
+
+    it("saves the first and second offence", () => {
+      cy.intercept("PUT", `/bichard/api/court-cases/${errorId}/update`).as("save")
+
+      cy.get("select.offence-matcher").select("001 - OF61016")
+      cy.wait("@save")
+      cy.get(".offence-matcher + .success-message").contains("Input saved").should("exist")
+
+      cy.get("@save")
+        .its("request.body")
+        .then((body) => {
+          const { offenceReasonSequence, offenceCourtCaseReferenceNumber } = body
+          return { offenceReasonSequence, offenceCourtCaseReferenceNumber }
+        })
+        .should("deep.equal", {
+          offenceReasonSequence: [{ offenceIndex: 0, value: 1 }],
+          offenceCourtCaseReferenceNumber: [{ offenceIndex: 0, value: "12/2732/000015R" }]
+        })
+
+      cy.get("a").contains("Back to all offences").click()
+      cy.get("a:contains('Section 18 - wounding with intent')").eq(1).click()
+      cy.get("select.offence-matcher").select("002 - OF61016")
+      cy.wait("@save")
+      cy.get(".offence-matcher + .success-message").contains("Input saved").should("exist")
+
+      cy.get("@save")
+        .its("request.body")
+        .then((body) => {
+          const { offenceReasonSequence, offenceCourtCaseReferenceNumber } = body
+          return { offenceReasonSequence, offenceCourtCaseReferenceNumber }
+        })
+        .should("deep.equal", {
+          offenceReasonSequence: [{ offenceIndex: 1, value: 2 }],
+          offenceCourtCaseReferenceNumber: [{ offenceIndex: 1, value: "12/2732/000016T" }]
+        })
+    })
+
+    it("should update the notes", () => {
+      cy.intercept("PUT", `/bichard/api/court-cases/${errorId}/update`).as("save")
+
+      cy.get("select.offence-matcher").select("001 - OF61016")
+      cy.wait("@save")
+      cy.get(".offence-matcher + .success-message").contains("Input saved").should("exist")
+
+      cy.get("@save")
+        .its(
+          "response.body.courtCase.updatedHearingOutcome.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence.0.ManualCourtCaseReference"
+        )
+        .should("be.true")
+      cy.get("@save")
+        .its(
+          "response.body.courtCase.updatedHearingOutcome.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence.0.ManualSequenceNumber"
+        )
+        .should("be.true")
+      cy.get("@save")
+        .its(
+          "response.body.courtCase.updatedHearingOutcome.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence.0.CourtOffenceSequenceNumber"
+        )
+        .should("eq", 1)
+      cy.get("@save")
+        .its(
+          "response.body.courtCase.updatedHearingOutcome.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence.0.CourtCaseReferenceNumber"
+        )
+        .should("eq", "12/2732/000015R")
+
+      cy.get("a").contains("Back to all offences").click()
+      cy.get("a:contains('Section 18 - wounding with intent')").eq(1).click()
+      cy.get("select.offence-matcher").select("002 - OF61016")
+      cy.wait("@save")
+      cy.get(".offence-matcher + .success-message").contains("Input saved").should("exist")
+
+      cy.get("@save")
+        .its(
+          "response.body.courtCase.updatedHearingOutcome.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence.1.ManualCourtCaseReference"
+        )
+        .should("be.true")
+      cy.get("@save")
+        .its(
+          "response.body.courtCase.updatedHearingOutcome.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence.1.ManualSequenceNumber"
+        )
+        .should("be.true")
+      cy.get("@save")
+        .its(
+          "response.body.courtCase.updatedHearingOutcome.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence.1.CourtOffenceSequenceNumber"
+        )
+        .should("eq", 2)
+      cy.get("@save")
+        .its(
+          "response.body.courtCase.updatedHearingOutcome.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence.1.CourtCaseReferenceNumber"
+        )
+        .should("eq", "12/2732/000016T")
+
+      clickTab("Notes")
+
+      cy.get("td").contains(
+        "GeneralHandler: Portal Action: Update Applied. Element: offenceReasonSequence. New Value: 1"
+      )
+      cy.get("td").contains(
+        "GeneralHandler: Portal Action: Update Applied. Element: offenceCourtCaseReferenceNumber. New Value: 12/2732/000015R"
+      )
+      cy.get("td").contains(
+        "GeneralHandler: Portal Action: Update Applied. Element: offenceReasonSequence. New Value: 2"
+      )
+      cy.get("td").contains(
+        "GeneralHandler: Portal Action: Update Applied. Element: offenceCourtCaseReferenceNumber. New Value: 12/2732/000016T"
+      )
     })
   })
 })

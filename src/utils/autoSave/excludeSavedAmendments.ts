@@ -1,5 +1,12 @@
-import { isEmpty, isEqual } from "lodash"
+import { isEqual } from "lodash"
 import { AmendmentKeys, Amendments, OffenceField, ResultQualifierCode } from "types/Amendments"
+
+const isNotEmpty = (values: (OffenceField<number> | OffenceField<string> | ResultQualifierCode)[]): boolean => {
+  const isEmptyKeys = Object.keys(values).length === 0 && values.constructor === Object
+  const isEmptyArrays = Object.values(values).length === 0
+
+  return !(isEmptyKeys || isEmptyArrays)
+}
 
 const handleArray = (
   map: Map<AmendmentKeys, (OffenceField<number> | OffenceField<string> | ResultQualifierCode)[]>,
@@ -26,7 +33,8 @@ const handleArray = (
     }
   })
 
-  if (!isEmpty(newValues)) {
+  // Cannot use Lodash's `isEmpty` as the `key: 0` is treated as falsy
+  if (isNotEmpty(newValues)) {
     map.set(amendmentField, newValues)
   }
 }

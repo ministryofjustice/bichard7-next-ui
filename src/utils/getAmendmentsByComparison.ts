@@ -25,12 +25,21 @@ const getAmendmentsByComparison = (aho: AnnotatedHearingOutcome, updatedAho?: An
     const updatedOffenceResults = updatedOffence?.Result
 
     const updatedReasonSequence = Number(updatedOffence?.CriminalProsecutionReference?.OffenceReasonSequence)
+    const updatedCourtCaseReferenceNumber = updatedOffence?.CourtCaseReferenceNumber
 
     if (updatedReasonSequence || updatedOffence?.AddedByTheCourt) {
       amendments.offenceReasonSequence = amendments.offenceReasonSequence || []
       amendments.offenceReasonSequence.push({
         offenceIndex,
         value: updatedOffence?.AddedByTheCourt ? 0 : updatedReasonSequence
+      })
+    }
+
+    if (updatedCourtCaseReferenceNumber) {
+      amendments.offenceCourtCaseReferenceNumber = amendments.offenceCourtCaseReferenceNumber || []
+      amendments.offenceCourtCaseReferenceNumber.push({
+        offenceIndex,
+        value: updatedCourtCaseReferenceNumber ?? ""
       })
     }
 
