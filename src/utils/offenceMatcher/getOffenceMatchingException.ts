@@ -20,18 +20,18 @@ const offenceMatchingExceptions = {
   ]
 }
 
-export type GetOffenceMatchingExceptionResult =
+type GetOffenceMatchingExceptionResult =
   | {
       code: ExceptionCode
       badge: ExceptionBadgeType.AddedByCourt | ExceptionBadgeType.Unmatched
     }
   | undefined
 
-export const getOffenceMatchingExceptions = (exceptions: Exception[]): Exception[] => {
+const getOffenceMatchingExceptions = (exceptions: Exception[]): Exception[] => {
   return exceptions.filter((exception) => offenceMatchingExceptions.offenceNotMatched.includes(exception.code))
 }
 
-export const getOffenceMatchingException = (
+const getOffenceMatchingException = (
   exceptions: Exception[],
   offenceIndex: number
 ): GetOffenceMatchingExceptionResult => {
@@ -60,3 +60,6 @@ export const getOffenceMatchingException = (
         : ExceptionBadgeType.Unmatched
   }
 }
+
+export { getOffenceMatchingException, getOffenceMatchingExceptions }
+export type { GetOffenceMatchingExceptionResult }
