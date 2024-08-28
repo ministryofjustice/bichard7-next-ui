@@ -77,6 +77,13 @@ describe("offenceAlreadySelected", () => {
       expect(result).toBe(false)
     })
 
+    it("should return true if offenceReasonSequence is 0", () => {
+      const offenceIndex = 3
+      const sequenceNumber = 1
+      const result = offenceAlreadySelected(amendments, offenceIndex, sequenceNumber, courtCaseReference)
+      expect(result).toBe(true)
+    })
+
     it("should return true if we're looking at offence index 3 and our Sequence Number is 1", () => {
       const offenceIndex = 3
       const sequenceNumber = 1
