@@ -19,10 +19,22 @@ describe("getLongTriggerCode", () => {
     expect(result).toBe("TRPR0011")
   })
 
-  it("returns passed value when it is not a short trigger code", () => {
-    const result = getLongTriggerCode("H0100302")
+  it("handles lowercase trigger codes", () => {
+    const result = getLongTriggerCode("pr11")
 
-    expect(result).toBe("H0100302")
+    expect(result).toBe("TRPR0011")
+  })
+
+  it("returns passed value when it is an exception code", () => {
+    const result = getLongTriggerCode("HO100302")
+
+    expect(result).toBe("HO100302")
+  })
+
+  it("returns passed value when it is an exception code and lowercase", () => {
+    const result = getLongTriggerCode("ho100302")
+
+    expect(result).toBe("HO100302")
   })
 
   it("returns the passed value when trigger code is not a number", () => {

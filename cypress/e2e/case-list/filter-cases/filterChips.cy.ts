@@ -206,13 +206,13 @@ describe("Case list", () => {
     })
 
     describe("Reason code", () => {
-      it("Should apply the 'Court name' filter chips then remove this chips to the original state", () => {
+      it("Should apply the 'Reason Code' filter chips then remove this chips to the original state", () => {
         cy.get("input[id=reasonCodes]").type("Bar")
 
         cy.get(".govuk-heading-s").contains("Reason").should("exist")
-        cy.get(".moj-filter__tag").contains("Bar").should("exist")
+        cy.get(".moj-filter__tag").contains("BAR").should("exist")
 
-        cy.get("li button.moj-filter__tag").contains("Bar").trigger("click")
+        cy.get("li button.moj-filter__tag").contains("BAR").trigger("click")
         cy.get(".moj-filter__tag").should("not.exist")
       })
 
@@ -220,10 +220,10 @@ describe("Case list", () => {
         cy.get("input[id=reasonCodes]").type("Foo Bar")
 
         cy.get(".govuk-heading-s").contains("Reason").should("exist")
-        cy.get(".moj-filter__tag").contains("Bar").should("exist")
+        cy.get(".moj-filter__tag").contains("BAR").should("exist")
 
-        cy.get("li button.moj-filter__tag").contains("Bar").trigger("click")
-        cy.get(".moj-filter__tag").contains("Bar").should("not.exist")
+        cy.get("li button.moj-filter__tag").contains("BAR").trigger("click")
+        cy.get(".moj-filter__tag").contains("BAR").should("not.exist")
       })
     })
 
