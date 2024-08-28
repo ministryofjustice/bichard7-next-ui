@@ -2,7 +2,7 @@ import errorPaths from "@moj-bichard7-developers/bichard7-next-core/core/lib/exc
 import ExceptionCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/ExceptionCode"
 import { isEqual } from "lodash"
 import { Exception } from "types/exceptions"
-import { ExceptionBadgeType } from "./exceptionBadgeType"
+import { ExceptionBadgeType } from "../exceptions/exceptionBadgeType"
 
 const getOffenceReasonSequencePath = (offenceIndex: number) => errorPaths.offence(offenceIndex).reasonSequence
 const offenceMatchingExceptions = {
@@ -20,18 +20,18 @@ const offenceMatchingExceptions = {
   ]
 }
 
-export type GetOffenceMatchingExceptionResult =
+type GetOffenceMatchingExceptionResult =
   | {
       code: ExceptionCode
       badge: ExceptionBadgeType.AddedByCourt | ExceptionBadgeType.Unmatched
     }
   | undefined
 
-export const getOffenceMatchingExceptions = (exceptions: Exception[]): Exception[] => {
+const getOffenceMatchingExceptions = (exceptions: Exception[]): Exception[] => {
   return exceptions.filter((exception) => offenceMatchingExceptions.offenceNotMatched.includes(exception.code))
 }
 
-export const getOffenceMatchingException = (
+const getOffenceMatchingException = (
   exceptions: Exception[],
   offenceIndex: number
 ): GetOffenceMatchingExceptionResult => {
@@ -60,3 +60,6 @@ export const getOffenceMatchingException = (
         : ExceptionBadgeType.Unmatched
   }
 }
+
+export { getOffenceMatchingException, getOffenceMatchingExceptions }
+export type { GetOffenceMatchingExceptionResult }
