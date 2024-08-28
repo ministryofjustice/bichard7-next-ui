@@ -3,6 +3,8 @@ const getLongTriggerCode = (triggerCode?: string | null): string | null => {
     return null
   }
 
+  triggerCode = triggerCode.toUpperCase()
+
   const triggerType = triggerCode?.substring(0, 2)
   if (triggerType[0] !== "P") {
     return triggerCode
