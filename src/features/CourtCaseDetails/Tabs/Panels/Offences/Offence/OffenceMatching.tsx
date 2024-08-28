@@ -4,7 +4,6 @@ import Badge, { BadgeColours } from "components/Badge"
 import ConditionalRender from "components/ConditionalRender"
 import ErrorPromptMessage from "components/ErrorPromptMessage"
 import ExceptionFieldTableRow from "components/ExceptionFieldTableRow"
-import { OffenceMatcher } from "components/OffenceMatcher"
 import { useCourtCase } from "context/CourtCaseContext"
 import { useCurrentUser } from "context/CurrentUserContext"
 import { findExceptions } from "types/ErrorMessages"
@@ -14,6 +13,7 @@ import { getOffenceMatchingException } from "utils/exceptions/getOffenceMatching
 import getExceptionDefinition from "utils/getExceptionDefinition"
 import findCandidates from "../../../../../../utils/offenceMatcher/findCandidates"
 import { TableRow } from "../../TableRow"
+import OffenceMatcher from "./OffenceMatcher"
 
 const enabled = (user: DisplayFullUser) => {
   const enabledInProduction = true // change this if we need to disable in production for everyone

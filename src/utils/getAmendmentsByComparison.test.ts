@@ -127,6 +127,23 @@ describe("getAmendmentsByComparison", () => {
     })
   })
 
+  it("returns the updated courtCaseReferenceNumber", () => {
+    const updated = structuredClone(aho)
+    updated.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[0] = {
+      CourtCaseReferenceNumber: "CourtCaseRef"
+    } as Offence
+
+    const result = getAmendmentsByComparison(aho, updated)
+    expect(result).toEqual({
+      offenceCourtCaseReferenceNumber: [
+        {
+          offenceIndex: 0,
+          value: "CourtCaseRef"
+        }
+      ]
+    })
+  })
+
   it("should return multiple updated fields correctly", () => {
     const updatedAho = structuredClone(aho)
     updatedAho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.ArrestSummonsNumber = updatedAsn
