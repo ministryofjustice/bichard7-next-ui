@@ -80,6 +80,7 @@ const CaseDetailReportPage: NextPage<Props> = (props) => {
     <>
       <CsrfTokenContext.Provider value={csrfTokenContext}>
         <CurrentUserContext.Provider value={currentUserContext}>
+          {/* { TODO: waiting for design } */}
           <h1>{"Case report"}</h1>
           {courtCasesForCaseDetailsReport.map((r) => {
             return <p key={r.errorId}>{r.asn}</p>
