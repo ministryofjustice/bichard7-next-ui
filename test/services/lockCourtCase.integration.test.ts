@@ -44,7 +44,7 @@ describe("lock court case", () => {
       jest.requireActual("services/updateLockStatusToLocked").default
     )
     ;(storeMessageAuditLogEvents as jest.Mock).mockImplementation(
-      jest.requireActual("services/storeAuditLogEvents").default
+      jest.requireActual("services/storeAuditLogEvents").storeMessageAuditLogEvents
     )
     ;[unlockedCourtCase] = await insertCourtCasesWithFields([
       {
