@@ -57,7 +57,7 @@ describe("resolveCourtCase", () => {
       jest.requireActual("services/updateLockStatusToUnlocked").default
     )
     ;(storeMessageAuditLogEvents as jest.Mock).mockImplementation(
-      jest.requireActual("services/storeAuditLogEvents").default
+      jest.requireActual("services/storeAuditLogEvents").storeMessageAuditLogEvents
     )
     ;(courtCasesByOrganisationUnitQuery as jest.Mock).mockImplementation(
       jest.requireActual("services/queries/courtCasesByOrganisationUnitQuery").default
