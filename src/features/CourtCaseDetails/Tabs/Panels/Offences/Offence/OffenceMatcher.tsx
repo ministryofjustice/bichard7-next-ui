@@ -1,3 +1,4 @@
+import AutoSave from "components/EditableFields/AutoSave"
 import { useCourtCase } from "context/CourtCaseContext"
 import { useCallback, useEffect, useState } from "react"
 import offenceAlreadySelected from "utils/offenceMatcher/offenceAlreadySelected"
@@ -24,6 +25,8 @@ const OffenceMatcher = ({ offenceIndex, candidates, isCaseLockedToCurrentUser }:
   }, [amendments.offenceCourtCaseReferenceNumber, amendments.offenceReasonSequence, offenceIndex])
 
   const [selectedValue, setSelectedValue] = useState(findPncOffence())
+  const [offenceMatcherChanged, setOffenceMatcherChanged] = useState<boolean>(false)
+  const [offenceMatcherSaved, setOffenceMatcherSaved] = useState<boolean>(false)
 
   useEffect(() => {
     setSelectedValue(findPncOffence())
@@ -44,41 +47,56 @@ const OffenceMatcher = ({ offenceIndex, candidates, isCaseLockedToCurrentUser }:
     })
 
     setSelectedValue(offenceMatcherSelectValue(offenceReasonSequence, ccr))
+    setOffenceMatcherChanged(true)
+    setOffenceMatcherSaved(false)
   }
 
-  return isCaseLockedToCurrentUser ? (
-    <select className="govuk-select offence-matcher" onChange={onSelectionChanged} value={selectedValue}>
-      <option disabled hidden value="">
-        {"Select an offence"}
-      </option>
-      {candidates?.map((c) => {
-        return (
-          <optgroup key={c.courtCaseReference} label={c.courtCaseReference}>
-            {c.offences.map((pnc, index) => {
-              return (
-                <option
-                  key={`${index}-${pnc.offence.cjsOffenceCode}`}
-                  value={offenceMatcherSelectValue(pnc.offence.sequenceNumber, c.courtCaseReference)}
-                  disabled={offenceAlreadySelected(
-                    amendments,
-                    offenceIndex,
-                    pnc.offence.sequenceNumber,
-                    c.courtCaseReference
-                  )}
-                  data-ccr={c.courtCaseReference}
-                >
-                  {`${String(pnc.offence.sequenceNumber).padStart(3, "0")} - ${pnc.offence.cjsOffenceCode}`}
-                </option>
-              )
-            })}
-          </optgroup>
-        )
-      })}
-      <option value="0">{"Added in court"}</option>
-    </select>
-  ) : (
-    <Badge isRendered={true} colour={BadgeColours.Purple} label={"Unmatched"} className="moj-badge--large" />
-  )
+  if (isCaseLockedToCurrentUser) {
+    return (
+      <>
+        <select className="govuk-select offence-matcher" onChange={onSelectionChanged} value={selectedValue}>
+          <option disabled hidden value="">
+            {"Select an offence"}
+          </option>
+          {candidates?.map((c) => {
+            return (
+              <optgroup key={c.courtCaseReference} label={c.courtCaseReference}>
+                {c.offences.map((pnc, index) => {
+                  return (
+                    <option
+                      key={`${index}-${pnc.offence.cjsOffenceCode}`}
+                      value={offenceMatcherSelectValue(pnc.offence.sequenceNumber, c.courtCaseReference)}
+                      disabled={offenceAlreadySelected(
+                        amendments,
+                        offenceIndex,
+                        pnc.offence.sequenceNumber,
+                        c.courtCaseReference
+                      )}
+                      data-ccr={c.courtCaseReference}
+                    >
+                      {`${String(pnc.offence.sequenceNumber).padStart(3, "0")} - ${pnc.offence.cjsOffenceCode}`}
+                    </option>
+                  )
+                })}
+              </optgroup>
+            )
+          })}
+          <option value="0">{"Added in court"}</option>
+        </select>
+        <AutoSave
+          key={selectedValue}
+          setChanged={setOffenceMatcherChanged}
+          setSaved={setOffenceMatcherSaved}
+          isValid={true}
+          amendmentFields={["offenceReasonSequence", "offenceCourtCaseReferenceNumber"]}
+          isChanged={offenceMatcherChanged}
+          isSaved={offenceMatcherSaved}
+        />
+      </>
+    )
+  } else {
+    return <Badge isRendered={true} colour={BadgeColours.Purple} label={"Unmatched"} className="moj-badge--large" />
+  }
 }
 
 export default OffenceMatcher
