@@ -14,7 +14,7 @@ const offenceAlreadySelected = (
       (a) => a.offenceIndex === offenceCcr.offenceIndex && a.offenceIndex !== offenceIndex
     )
 
-    if (offenceReasonSequence?.value) {
+    if (offenceReasonSequence?.value !== undefined && offenceReasonSequence.value >= 0) {
       knownMatches.push(offenceMatcherSelectValue(offenceReasonSequence.value, offenceCcr.value))
     }
   })
