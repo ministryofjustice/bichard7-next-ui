@@ -6,7 +6,7 @@ import insertNotes from "../insertNotes"
 import updateLockStatusToUnlocked from "../updateLockStatusToUnlocked"
 import UnlockReason from "types/UnlockReason"
 import { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/common/types/AuditLogEvent"
-import storeAuditLogEvents from "../storeAuditLogEvents"
+import { storeMessageAuditLogEvents } from "../storeAuditLogEvents"
 import EventCategory from "@moj-bichard7-developers/bichard7-next-core/common/types/EventCategory"
 import { AUDIT_LOG_EVENT_SOURCE, REALLOCATE_CASE_TRIGGER_CODE } from "../../config"
 import getCourtCaseByOrganisationUnit from "../getCourtCaseByOrganisationUnit"
@@ -146,7 +146,9 @@ const reallocateCourtCaseToForce = async (
         throw unlockResult
       }
 
-      const storeAuditLogResponse = await storeAuditLogEvents(courtCase.messageId, events).catch((error) => error)
+      const storeAuditLogResponse = await storeMessageAuditLogEvents(courtCase.messageId, events).catch(
+        (error) => error
+      )
 
       if (isError(storeAuditLogResponse)) {
         throw storeAuditLogResponse

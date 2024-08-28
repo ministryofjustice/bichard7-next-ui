@@ -3,7 +3,7 @@ import { isError } from "types/Result"
 import User from "./entities/User"
 import updateLockStatusToUnlocked from "./updateLockStatusToUnlocked"
 import { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/common/types/AuditLogEvent"
-import storeAuditLogEvents from "./storeAuditLogEvents"
+import { storeMessageAuditLogEvents } from "./storeAuditLogEvents"
 import UnlockReason from "types/UnlockReason"
 import getCourtCaseByOrganisationUnit from "./getCourtCaseByOrganisationUnit"
 
@@ -32,7 +32,7 @@ const unlockCourtCase = async (
       throw unlockResult
     }
 
-    const storeAuditLogResponse = await storeAuditLogEvents(courtCase.messageId, events)
+    const storeAuditLogResponse = await storeMessageAuditLogEvents(courtCase.messageId, events)
 
     if (isError(storeAuditLogResponse)) {
       throw storeAuditLogResponse

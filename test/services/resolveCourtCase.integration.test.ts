@@ -4,7 +4,7 @@ import { differenceInMilliseconds } from "date-fns"
 import User from "services/entities/User"
 import insertNotes from "services/insertNotes"
 import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
-import storeAuditLogEvents from "services/storeAuditLogEvents"
+import { storeMessageAuditLogEvents } from "services/storeAuditLogEvents"
 import updateLockStatusToUnlocked from "services/updateLockStatusToUnlocked"
 import { DataSource, UpdateQueryBuilder } from "typeorm"
 import { ManualResolution, ResolutionReasonCode } from "types/ManualResolution"
@@ -56,7 +56,9 @@ describe("resolveCourtCase", () => {
     ;(updateLockStatusToUnlocked as jest.Mock).mockImplementation(
       jest.requireActual("services/updateLockStatusToUnlocked").default
     )
-    ;(storeAuditLogEvents as jest.Mock).mockImplementation(jest.requireActual("services/storeAuditLogEvents").default)
+    ;(storeMessageAuditLogEvents as jest.Mock).mockImplementation(
+      jest.requireActual("services/storeAuditLogEvents").storeMessageAuditLogEvents
+    )
     ;(courtCasesByOrganisationUnitQuery as jest.Mock).mockImplementation(
       jest.requireActual("services/queries/courtCasesByOrganisationUnitQuery").default
     )
@@ -512,7 +514,7 @@ describe("resolveCourtCase", () => {
 
     it("Should return the error if fails to store audit logs", async () => {
       const expectedError = `Error while calling audit log API`
-      ;(storeAuditLogEvents as jest.Mock).mockImplementationOnce(() => new Error(expectedError))
+      ;(storeMessageAuditLogEvents as jest.Mock).mockImplementationOnce(() => new Error(expectedError))
 
       const result = await resolveCourtCase(dataSource, courtCases[0], resolution, user).catch(
         (error) => error as Error

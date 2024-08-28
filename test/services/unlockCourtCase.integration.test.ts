@@ -1,7 +1,7 @@
 import axios from "axios"
 import User from "services/entities/User"
 import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
-import storeAuditLogEvents from "services/storeAuditLogEvents"
+import { storeMessageAuditLogEvents } from "services/storeAuditLogEvents"
 import unlockCourtCase from "services/unlockCourtCase"
 import updateLockStatusToUnlocked from "services/updateLockStatusToUnlocked"
 import { DataSource } from "typeorm"
@@ -42,7 +42,9 @@ describe("unlock court case", () => {
     ;(updateLockStatusToUnlocked as jest.Mock).mockImplementation(
       jest.requireActual("services/updateLockStatusToUnlocked").default
     )
-    ;(storeAuditLogEvents as jest.Mock).mockImplementation(jest.requireActual("services/storeAuditLogEvents").default)
+    ;(storeMessageAuditLogEvents as jest.Mock).mockImplementation(
+      jest.requireActual("services/storeAuditLogEvents").storeMessageAuditLogEvents
+    )
     ;(courtCasesByOrganisationUnitQuery as jest.Mock).mockImplementation(
       jest.requireActual("services/queries/courtCasesByOrganisationUnitQuery").default
     )
@@ -105,8 +107,8 @@ describe("unlock court case", () => {
         UnlockReason.TriggerAndException,
         expectedAuditLogEvents
       )
-      expect(storeAuditLogEvents).toHaveBeenCalledTimes(1)
-      expect(storeAuditLogEvents).toHaveBeenCalledWith(lockedCourtCase.messageId, expectedAuditLogEvents)
+      expect(storeMessageAuditLogEvents).toHaveBeenCalledTimes(1)
+      expect(storeMessageAuditLogEvents).toHaveBeenCalledWith(lockedCourtCase.messageId, expectedAuditLogEvents)
     })
 
     it("Should unlock the case and update the audit log events", async () => {
@@ -155,7 +157,9 @@ describe("unlock court case", () => {
 
   describe("when there is an error", () => {
     it("Should return the error if fails to store audit logs", async () => {
-      ;(storeAuditLogEvents as jest.Mock).mockImplementationOnce(() => new Error(`Error while calling audit log API`))
+      ;(storeMessageAuditLogEvents as jest.Mock).mockImplementationOnce(
+        () => new Error(`Error while calling audit log API`)
+      )
 
       const result = await unlockCourtCase(
         dataSource,
