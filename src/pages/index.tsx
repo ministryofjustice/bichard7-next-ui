@@ -227,11 +227,12 @@ export const getServerSideProps = withMultipleServerSideProps(
         queryStringCookieName,
         totalCases: courtCases.totalCases,
         user: userToDisplayFullUserDto(currentUser),
-        caseResolvedDateRange: !!caseListQueryParams.resolvedDateRange ?
-          {
-            from: formatFormInputDateString(caseListQueryParams.resolvedDateRange.from),
-            to: formatFormInputDateString(caseListQueryParams.resolvedDateRange.to)
-          } : null,
+        caseResolvedDateRange: caseListQueryParams.resolvedDateRange
+          ? {
+              from: formatFormInputDateString(caseListQueryParams.resolvedDateRange.from),
+              to: formatFormInputDateString(caseListQueryParams.resolvedDateRange.to)
+            }
+          : null,
         ...caseListQueryProps
       }
     }
