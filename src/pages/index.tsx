@@ -31,7 +31,7 @@ import {
   LockedState,
   QueryOrder,
   Reason,
-  SerializedCourtDateRange
+  SerializedDateRange
 } from "types/CaseListQueryParams"
 import Permission from "types/Permission"
 import { isError } from "types/Result"
@@ -63,14 +63,15 @@ type Props = {
   caseAgeCounts: Record<string, number>
   courtCases: DisplayPartialCourtCase[]
   csrfToken: string
-  dateRange: SerializedCourtDateRange | null
+  dateRange: SerializedDateRange | null
   displaySwitchingSurveyFeedback: boolean
   environment: string | null
   oppositeOrder: QueryOrder
   queryStringCookieName: string
   totalCases: number
   user: DisplayFullUser
-} & Omit<CaseListQueryParams, "allocatedToUserName" | "resolvedByUsername" | "courtDateRange">
+  caseResolvedDateRange: SerializedDateRange | null
+} & Omit<CaseListQueryParams, "allocatedToUserName" | "resolvedByUsername" | "courtDateRange" | "resolvedDateRange">
 
 const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param === "desc"
 
@@ -104,6 +105,7 @@ const extractSearchParamsFromQuery = (query: ParsedUrlQuery, currentUser: User):
   const resolvedByUsername =
     caseState === "Resolved" && !currentUser.hasAccessTo[Permission.ListAllCases] ? currentUser.username : null
   const courtDateRange = caseAges || dateRange
+  const resolvedDateRange = validateDateRange({ from: query.resolvedFrom, to: query.resolvedTo })
 
   return {
     ...(defendantName && { defendantName: defendantName }),
@@ -119,7 +121,8 @@ const extractSearchParamsFromQuery = (query: ParsedUrlQuery, currentUser: User):
     lockedState,
     ...(caseState && { caseState }),
     ...(resolvedByUsername && { resolvedByUsername }),
-    ...(allocatedToUserName && { allocatedToUserName })
+    ...(allocatedToUserName && { allocatedToUserName }),
+    ...(resolvedDateRange && { resolvedDateRange })
   }
 }
 
@@ -203,7 +206,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     logCaseListRenderTime(startTime, currentUser, caseListQueryParams)
 
     // Remove courtDateRange from the props because the dates don't serialise
-    const { courtDateRange: _, ...caseListQueryProps } = caseListQueryParams
+    const { courtDateRange: _, resolvedDateRange: __, ...caseListQueryProps } = caseListQueryParams
     return {
       props: {
         build: process.env.NEXT_PUBLIC_BUILD || null,
@@ -224,6 +227,11 @@ export const getServerSideProps = withMultipleServerSideProps(
         queryStringCookieName,
         totalCases: courtCases.totalCases,
         user: userToDisplayFullUserDto(currentUser),
+        caseResolvedDateRange: !!caseListQueryParams.resolvedDateRange ?
+          {
+            from: formatFormInputDateString(caseListQueryParams.resolvedDateRange.from),
+            to: formatFormInputDateString(caseListQueryParams.resolvedDateRange.to)
+          } : null,
         ...caseListQueryProps
       }
     }
