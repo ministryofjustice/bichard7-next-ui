@@ -28,7 +28,8 @@ const listCourtCases = async (
     caseState,
     allocatedToUserName,
     reasonCodes,
-    resolvedByUsername
+    resolvedByUsername,
+    resolvedDateRange
   }: CaseListQueryParams,
   user: User
 ): PromiseResult<ListCourtCaseResult> => {
@@ -144,6 +145,12 @@ const listCourtCases = async (
   }
 
   filterByReasonAndResolutionStatus(query, user, reason, reasonCodes, caseState, resolvedByUsername)
+
+  if (caseState === "Resolved" && resolvedDateRange) {
+    query
+      .andWhere({ resolutionTimestamp: MoreThanOrEqual(resolvedDateRange?.from) })
+      .andWhere({ resolutionTimestamp: LessThanOrEqual(resolvedDateRange?.to) })
+  }
 
   if (allocatedToUserName) {
     query.andWhere(
