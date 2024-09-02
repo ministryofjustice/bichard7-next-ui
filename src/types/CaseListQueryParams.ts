@@ -40,4 +40,5 @@ export type CaseListQueryParams = {
   reason?: Reason
   reasonCodes?: string[]
   resolvedByUsername?: string
+  asn?: string
 }

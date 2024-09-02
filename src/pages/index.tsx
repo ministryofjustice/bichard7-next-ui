@@ -104,12 +104,13 @@ const extractSearchParamsFromQuery = (query: ParsedUrlQuery, currentUser: User):
   const resolvedByUsername =
     caseState === "Resolved" && !currentUser.hasAccessTo[Permission.ListAllCases] ? currentUser.username : null
   const courtDateRange = caseAges || dateRange
-
+  const asn = validateQueryParams(query.asn) ? sanitise(query.asn) : null
   return {
     ...(defendantName && { defendantName: defendantName }),
     ...(courtName && { courtName: courtName }),
     ...(reasonCodes && { reasonCodes: reasonCodes }),
     ...(ptiurn && { ptiurn }),
+    ...(asn && { asn }),
     reason,
     maxPageItems: validateQueryParams(query.maxPageItems) ? +Number(query.maxPageItems) : defaults.maxPageItems,
     page: validateQueryParams(query.page) ? +Number(query.page) : 1,
