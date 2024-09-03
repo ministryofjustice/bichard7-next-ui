@@ -30,6 +30,7 @@ const listCourtCases = async (
     reasonCodes,
     resolvedByUsername,
     resolvedDateRange
+    asn
   }: CaseListQueryParams,
   user: User
 ): PromiseResult<ListCourtCaseResult> => {
@@ -102,6 +103,10 @@ const listCourtCases = async (
   if (ptiurn) {
     const ptiurnLike = { ptiurn: ILike(`%${ptiurn}%`) }
     query.andWhere(ptiurnLike)
+  }
+
+  if (asn) {
+    query.andWhere({ asn: ILike(`%${asn}%`) })
   }
 
   if (reasonCodes?.length) {

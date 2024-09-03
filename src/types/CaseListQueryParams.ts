@@ -41,4 +41,5 @@ export type CaseListQueryParams = {
   reasonCodes?: string[]
   resolvedByUsername?: string
   resolvedDateRange?: DateRange
+  asn?: string
 }
