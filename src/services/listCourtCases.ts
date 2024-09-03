@@ -29,7 +29,7 @@ const listCourtCases = async (
     allocatedToUserName,
     reasonCodes,
     resolvedByUsername,
-    resolvedDateRange
+    resolvedDateRange,
     asn
   }: CaseListQueryParams,
   user: User
