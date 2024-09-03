@@ -817,9 +817,9 @@ describe("listCourtCases", () => {
 
       expect(result).toHaveLength(5)
       expect(totalCases).toBe(5)
-      expect(result[0].resolutionTimestamp?.toString()).toBe("Fri May 03 2024 01:00:00 GMT+0100 (British Summer Time)")
-      expect(result[2].resolutionTimestamp?.toString()).toBe("Sun May 05 2024 01:00:00 GMT+0100 (British Summer Time)")
-      expect(result[4].resolutionTimestamp?.toString()).toBe("Tue May 07 2024 01:00:00 GMT+0100 (British Summer Time)")
+      expect(result[0].resolutionTimestamp?.toString()).toBe(new Date(`2024-05-03`).toString())
+      expect(result[2].resolutionTimestamp?.toString()).toBe(new Date(`2024-05-05`).toString())
+      expect(result[4].resolutionTimestamp?.toString()).toBe(new Date(`2024-05-07`).toString())
     })
   })
 })
