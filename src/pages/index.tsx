@@ -107,7 +107,7 @@ const extractSearchParamsFromQuery = (query: ParsedUrlQuery, currentUser: User):
   const courtDateRange = caseAges || dateRange
   const resolvedDateRange = validateDateRange({ from: query.resolvedFrom, to: query.resolvedTo })
   const asn = validateQueryParams(query.asn) ? sanitise(query.asn) : null
-  
+
   return {
     ...(defendantName && { defendantName: defendantName }),
     ...(courtName && { courtName: courtName }),
