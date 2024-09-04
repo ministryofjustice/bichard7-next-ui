@@ -27,7 +27,7 @@ const enabled = (user: DisplayFullUser) => {
   return enabledInProduction && featureFlagsEnabled
 }
 
-type Props = {
+type OffenceMatchingProps = {
   offenceIndex: number
   offence: Offence
   isCaseUnresolved: boolean
@@ -41,7 +41,7 @@ export const OffenceMatching = ({
   isCaseUnresolved,
   exceptions,
   isCaseLockedToCurrentUser
-}: Props) => {
+}: OffenceMatchingProps) => {
   const { courtCase, savedAmendments } = useCourtCase()
   const currentUser = useCurrentUser()
 
