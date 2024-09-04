@@ -106,3 +106,6 @@ dist
 # Cypress artifacts
 cypress/videos
 cypress/screenshots
+
+# SWC cache
+.swc/

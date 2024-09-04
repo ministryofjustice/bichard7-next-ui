@@ -32,8 +32,8 @@
     "zap": "./scripts/zap/zap-scan.sh"
   },
   "dependencies": {
-    "@govuk-react/table": "^0.10.7",
     "@govuk-react/select": "^0.10.7",
+    "@govuk-react/table": "^0.10.7",
     "@ministryofjustice/frontend": "^2.2.0",
     "@moj-bichard7-developers/bichard7-next-core": "^2.0.9",
     "@moj-bichard7-developers/bichard7-next-data": "^2.0.205",
@@ -76,6 +76,8 @@
     "@next/eslint-plugin-next": "^14.2.7",
     "@stdlib/random-base-exponential": "^0.2.1",
     "@stdlib/random-sample": "^0.2.1",
+    "@swc/core": "^1.7.23",
+    "@swc/jest": "^0.2.36",
     "@testing-library/cypress": "^10.0.2",
     "@testing-library/jest-dom": "^6.5.0",
     "@types/cookie-signature": "^1.1.2",
