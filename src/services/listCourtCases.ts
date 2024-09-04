@@ -11,6 +11,16 @@ import filterByReasonAndResolutionStatus from "./filters/filterByReasonAndResolu
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 import leftJoinAndSelectTriggersQuery from "./queries/leftJoinAndSelectTriggersQuery"
 
+function formatName(name: string) {
+  let splitName = name.replace(/\*|\s+/g, "%")
+
+  if (!splitName.endsWith("%")) {
+    splitName = `${splitName}%`
+  }
+
+  return splitName
+}
+
 const listCourtCases = async (
   connection: DataSource,
   {
@@ -87,11 +97,7 @@ const listCourtCases = async (
 
   // Filters
   if (defendantName) {
-    let splitDefendantName = defendantName.replace(/\*|\s+/g, "%")
-
-    if (!splitDefendantName.endsWith("%")) {
-      splitDefendantName = `${splitDefendantName}%`
-    }
+    const splitDefendantName = formatName(defendantName)
 
     query.andWhere({
       defendantName: ILike(splitDefendantName)
@@ -167,11 +173,7 @@ const listCourtCases = async (
   }
 
   if (resolvedByUsername) {
-    let splitResolvedByUsername = resolvedByUsername.replace(/\*|\s+/g, "%")
-
-    if (!splitResolvedByUsername.endsWith("%")) {
-      splitResolvedByUsername = `${splitResolvedByUsername}%`
-    }
+    const splitResolvedByUsername = formatName(resolvedByUsername)
 
     query.andWhere(
       new Brackets((qb) => {

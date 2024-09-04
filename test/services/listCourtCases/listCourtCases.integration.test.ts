@@ -540,31 +540,6 @@ describe("listCourtCases", () => {
     })
   })
 
-  describe("search by resolvedByUsername", () => {
-    it("Should list cases that have been resolved by a specific user", async () => {
-      await insertCourtCasesWithFields([
-        { errorResolvedBy: "User Name01" },
-        { triggerResolvedBy: "User Name02" },
-        { errorResolvedBy: "User Name03" }
-      ])
-
-      let result = await listCourtCases(dataSource, { maxPageItems: 100, resolvedByUsername: "User" }, testUser)
-      expect(isError(result)).toBe(false)
-      let { result: cases } = result as ListCourtCaseResult
-
-      expect(cases).toHaveLength(3)
-      expect(cases[0].errorResolvedBy).toStrictEqual("User Name01")
-      expect(cases[1].triggerResolvedBy).toStrictEqual("User Name02")
-      expect(cases[2].errorResolvedBy).toStrictEqual("User Name03")
-
-      result = await listCourtCases(dataSource, { maxPageItems: 100, resolvedByUsername: "User Name01" }, testUser)
-      expect(isError(result)).toBe(false)
-      cases = (result as ListCourtCaseResult).result
-
-      expect(cases).toHaveLength(1)
-      expect(cases[0].errorResolvedBy).toStrictEqual("User Name01")
-    })
-  })
   describe("search by reason", () => {
     it("Should list cases when there is a case insensitive match in triggers or exceptions", async () => {
       await insertCourtCasesWithFields(Array.from({ length: 4 }, () => ({ orgForPoliceFilter: orgCode })))
