@@ -5,9 +5,8 @@ import ErrorPromptMessage from "components/ErrorPromptMessage"
 import ExceptionFieldTableRow from "components/ExceptionFieldTableRow"
 import { useCourtCase } from "context/CourtCaseContext"
 import { useCurrentUser } from "context/CurrentUserContext"
-import { findExceptions } from "types/ErrorMessages"
 import { Exception } from "types/exceptions"
-import getExceptionDefinition from "utils/getExceptionDefinition"
+import getExceptionMessage from "utils/offenceMatcher/getExceptionMessage"
 import { getOffenceMatchingException } from "utils/offenceMatcher/getOffenceMatchingException"
 import isEnabled from "utils/offenceMatcher/isEnabled"
 import offenceMatchingExceptions from "utils/offenceMatcher/offenceMatchingExceptions"
@@ -34,16 +33,7 @@ export const OffenceMatching = ({
   const currentUser = useCurrentUser()
 
   const offenceMatchingException = isCaseUnresolved && getOffenceMatchingException(exceptions, offenceIndex)
-
-  const findExceptionByOffenceNumber = courtCase.aho.Exceptions.filter((exception) =>
-    exception.path.includes(offenceIndex)
-  )
-  const offenceMatchingExceptionMessage =
-    findExceptions(
-      courtCase,
-      findExceptionByOffenceNumber.length > 0 ? findExceptionByOffenceNumber : courtCase.aho.Exceptions,
-      ...offenceMatchingExceptions.noOffencesMatched
-    ) || getExceptionDefinition(findExceptionByOffenceNumber[0]?.code)?.shortDescription
+  const offenceMatchingExceptionMessage = getExceptionMessage(courtCase, offenceIndex)
 
   const displayOffenceMatcher =
     isEnabled(currentUser) && exceptions.some((e) => offenceMatchingExceptions.offenceNotMatched.includes(e.code))
