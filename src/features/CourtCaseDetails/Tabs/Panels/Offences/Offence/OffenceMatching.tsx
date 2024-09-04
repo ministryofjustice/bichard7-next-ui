@@ -1,5 +1,4 @@
 import { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
-import ExceptionCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/ExceptionCode"
 import Badge, { BadgeColours } from "components/Badge"
 import ConditionalRender from "components/ConditionalRender"
 import ErrorPromptMessage from "components/ErrorPromptMessage"
@@ -10,9 +9,10 @@ import { findExceptions } from "types/ErrorMessages"
 import { DisplayFullUser } from "types/display/Users"
 import { Exception } from "types/exceptions"
 import getExceptionDefinition from "utils/getExceptionDefinition"
+import { getOffenceMatchingException } from "utils/offenceMatcher/getOffenceMatchingException"
+import offenceMatchingExceptions from "utils/offenceMatcher/offenceMatchingExceptions"
 import findCandidates from "../../../../../../utils/offenceMatcher/findCandidates"
 import { TableRow } from "../../TableRow"
-import { getOffenceMatchingException } from "utils/offenceMatcher/getOffenceMatchingException"
 import OffenceMatcher from "./OffenceMatcher"
 
 const enabled = (user: DisplayFullUser) => {
@@ -45,19 +45,6 @@ export const OffenceMatching = ({
   const { courtCase, savedAmendments } = useCourtCase()
   const currentUser = useCurrentUser()
 
-  const offenceMatchingExceptions = [ExceptionCode.HO100310, ExceptionCode.HO100332]
-  const noneOffenceMatchingExceptions = [
-    ExceptionCode.HO100203,
-    ExceptionCode.HO100228,
-    ExceptionCode.HO100304,
-    ExceptionCode.HO100311,
-    ExceptionCode.HO100312,
-    ExceptionCode.HO100320,
-    ExceptionCode.HO100328,
-    ExceptionCode.HO100333,
-    ExceptionCode.HO100507
-  ]
-
   const offenceMatchingException = isCaseUnresolved && getOffenceMatchingException(exceptions, offenceIndex)
 
   const findExceptionByOffenceNumber = courtCase.aho.Exceptions.filter((exception) =>
@@ -67,11 +54,11 @@ export const OffenceMatching = ({
     findExceptions(
       courtCase,
       findExceptionByOffenceNumber.length > 0 ? findExceptionByOffenceNumber : courtCase.aho.Exceptions,
-      ...noneOffenceMatchingExceptions
+      ...offenceMatchingExceptions.noOffencesMatched
     ) || getExceptionDefinition(findExceptionByOffenceNumber[0]?.code)?.shortDescription
 
   const displayOffenceMatcher =
-    enabled(currentUser) && exceptions.some((e) => offenceMatchingExceptions.includes(e.code))
+    enabled(currentUser) && exceptions.some((e) => offenceMatchingExceptions.offenceNotMatched.includes(e.code))
   const userCanMatchOffence =
     courtCase.errorLockedByUsername === currentUser?.username && courtCase.errorStatus === "Unresolved"
 
