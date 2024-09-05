@@ -1,4 +1,5 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} */
+
 module.exports = {
   preset: "ts-jest",
   setupFilesAfterEnv: ["<rootDir>/setupTests.ts"],
@@ -11,5 +12,8 @@ module.exports = {
     "^entities/(.*)$": "<rootDir>/src/entities/$1",
     "^services/(.*)$": "<rootDir>/src/services/$1",
     "^middleware/(.*)$": "<rootDir>/src/middleware/$1"
+  },
+  transform: {
+    "^.+\\.(t|j)sx?$": "@swc/jest"
   }
 }
