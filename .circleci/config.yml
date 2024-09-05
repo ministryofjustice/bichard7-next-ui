@@ -118,6 +118,7 @@ commands:
       - restore_cache:
           keys:
               - ubuntu-package-cache-v1-{{ checksum "~/bichard7-next-core/.circleci/scripts/install-ms-edge-on-linux.sh" }}
+              - ubuntu-package-cache-v1-
       - run:
           name: Install MS Edge (dev)
           working_directory: ~/bichard7-next-core
