@@ -134,3 +134,6 @@ public/images/govuk-opengraph-image.png
 
 # Ignore auto-generated zap.yaml
 scripts/zap/zap.yaml
+
+# SWC cache
+.swc/
