@@ -20,4 +20,14 @@ describe("formatName", () => {
   it("should handle empty string", () => {
     expect(formatName("")).toBe("%")
   })
+
+  it("should handle a wildcard character anywhere in the string", () => {
+    expect(formatName("Name0%")).toBe("Name0%")
+    expect(formatName("User%Name")).toBe("User%Name")
+    expect(formatName("%Name")).toBe("%Name")
+  })
+
+  it('should still replace spaces and append "%" at the end if no wildcard is present', () => {
+    expect(formatName("Name 0")).toBe("Name%0%")
+  })
 })
