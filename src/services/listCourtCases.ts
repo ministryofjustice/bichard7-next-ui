@@ -11,6 +11,7 @@ import User from "./entities/User"
 import filterByReasonAndResolutionStatus from "./filters/filterByReasonAndResolutionStatus"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 import leftJoinAndSelectTriggersQuery from "./queries/leftJoinAndSelectTriggersQuery"
+import QueryColumns from "./QueryColumns"
 
 const listCourtCases = async (
   connection: DataSource,
@@ -31,34 +32,13 @@ const listCourtCases = async (
     resolvedByUsername,
     asn
   }: CaseListQueryParams,
-  user: User
+  user: User,
+  selectColumns: string[] = QueryColumns.CaseListQuery
 ): PromiseResult<ListCourtCaseResult> => {
   const pageNumValidated = (page ? page : 1) - 1 // -1 because the db index starts at 0
   const maxPageItemsValidated = maxPageItems ? maxPageItems : 25
   const repository = connection.getRepository(CourtCase)
-  let query = repository
-    .createQueryBuilder("courtCase")
-    .select([
-      "courtCase.errorId",
-      "courtCase.triggerCount",
-      "courtCase.isUrgent",
-      "courtCase.asn",
-      "courtCase.errorReport",
-      "courtCase.errorReason",
-      "courtCase.triggerReason",
-      "courtCase.errorCount",
-      "courtCase.errorStatus",
-      "courtCase.triggerStatus",
-      "courtCase.courtDate",
-      "courtCase.ptiurn",
-      "courtCase.courtName",
-      "courtCase.resolutionTimestamp",
-      "courtCase.errorResolvedBy",
-      "courtCase.triggerResolvedBy",
-      "courtCase.defendantName",
-      "courtCase.errorLockedByUsername",
-      "courtCase.triggerLockedByUsername"
-    ])
+  let query = repository.createQueryBuilder("courtCase").select(selectColumns)
   query = courtCasesByOrganisationUnitQuery(query, user)
   leftJoinAndSelectTriggersQuery(query, user.excludedTriggers, caseState ?? "Unresolved")
     .leftJoinAndSelect("courtCase.notes", "note")
