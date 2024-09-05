@@ -10,7 +10,7 @@ import User from "./entities/User"
 import filterByReasonAndResolutionStatus from "./filters/filterByReasonAndResolutionStatus"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 import leftJoinAndSelectTriggersQuery from "./queries/leftJoinAndSelectTriggersQuery"
-import { formatName } from "helpers.ts/splitName"
+import { formatName } from "helpers/formatName"
 
 const listCourtCases = async (
   connection: DataSource,
