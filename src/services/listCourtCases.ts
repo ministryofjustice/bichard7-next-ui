@@ -10,16 +10,7 @@ import User from "./entities/User"
 import filterByReasonAndResolutionStatus from "./filters/filterByReasonAndResolutionStatus"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 import leftJoinAndSelectTriggersQuery from "./queries/leftJoinAndSelectTriggersQuery"
-
-function formatName(name: string) {
-  let splitName = name.replace(/\*|\s+/g, "%")
-
-  if (!splitName.endsWith("%")) {
-    splitName = `${splitName}%`
-  }
-
-  return splitName
-}
+import { formatName } from "helpers.ts/splitName"
 
 const listCourtCases = async (
   connection: DataSource,
