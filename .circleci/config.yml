@@ -17,6 +17,8 @@ commands:
       - node_install
       - node/install-packages:
           include-branch-in-cache-key: true
+          cache-path: ~/project/node_modules
+          override-ci-command: npm install
       - checkout_core
       - run:
           name: Set GB locale
