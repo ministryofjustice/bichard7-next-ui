@@ -1,10 +1,10 @@
+import Badge, { BadgeColours } from "components/Badge"
 import AutoSave from "components/EditableFields/AutoSave"
 import { useCourtCase } from "context/CourtCaseContext"
 import { useCallback, useEffect, useState } from "react"
+import type { Candidates } from "types/OffenceMatching"
 import offenceAlreadySelected from "utils/offenceMatcher/offenceAlreadySelected"
 import offenceMatcherSelectValue from "utils/offenceMatcher/offenceMatcherSelectValue"
-import Badge, { BadgeColours } from "../../../../../../components/Badge"
-import type { Candidates } from "../../../../../../types/OffenceMatching"
 
 interface Props {
   offenceIndex: number

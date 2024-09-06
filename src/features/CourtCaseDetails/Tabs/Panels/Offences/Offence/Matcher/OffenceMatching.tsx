@@ -10,8 +10,8 @@ import getExceptionMessage from "utils/offenceMatcher/getExceptionMessage"
 import getOffenceMatchingException from "utils/offenceMatcher/getOffenceMatchingException"
 import isEnabled from "utils/offenceMatcher/isEnabled"
 import offenceMatchingExceptions from "utils/offenceMatcher/offenceMatchingExceptions"
-import findCandidates from "../../../../../../utils/offenceMatcher/findCandidates"
-import { TableRow } from "../../TableRow"
+import findCandidates from "../../../../../../../utils/offenceMatcher/findCandidates"
+import { TableRow } from "../../../TableRow"
 import OffenceMatcher from "./OffenceMatcher"
 
 type OffenceMatchingProps = {
