@@ -94,7 +94,7 @@ describe("listCourtCases", () => {
         { errorResolvedBy: "User Name03" }
       ])
 
-      const result = await listCourtCases(dataSource, { maxPageItems: 100, resolvedByUsername: "Name0%" }, testUser)
+      const result = await listCourtCases(dataSource, { maxPageItems: 100, resolvedByUsername: "%Name0%" }, testUser)
       expect(isError(result)).toBe(false)
       const { result: cases } = result as ListCourtCaseResult
 
