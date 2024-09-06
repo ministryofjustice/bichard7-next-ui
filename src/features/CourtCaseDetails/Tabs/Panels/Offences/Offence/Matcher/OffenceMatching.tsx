@@ -11,6 +11,7 @@ import isEnabled from "utils/offenceMatcher/isEnabled"
 import offenceMatchingExceptions from "utils/offenceMatcher/offenceMatchingExceptions"
 import { TableRow } from "../../../TableRow"
 import TableRowForOffenceMatcher from "./TableRows/TableRowForOffenceMatcher"
+import TableRowForOffenceMatchingBadge from "./TableRows/TableRowForOffenceMatchingBadge"
 
 type OffenceMatchingProps = {
   offenceIndex: number
@@ -27,7 +28,7 @@ export const OffenceMatching = ({
   exceptions,
   isCaseLockedToCurrentUser
 }: OffenceMatchingProps) => {
-  const { courtCase, savedAmendments } = useCourtCase()
+  const { courtCase } = useCourtCase()
   const currentUser = useCurrentUser()
 
   const offenceMatchingException = isCaseUnresolved && getOffenceMatchingException(exceptions, offenceIndex)
@@ -37,8 +38,6 @@ export const OffenceMatching = ({
     isEnabled(currentUser) && exceptions.some((e) => offenceMatchingExceptions.offenceNotMatched.includes(e.code))
   const userCanMatchOffence =
     courtCase.errorLockedByUsername === currentUser?.username && courtCase.errorStatus === "Unresolved"
-
-  const updatedOffence = savedAmendments.offenceReasonSequence?.find((o) => o.offenceIndex === offenceIndex)
 
   return (
     <>
@@ -51,19 +50,9 @@ export const OffenceMatching = ({
             isCaseLockedToCurrentUser={isCaseLockedToCurrentUser}
           />
         ) : (
-          <TableRow
-            label="Matched PNC offence"
-            value={
-              <>
-                <div>{offence.CriminalProsecutionReference.OffenceReasonSequence}</div>
-                <Badge
-                  isRendered={true}
-                  colour={BadgeColours.Purple}
-                  label={!updatedOffence ? "UNMATCHED" : updatedOffence.value === 0 ? "ADDED IN COURT" : "MATCHED"}
-                  className="moj-badge--large"
-                />
-              </>
-            }
+          <TableRowForOffenceMatchingBadge
+            offenceIndex={offenceIndex}
+            offenceReasonSequence={offence.CriminalProsecutionReference.OffenceReasonSequence}
           />
         )}
       </ConditionalRender>
