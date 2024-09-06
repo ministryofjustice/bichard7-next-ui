@@ -1,7 +1,6 @@
 import { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import Badge, { BadgeColours } from "components/Badge"
 import ConditionalRender from "components/ConditionalRender"
-import ErrorPromptMessage from "components/ErrorPromptMessage"
 import ExceptionFieldTableRow from "components/ExceptionFieldTableRow"
 import { useCourtCase } from "context/CourtCaseContext"
 import { useCurrentUser } from "context/CurrentUserContext"
@@ -10,9 +9,8 @@ import getExceptionMessage from "utils/offenceMatcher/getExceptionMessage"
 import getOffenceMatchingException from "utils/offenceMatcher/getOffenceMatchingException"
 import isEnabled from "utils/offenceMatcher/isEnabled"
 import offenceMatchingExceptions from "utils/offenceMatcher/offenceMatchingExceptions"
-import findCandidates from "../../../../../../../utils/offenceMatcher/findCandidates"
 import { TableRow } from "../../../TableRow"
-import OffenceMatcher from "./OffenceMatcher"
+import TableRowForOffenceMatcher from "./TableRows/TableRowForOffenceMatcher"
 
 type OffenceMatchingProps = {
   offenceIndex: number
@@ -48,18 +46,10 @@ export const OffenceMatching = ({
       we should display the PNC sequence number input box below. */}
       <ConditionalRender isRendered={displayOffenceMatcher}>
         {offenceMatchingException && userCanMatchOffence ? (
-          <ExceptionFieldTableRow
-            label={"Matched PNC offence"}
-            value={
-              <OffenceMatcher
-                offenceIndex={offenceIndex}
-                candidates={findCandidates(courtCase, offenceIndex)}
-                isCaseLockedToCurrentUser={isCaseLockedToCurrentUser}
-              />
-            }
-          >
-            <ErrorPromptMessage message={offenceMatchingExceptionMessage} />
-          </ExceptionFieldTableRow>
+          <TableRowForOffenceMatcher
+            offenceIndex={offenceIndex}
+            isCaseLockedToCurrentUser={isCaseLockedToCurrentUser}
+          />
         ) : (
           <TableRow
             label="Matched PNC offence"
