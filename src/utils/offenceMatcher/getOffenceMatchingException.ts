@@ -14,10 +14,6 @@ type GetOffenceMatchingExceptionResult =
     }
   | undefined
 
-const getOffenceMatchingExceptions = (exceptions: Exception[]): Exception[] => {
-  return exceptions.filter((exception) => offenceMatchingExceptions.offenceNotMatched.includes(exception.code))
-}
-
 const getOffenceMatchingException = (
   exceptions: Exception[],
   offenceIndex: number
@@ -48,5 +44,5 @@ const getOffenceMatchingException = (
   }
 }
 
-export { getOffenceMatchingException, getOffenceMatchingExceptions }
+export default getOffenceMatchingException
 export type { GetOffenceMatchingExceptionResult }

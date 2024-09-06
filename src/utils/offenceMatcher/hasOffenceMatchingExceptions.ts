@@ -1,10 +1,6 @@
 import { Exception } from "types/exceptions"
-import offenceMatchingExceptions from "./offenceMatchingExceptions"
+import getOffenceMatchingExceptions from "./getOffenceMatchingExceptions"
 
-const filterOffenceMatchingException = (exceptions: Exception[]): Exception[] =>
-  exceptions.filter((exception) => offenceMatchingExceptions.offenceNotMatched.includes(exception.code))
+const hasOffenceMatchingExceptions = (exceptions: Exception[]) => getOffenceMatchingExceptions(exceptions).length > 0
 
-const hasOffenceMatchingExceptions = (exceptions: Exception[]) => filterOffenceMatchingException(exceptions).length > 0
-
-export { filterOffenceMatchingException }
 export default hasOffenceMatchingExceptions
