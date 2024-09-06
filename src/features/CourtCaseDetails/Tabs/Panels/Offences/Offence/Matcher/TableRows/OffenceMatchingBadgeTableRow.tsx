@@ -2,15 +2,15 @@ import Badge, { BadgeColours } from "components/Badge"
 import { useCourtCase } from "context/CourtCaseContext"
 import { TableRow } from "features/CourtCaseDetails/Tabs/Panels/TableRow"
 
-interface TableRowForNumericalInputProps {
+interface OffenceMatchingBadgeTableRowProps {
   offenceIndex: number
-  offenceReasonSequence: string | null | undefined
+  offenceReasonSequence?: string | null
 }
 
-const TableRowForOffenceMatchingBadge = ({
+const OffenceMatchingBadgeTableRow = ({
   offenceIndex,
   offenceReasonSequence
-}: TableRowForNumericalInputProps): JSX.Element => {
+}: OffenceMatchingBadgeTableRowProps): JSX.Element => {
   const { savedAmendments } = useCourtCase()
   const updatedOffence = savedAmendments.offenceReasonSequence?.find((o) => o.offenceIndex === offenceIndex)
 
@@ -32,4 +32,4 @@ const TableRowForOffenceMatchingBadge = ({
   )
 }
 
-export default TableRowForOffenceMatchingBadge
+export default OffenceMatchingBadgeTableRow

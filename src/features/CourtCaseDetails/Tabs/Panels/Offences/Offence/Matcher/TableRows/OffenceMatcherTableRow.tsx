@@ -5,15 +5,15 @@ import findCandidates from "utils/offenceMatcher/findCandidates"
 import getExceptionMessage from "utils/offenceMatcher/getExceptionMessage"
 import OffenceMatcher from "../OffenceMatcher"
 
-interface TableRowForOffenceMatcherProps {
+interface OffenceMatcherTableRowProps {
   offenceIndex: number
   isCaseLockedToCurrentUser: boolean
 }
 
-const TableRowForOffenceMatcher = ({
+const OffenceMatcherTableRow = ({
   offenceIndex,
   isCaseLockedToCurrentUser
-}: TableRowForOffenceMatcherProps): JSX.Element => {
+}: OffenceMatcherTableRowProps): JSX.Element => {
   const { courtCase } = useCourtCase()
   const offenceMatchingExceptionMessage = getExceptionMessage(courtCase, offenceIndex)
 
@@ -33,4 +33,4 @@ const TableRowForOffenceMatcher = ({
   )
 }
 
-export default TableRowForOffenceMatcher
+export default OffenceMatcherTableRow

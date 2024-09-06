@@ -1,7 +1,5 @@
 import { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
-import Badge, { BadgeColours } from "components/Badge"
 import ConditionalRender from "components/ConditionalRender"
-import ExceptionFieldTableRow from "components/ExceptionFieldTableRow"
 import { useCourtCase } from "context/CourtCaseContext"
 import { useCurrentUser } from "context/CurrentUserContext"
 import { Exception } from "types/exceptions"
@@ -9,9 +7,11 @@ import getExceptionMessage from "utils/offenceMatcher/getExceptionMessage"
 import getOffenceMatchingException from "utils/offenceMatcher/getOffenceMatchingException"
 import isEnabled from "utils/offenceMatcher/isEnabled"
 import offenceMatchingExceptions from "utils/offenceMatcher/offenceMatchingExceptions"
-import { TableRow } from "../../../TableRow"
-import TableRowForOffenceMatcher from "./TableRows/TableRowForOffenceMatcher"
-import TableRowForOffenceMatchingBadge from "./TableRows/TableRowForOffenceMatchingBadge"
+
+import LegacySequencingBadgeTableRow from "./TableRows/LegacySequencingBadgeTableRow"
+import LegacySequencingMessageTableRow from "./TableRows/LegacySequencingMessageTableRow"
+import OffenceMatcherTableRow from "./TableRows/OffenceMatcherTableRow"
+import OffenceMatchingBadgeTableRow from "./TableRows/OffenceMatchingBadgeTableRow"
 
 type OffenceMatchingProps = {
   offenceIndex: number
@@ -45,12 +45,9 @@ export const OffenceMatching = ({
       we should display the PNC sequence number input box below. */}
       <ConditionalRender isRendered={displayOffenceMatcher}>
         {offenceMatchingException && userCanMatchOffence ? (
-          <TableRowForOffenceMatcher
-            offenceIndex={offenceIndex}
-            isCaseLockedToCurrentUser={isCaseLockedToCurrentUser}
-          />
+          <OffenceMatcherTableRow offenceIndex={offenceIndex} isCaseLockedToCurrentUser={isCaseLockedToCurrentUser} />
         ) : (
-          <TableRowForOffenceMatchingBadge
+          <OffenceMatchingBadgeTableRow
             offenceIndex={offenceIndex}
             offenceReasonSequence={offence.CriminalProsecutionReference.OffenceReasonSequence}
           />
@@ -60,27 +57,13 @@ export const OffenceMatching = ({
       {/* PNC sequence number */}
       <ConditionalRender isRendered={!displayOffenceMatcher}>
         {offenceMatchingException ? (
-          <ExceptionFieldTableRow
-            badgeText={offenceMatchingException.badge}
-            label={"PNC sequence number"}
+          <LegacySequencingMessageTableRow
+            exception={offenceMatchingException}
             message={offenceMatchingExceptionMessage}
-          >
-            {" "}
-            <>
-              {"Court Case Reference:"}
-              <br />
-              {courtCase.courtReference}
-            </>
-          </ExceptionFieldTableRow>
+          />
         ) : (
-          <TableRow
-            label="PNC sequence number"
-            value={
-              <>
-                <div>{offence.CriminalProsecutionReference.OffenceReasonSequence}</div>
-                <Badge isRendered={true} colour={BadgeColours.Purple} label="Matched" className="moj-badge--large" />
-              </>
-            }
+          <LegacySequencingBadgeTableRow
+            offenceReasonSequence={offence.CriminalProsecutionReference.OffenceReasonSequence}
           />
         )}
       </ConditionalRender>
