@@ -7,17 +7,15 @@ import offenceMatchingExceptions from "./offenceMatchingExceptions"
 
 const getOffenceReasonSequencePath = (offenceIndex: number) => errorPaths.offence(offenceIndex).reasonSequence
 
-type GetOffenceMatchingExceptionResult =
-  | {
-      code: ExceptionCode
-      badge: ExceptionBadgeType.AddedByCourt | ExceptionBadgeType.Unmatched
-    }
-  | undefined
+type OffenceMatchingException = {
+  code: ExceptionCode
+  badge: ExceptionBadgeType.AddedByCourt | ExceptionBadgeType.Unmatched
+}
 
 const getOffenceMatchingException = (
   exceptions: Exception[],
   offenceIndex: number
-): GetOffenceMatchingExceptionResult => {
+): OffenceMatchingException | undefined => {
   const offenceMatchingException = exceptions.find((exception) => {
     const sequencePath = getOffenceReasonSequencePath(offenceIndex)
 
@@ -45,4 +43,4 @@ const getOffenceMatchingException = (
 }
 
 export default getOffenceMatchingException
-export type { GetOffenceMatchingExceptionResult }
+export type { OffenceMatchingException }
