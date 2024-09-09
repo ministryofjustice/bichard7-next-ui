@@ -109,3 +109,6 @@ cypress/screenshots
 
 # SWC cache
 .swc/
+
+# CI files
+.circleci/
