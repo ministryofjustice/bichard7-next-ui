@@ -187,7 +187,6 @@ jobs:
   save-docker-images:
     machine:
       image: ubuntu-2204:current
-      docker_layer_caching: true
     resource_class: xlarge
     steps:
       - attach_workspace:
@@ -431,7 +430,6 @@ workflows:
   build-and-test:
     jobs:
       - build-ui
-      - save-docker-images
       - lint
       - unit_test
       - integration_test
@@ -447,31 +445,31 @@ workflows:
           ms-edge: true
           requires:
             - build-ui
+
+      - save-docker-images:
+          requires:
+            - build-ui
+
       - cypress_e2e_tests:
           name: cypress_e2e_tests
           ms-edge: false
           requires:
-            - build-ui
             - save-docker-images
       - cypress_e2e_tests:
           name: cypress_e2e_tests_ms_edge
           ms-edge: true
           requires:
-            - build-ui
             - save-docker-images
       - cucumber_e2e_tests:
           name: cucumber_e2e_tests
           ms-edge: false
           requires:
-            - build-ui
             - save-docker-images
       - cucumber_e2e_tests:
           name: cucumber_e2e_tests_ms_edge
           ms-edge: true
           requires:
-            - build-ui
             - save-docker-images
       - zap_scanner:
           requires:
-            - build-ui
             - save-docker-images
