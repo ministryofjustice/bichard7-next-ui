@@ -1,24 +1,23 @@
 import ExceptionCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/ExceptionCode"
 import type { Exception } from "types/exceptions"
 import { ExceptionBadgeType } from "utils/exceptions/exceptionBadgeType"
-import type { GetOffenceMatchingExceptionResult } from "./getOffenceMatchingException"
 import getOffenceMatchingException from "./getOffenceMatchingException"
 
 describe("getOffenceMatchingException", () => {
   it("returns undefined when given an empty array", () => {
-    const result: GetOffenceMatchingExceptionResult = getOffenceMatchingException([], 0)
+    const result = getOffenceMatchingException([], 0)
     expect(result).toBeUndefined()
   })
 
   it("returns exception with AddedByCourt badge when given an exception in noOffencesMatched array", () => {
     const exception: Exception = { code: ExceptionCode.HO100507, path: ["test"] }
-    const result: GetOffenceMatchingExceptionResult = getOffenceMatchingException([exception], 0)
+    const result = getOffenceMatchingException([exception], 0)
     expect(result).toEqual({ code: ExceptionCode.HO100507, badge: ExceptionBadgeType.AddedByCourt })
   })
 
   it("returns exception with Unmatched badge when given an exception in noOffencesMatched array", () => {
     const exception: Exception = { code: ExceptionCode.HO100304, path: ["test"] }
-    const result: GetOffenceMatchingExceptionResult = getOffenceMatchingException([exception], 0)
+    const result = getOffenceMatchingException([exception], 0)
     expect(result).toEqual({ code: ExceptionCode.HO100304, badge: ExceptionBadgeType.Unmatched })
   })
 
@@ -35,7 +34,7 @@ describe("getOffenceMatchingException", () => {
         "OffenceReasonSequence"
       ]
     }
-    const result: GetOffenceMatchingExceptionResult = getOffenceMatchingException([exception], 1)
+    const result = getOffenceMatchingException([exception], 1)
     expect(result).toEqual({ code: ExceptionCode.HO100310, badge: ExceptionBadgeType.Unmatched })
   })
 
@@ -52,7 +51,7 @@ describe("getOffenceMatchingException", () => {
         "OffenceReasonSequence"
       ]
     }
-    const result: GetOffenceMatchingExceptionResult = getOffenceMatchingException([exception], 2)
+    const result = getOffenceMatchingException([exception], 2)
     expect(result).toBeUndefined()
   })
 
@@ -61,7 +60,7 @@ describe("getOffenceMatchingException", () => {
       { code: ExceptionCode.HO100507, path: ["test"] },
       { code: ExceptionCode.HO100304, path: ["test"] }
     ]
-    const result: GetOffenceMatchingExceptionResult = getOffenceMatchingException(exceptions, 1)
+    const result = getOffenceMatchingException(exceptions, 1)
     expect(result).toEqual({ code: ExceptionCode.HO100507, badge: ExceptionBadgeType.AddedByCourt })
   })
 
@@ -92,7 +91,7 @@ describe("getOffenceMatchingException", () => {
         ]
       }
     ]
-    const result: GetOffenceMatchingExceptionResult = getOffenceMatchingException(exceptions, 2)
+    const result = getOffenceMatchingException(exceptions, 2)
     expect(result).toEqual({ code: ExceptionCode.HO100312, badge: ExceptionBadgeType.Unmatched })
   })
 
@@ -112,7 +111,7 @@ describe("getOffenceMatchingException", () => {
         ]
       }
     ]
-    const result: GetOffenceMatchingExceptionResult = getOffenceMatchingException(exceptions, 1)
+    const result = getOffenceMatchingException(exceptions, 1)
     expect(result).toEqual({ code: ExceptionCode.HO100507, badge: ExceptionBadgeType.AddedByCourt })
   })
 })
