@@ -159,10 +159,12 @@ const listCourtCases = async (
   // Existing filters
   filterByReasonAndResolutionStatus(query, user, reason, reasonCodes, caseState, resolvedByUsername)
 
-  if (caseState === "Resolved" && resolvedDateRange) {
-    query
-      .andWhere({ resolutionTimestamp: MoreThanOrEqual(resolvedDateRange?.from) })
-      .andWhere({ resolutionTimestamp: LessThanOrEqual(resolvedDateRange?.to) })
+  if (caseState === "Resolved" && resolvedDateRange?.from) {
+    query.andWhere({ resolutionTimestamp: MoreThanOrEqual(resolvedDateRange?.from) })
+  }
+
+  if (caseState === "Resolved" && resolvedDateRange?.to) {
+    query.andWhere({ resolutionTimestamp: LessThanOrEqual(resolvedDateRange?.to) })
   }
 
   if (allocatedToUserName) {
