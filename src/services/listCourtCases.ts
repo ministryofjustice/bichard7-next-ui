@@ -10,6 +10,7 @@ import User from "./entities/User"
 import filterByReasonAndResolutionStatus from "./filters/filterByReasonAndResolutionStatus"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 import leftJoinAndSelectTriggersQuery from "./queries/leftJoinAndSelectTriggersQuery"
+import QueryColumns from "./QueryColumns"
 import { formatName } from "../helpers/formatName"
 
 const listCourtCases = async (
@@ -32,35 +33,13 @@ const listCourtCases = async (
     resolvedDateRange,
     asn
   }: CaseListQueryParams,
-  user: User
+  user: User,
+  selectColumns: string[] = QueryColumns.CaseListQuery
 ): PromiseResult<ListCourtCaseResult> => {
   const pageNumValidated = (page ? page : 1) - 1 // -1 because the db index starts at 0
   const maxPageItemsValidated = maxPageItems ? maxPageItems : 25
   const repository = connection.getRepository(CourtCase)
-  let query = repository
-    .createQueryBuilder("courtCase")
-    .select([
-      "courtCase.errorId",
-      "courtCase.triggerCount",
-      "courtCase.isUrgent",
-      "courtCase.asn",
-      "courtCase.errorReport",
-      "courtCase.errorReason",
-      "courtCase.triggerReason",
-      "courtCase.errorCount",
-      "courtCase.errorStatus",
-      "courtCase.triggerStatus",
-      "courtCase.courtDate",
-      "courtCase.ptiurn",
-      "courtCase.courtName",
-      "courtCase.resolutionTimestamp",
-      "courtCase.errorResolvedBy",
-      "courtCase.triggerResolvedBy",
-      "courtCase.defendantName",
-      "courtCase.errorLockedByUsername",
-      "courtCase.triggerLockedByUsername"
-    ])
-
+  let query = repository.createQueryBuilder("courtCase").select(selectColumns)
   query = courtCasesByOrganisationUnitQuery(query, user)
 
   leftJoinAndSelectTriggersQuery(query, user.excludedTriggers, caseState ?? "Unresolved")
@@ -180,10 +159,12 @@ const listCourtCases = async (
   // Existing filters
   filterByReasonAndResolutionStatus(query, user, reason, reasonCodes, caseState, resolvedByUsername)
 
-  if (caseState === "Resolved" && resolvedDateRange) {
-    query
-      .andWhere({ resolutionTimestamp: MoreThanOrEqual(resolvedDateRange?.from) })
-      .andWhere({ resolutionTimestamp: LessThanOrEqual(resolvedDateRange?.to) })
+  if (caseState === "Resolved" && resolvedDateRange?.from) {
+    query.andWhere({ resolutionTimestamp: MoreThanOrEqual(resolvedDateRange?.from) })
+  }
+
+  if (caseState === "Resolved" && resolvedDateRange?.to) {
+    query.andWhere({ resolutionTimestamp: LessThanOrEqual(resolvedDateRange?.to) })
   }
 
   if (allocatedToUserName) {
