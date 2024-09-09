@@ -3,7 +3,6 @@ import { CaseListQueryParams, LockedState } from "types/CaseListQueryParams"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import Permission from "types/Permission"
 import PromiseResult from "types/PromiseResult"
-
 import { isError } from "types/Result"
 import CourtCase from "./entities/CourtCase"
 import getLongTriggerCode from "./entities/transformers/getLongTriggerCode"
@@ -12,6 +11,7 @@ import filterByReasonAndResolutionStatus from "./filters/filterByReasonAndResolu
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 import leftJoinAndSelectTriggersQuery from "./queries/leftJoinAndSelectTriggersQuery"
 import QueryColumns from "./QueryColumns"
+import { formatName } from "helpers/formatName"
 
 const listCourtCases = async (
   connection: DataSource,
@@ -41,6 +41,7 @@ const listCourtCases = async (
   const repository = connection.getRepository(CourtCase)
   let query = repository.createQueryBuilder("courtCase").select(selectColumns)
   query = courtCasesByOrganisationUnitQuery(query, user)
+
   leftJoinAndSelectTriggersQuery(query, user.excludedTriggers, caseState ?? "Unresolved")
     .leftJoinAndSelect("courtCase.notes", "note")
     .leftJoin("courtCase.errorLockedByUser", "errorLockedByUser")
@@ -66,27 +67,31 @@ const listCourtCases = async (
 
   // Filters
   if (defendantName) {
-    let splitDefendantName = defendantName.replace(/\*|\s+/g, "%")
+    const splitDefendantName = formatName(defendantName)
 
-    if (!splitDefendantName.endsWith("%")) {
-      splitDefendantName = `${splitDefendantName}%`
-    }
-
-    query.andWhere({ defendantName: ILike(splitDefendantName) })
+    query.andWhere({
+      defendantName: ILike(splitDefendantName)
+    })
   }
 
   if (courtName) {
-    const courtNameLike = { courtName: ILike(`%${courtName}%`) }
+    const courtNameLike = {
+      courtName: ILike(`%${courtName}%`)
+    }
     query.andWhere(courtNameLike)
   }
 
   if (ptiurn) {
-    const ptiurnLike = { ptiurn: ILike(`%${ptiurn}%`) }
+    const ptiurnLike = {
+      ptiurn: ILike(`%${ptiurn}%`)
+    }
     query.andWhere(ptiurnLike)
   }
 
   if (asn) {
-    query.andWhere({ asn: ILike(`%${asn}%`) })
+    query.andWhere({
+      asn: ILike(`%${asn}%`)
+    })
   }
 
   if (reasonCodes?.length) {
@@ -99,7 +104,7 @@ const listCourtCases = async (
           .orWhere("courtCase.error_report ilike any(array[:...firstExceptions])", {
             firstExceptions: reasonCodes.map((reasonCode) => `${reasonCode}||%`)
           })
-          // match exceptions ins the middle of the error report
+          // match exceptions in the middle of the error report
           .orWhere("courtCase.error_report ilike any(array[:...exceptions])", {
             exceptions: reasonCodes.map((reasonCode) => `% ${reasonCode}||%`)
           })
@@ -115,8 +120,12 @@ const listCourtCases = async (
             qb.orWhere(
               new Brackets((dateRangeQuery) => {
                 dateRangeQuery
-                  .andWhere({ courtDate: MoreThanOrEqual(dateRange.from) })
-                  .andWhere({ courtDate: LessThanOrEqual(dateRange.to) })
+                  .andWhere({
+                    courtDate: MoreThanOrEqual(dateRange.from)
+                  })
+                  .andWhere({
+                    courtDate: LessThanOrEqual(dateRange.to)
+                  })
               })
             )
           })
@@ -124,11 +133,30 @@ const listCourtCases = async (
       )
     } else {
       query
-        .andWhere({ courtDate: MoreThanOrEqual(courtDateRange.from) })
-        .andWhere({ courtDate: LessThanOrEqual(courtDateRange.to) })
+        .andWhere({
+          courtDate: MoreThanOrEqual(courtDateRange.from)
+        })
+        .andWhere({
+          courtDate: LessThanOrEqual(courtDateRange.to)
+        })
     }
   }
 
+  if (resolvedByUsername) {
+    const splitResolvedByUsername = formatName(resolvedByUsername)
+
+    query.andWhere(
+      new Brackets((qb) => {
+        qb.where({
+          errorResolvedBy: ILike(splitResolvedByUsername)
+        }).orWhere({
+          triggerResolvedBy: ILike(splitResolvedByUsername)
+        })
+      })
+    )
+  }
+
+  // Existing filters
   filterByReasonAndResolutionStatus(query, user, reason, reasonCodes, caseState, resolvedByUsername)
 
   if (caseState === "Resolved" && resolvedDateRange) {
@@ -140,7 +168,9 @@ const listCourtCases = async (
   if (allocatedToUserName) {
     query.andWhere(
       new Brackets((qb) => {
-        qb.where({ errorLockedByUsername: allocatedToUserName }).orWhere({
+        qb.where({
+          errorLockedByUsername: allocatedToUserName
+        }).orWhere({
           triggerLockedByUsername: allocatedToUserName
         })
       })
@@ -151,13 +181,21 @@ const listCourtCases = async (
     if (lockedState === LockedState.Locked) {
       query.andWhere(
         new Brackets((qb) => {
-          qb.where({ errorLockedByUsername: Not(IsNull()) }).orWhere({ triggerLockedByUsername: Not(IsNull()) })
+          qb.where({
+            errorLockedByUsername: Not(IsNull())
+          }).orWhere({
+            triggerLockedByUsername: Not(IsNull())
+          })
         })
       )
     } else if (lockedState === LockedState.Unlocked) {
       query.andWhere(
         new Brackets((qb) => {
-          qb.where({ errorLockedByUsername: IsNull() }).andWhere({ triggerLockedByUsername: IsNull() })
+          qb.where({
+            errorLockedByUsername: IsNull()
+          }).andWhere({
+            triggerLockedByUsername: IsNull()
+          })
         })
       )
     }
@@ -168,11 +206,15 @@ const listCourtCases = async (
   }
 
   if (!user.hasAccessTo[Permission.Triggers]) {
-    query.andWhere({ errorCount: MoreThan(0) })
+    query.andWhere({
+      errorCount: MoreThan(0)
+    })
   }
 
   if (!user.hasAccessTo[Permission.Exceptions]) {
-    query.andWhere({ triggerCount: MoreThan(0) })
+    query.andWhere({
+      triggerCount: MoreThan(0)
+    })
   }
 
   const result = await query.getManyAndCount().catch((error: Error) => error)

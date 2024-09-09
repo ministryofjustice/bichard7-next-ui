@@ -539,6 +539,7 @@ describe("listCourtCases", () => {
       expect(cases[1].ptiurn).toStrictEqual(ptiurnToIncludeWithPartialMatch)
     })
   })
+
   describe("search by reason", () => {
     it("Should list cases when there is a case insensitive match in triggers or exceptions", async () => {
       await insertCourtCasesWithFields(Array.from({ length: 4 }, () => ({ orgForPoliceFilter: orgCode })))
