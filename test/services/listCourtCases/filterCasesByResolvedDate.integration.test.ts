@@ -108,7 +108,7 @@ describe("Filter cases by resolved date", () => {
 
   it("Returns all cases resolved before 'to' if 'from' is ommitted", async () => {
     const resolvedDateRange = {
-      to: new Date("2024-05-05 00:00:.000")
+      to: new Date("2024-05-05 23:59:59.000")
     } as DateRange
     await insertCourtCasesWithFields(
       Array.from(Array(8)).map((_, index) => ({
@@ -125,12 +125,13 @@ describe("Filter cases by resolved date", () => {
       testUser
     )) as ListCourtCaseResult
 
-    expect(result).toHaveLength(4)
-    expect(totalCases).toBe(4)
+    expect(result).toHaveLength(5)
+    expect(totalCases).toBe(5)
     expect(result[0].resolutionTimestamp?.toString()).toBe(new Date(`2024-05-01`).toString())
     expect(result[1].resolutionTimestamp?.toString()).toBe(new Date(`2024-05-02`).toString())
     expect(result[2].resolutionTimestamp?.toString()).toBe(new Date(`2024-05-03`).toString())
     expect(result[3].resolutionTimestamp?.toString()).toBe(new Date(`2024-05-04`).toString())
+    expect(result[4].resolutionTimestamp?.toString()).toBe(new Date(`2024-05-05`).toString())
   })
 
   it("Returns all cases resolved if both 'from' and 'to' are ommitted", async () => {
