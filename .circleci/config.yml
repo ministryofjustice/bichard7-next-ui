@@ -166,12 +166,10 @@ jobs:
   build-ui:
     machine:
       image: ubuntu-2204:current
-      docker_layer_caching: true
     resource_class: xlarge
     steps:
       - checkout
       - checkout_core
-      - install_ms_edge
       - run: ./.circleci/scripts/build-ui.sh
       - run:
           name: Save Docker image
