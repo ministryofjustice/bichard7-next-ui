@@ -192,6 +192,8 @@ jobs:
     steps:
       - attach_workspace:
           at: .
+      - checkout
+      - checkout_core
       - fetch_images:
           IMAGES: nodejs-20-2023 user-service nginx-auth-proxy
       - run:
