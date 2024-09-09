@@ -72,11 +72,6 @@ describe("Filter cases by resolved date", () => {
       testUser
     )) as ListCourtCaseResult
 
-    console.log(
-      "Result: ",
-      result.map((r) => r.resolutionTimestamp)
-    )
-
     expect(result).toHaveLength(5)
     expect(totalCases).toBe(5)
     expect(result[0].resolutionTimestamp?.toString()).toBe(new Date(`2024-05-03`).toString())
