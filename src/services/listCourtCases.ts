@@ -11,7 +11,7 @@ import filterByReasonAndResolutionStatus from "./filters/filterByReasonAndResolu
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 import leftJoinAndSelectTriggersQuery from "./queries/leftJoinAndSelectTriggersQuery"
 import QueryColumns from "./QueryColumns"
-import { formatName } from "helpers/formatName"
+import { formatName } from "../helpers/formatName"
 
 const listCourtCases = async (
   connection: DataSource,
