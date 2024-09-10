@@ -11,12 +11,6 @@ commands:
           name: Clone bichard7-next-core
           command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-core.git ~/bichard7-next-core
 
-  checkout_audit_logging:
-    steps:
-      - run:
-          name: Clone bichard7-next-audit-logging
-          command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-audit-logging.git ~/bichard7-next-audit-logging
-
   install_npm_packages:
     steps:
         - restore_cache:
@@ -36,11 +30,13 @@ commands:
       - node_install
       - install_npm_packages
       - checkout_core
-      - checkout_audit_logging
       - run:
           name: Set GB locale
           working_directory: ~/bichard7-next-core
           command: bash .circleci/scripts/set-locale.sh
+      - run:
+          name: Clone bichard7-next-audit-logging
+          command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-audit-logging.git ~/bichard7-next-audit-logging
 
   fetch_images:
     parameters:
@@ -136,6 +132,10 @@ commands:
   ################### Services
   start_bichard7_legacy:
     steps:
+      - fetch_images:
+          IMAGES: nodejs-20-2023
+      - build_message_forwarder
+      - build_audit_logging_images
       - run:
           name: Start bichard7 legacy
           working_directory: ~/bichard7-next-core
@@ -182,30 +182,6 @@ jobs:
             - .
             - images
 
-  save-docker-images:
-    machine:
-      image: ubuntu-2204:current
-      docker_layer_caching: true
-    resource_class: xlarge
-    steps:
-      - attach_workspace:
-          at: .
-      - checkout
-      - checkout_core
-      - checkout_audit_logging
-      - fetch_images:
-          IMAGES: nodejs-20-2023 user-service nginx-auth-proxy
-      - build_message_forwarder
-      - build_audit_logging_images
-      - run:
-          name: Save Docker images
-          command: bash ./.circleci/scripts/save-docker-images.sh
-      - persist_to_workspace:
-          root: .
-          paths:
-            - .
-            - images
-
   lint:
     machine:
       image: ubuntu-2204:current
@@ -236,9 +212,10 @@ jobs:
       docker_layer_caching: true
     resource_class: xlarge
     steps:
-      - attach_workspace:
-          at: .
       - setup
+      - fetch_images:
+          IMAGES: nodejs-20-2023
+      - build_audit_logging_images
       - start_services:
           SERVICES: activemq localstack db-seed audit-log-api
       - run:
@@ -251,9 +228,10 @@ jobs:
       docker_layer_caching: true
     resource_class: medium
     steps:
-      - attach_workspace:
-          at: .
       - setup
+      - fetch_images:
+          IMAGES: nodejs-20-2023
+      - build_audit_logging_images
       - start_services:
           SERVICES: db-seed audit-log-api localstack
       - run:
@@ -316,8 +294,9 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: Load images
-          command: bash ./.circleci/scripts/load-docker-images.sh
+          name: Load image
+          command: |
+            docker image load < "images/ui:latest"
       - setup
       - when:
           condition:
@@ -328,6 +307,9 @@ jobs:
           command: ./.circleci/scripts/install-cypress.sh 2>&1
           background: true
       - run: npm run install:assets
+      - fetch_images:
+          IMAGES: nodejs-20-2023 user-service nginx-auth-proxy
+      - build_audit_logging_images
       - run:
           name: Wait for cypress install to finish
           command: until [ -f cypressInstalled ]; do sleep 1; done
@@ -355,6 +337,7 @@ jobs:
   cucumber_e2e_tests:
     machine:
       image: ubuntu-2204:current
+      docker_layer_caching: true
     resource_class: xlarge
     parallelism: 10
     parameters:
@@ -371,8 +354,9 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: Load images
-          command: bash ./.circleci/scripts/load-docker-images.sh
+          name: Load image
+          command: |
+            docker image load < "images/ui:latest"
       - setup
       - when:
           condition:
@@ -400,14 +384,19 @@ jobs:
   zap_scanner:
     machine:
       image: ubuntu-2204:current
+      docker_layer_caching: true
     resource_class: xlarge
     steps:
       - attach_workspace:
           at: .
       - run:
-          name: Load images
-          command: bash ./.circleci/scripts/load-docker-images.sh
+          name: Load image
+          command: |
+            docker image load < "images/ui:latest"
       - setup
+      - fetch_images:
+          IMAGES: nodejs-20-2023 user-service nginx-auth-proxy
+      - build_audit_logging_images
       - run:
           command: npm run ui
           working_directory: ~/bichard7-next-core
@@ -426,6 +415,8 @@ workflows:
       - build-ui
       - lint
       - unit_test
+      - integration_test
+      - seed_data
 
       - cypress_component_test:
           name: cypress_component_test
@@ -437,40 +428,26 @@ workflows:
           ms-edge: true
           requires:
             - build-ui
-
-      - save-docker-images:
-          requires:
-            - build-ui
-
-      - seed_data:
-          requires:
-            - save-docker-images
-      - integration_test:
-          requires:
-            - save-docker-images
-
       - cypress_e2e_tests:
           name: cypress_e2e_tests
           ms-edge: false
           requires:
-            - save-docker-images
+            - build-ui
       - cypress_e2e_tests:
           name: cypress_e2e_tests_ms_edge
           ms-edge: true
           requires:
-            - save-docker-images
-
+            - build-ui
       - cucumber_e2e_tests:
           name: cucumber_e2e_tests
           ms-edge: false
           requires:
-            - save-docker-images
+            - build-ui
       - cucumber_e2e_tests:
           name: cucumber_e2e_tests_ms_edge
           ms-edge: true
           requires:
-            - save-docker-images
-
+            - build-ui
       - zap_scanner:
           requires:
-            - save-docker-images
+            - build-ui
