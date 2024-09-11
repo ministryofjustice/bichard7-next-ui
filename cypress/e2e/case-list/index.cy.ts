@@ -32,13 +32,7 @@ describe("Case list", () => {
     })
 
     it("Should display 0 cases when there are no cases 'locked to me' and hide the bottom pagination bar ", () => {
-      const lockUsernames = [
-        "BichardForce01",
-        "BichardForce02",
-        "BichardForce03",
-        null,
-        "A really really really long.name"
-      ]
+      const lockUsernames = ["BichardForce02", "BichardForce03", null, "A really really really long.name"]
       cy.task(
         "insertCourtCasesWithFields",
         lockUsernames.map((username) => ({
