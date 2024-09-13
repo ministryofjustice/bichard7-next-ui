@@ -292,6 +292,7 @@ const Home: NextPage<Props> = (props) => {
               filter={<CourtCaseFilter {...searchParams} />}
               appliedFilters={<AppliedFilters filters={{ ...searchParams }} />}
               courtCaseList={<CourtCaseList courtCases={courtCases} order={oppositeOrder} />}
+              courtCases={courtCases}
               paginationTop={
                 <Pagination
                   pageNum={searchParams.page}
