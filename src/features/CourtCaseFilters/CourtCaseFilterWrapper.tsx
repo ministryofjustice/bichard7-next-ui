@@ -1,7 +1,7 @@
 import { useCurrentUser } from "context/CurrentUserContext"
 import { useEffect, useState } from "react"
 import { Heading } from "govuk-react"
-import { DisplayPartialCourtCase } from "types/display/CourtCases"
+import { useRouter } from "next/router"
 
 interface Props {
   filter: React.ReactNode
@@ -9,7 +9,6 @@ interface Props {
   appliedFilters: React.ReactNode
   paginationTop: React.ReactNode
   paginationBottom: React.ReactNode
-  courtCases: DisplayPartialCourtCase[]
 }
 
 const CourtCaseFilterWrapper: React.FC<Props> = ({
@@ -17,12 +16,12 @@ const CourtCaseFilterWrapper: React.FC<Props> = ({
   appliedFilters,
   courtCaseList,
   paginationTop,
-  paginationBottom,
-  courtCases
+  paginationBottom
 }: Props) => {
   const user = useCurrentUser()
   const filterPanelKey = `is-filter-panel-visible-${user.username}`
   const [isSearchPanelShown, setIsSearchPanelShown] = useState(true)
+  const router = useRouter()
 
   useEffect(() => {
     const filterPanelValue = localStorage.getItem(filterPanelKey)
@@ -75,31 +74,7 @@ const CourtCaseFilterWrapper: React.FC<Props> = ({
               className="govuk-button govuk-button--primary govuk-!-margin-bottom-0"
               type="button"
               onClick={() => {
-                const nullToEmptyReplacer = (_key: string, value: unknown) => {
-                  return null === value ? "" : value
-                }
-
-                const header = Array.from(new Set(courtCases.map((courtCase) => Object.keys(courtCase)).flat()))
-
-                const csv = [
-                  header.join(","),
-                  ...courtCases.map((row) =>
-                    header.map((fieldName) => JSON.stringify(row[fieldName], nullToEmptyReplacer)).join(",")
-                  )
-                ].join("\r\n")
-
-                const universalBom = "\uFEFF"
-                const blobParts = [universalBom + csv]
-                const blobOptions: BlobPropertyBag = {
-                  type: "text/csv;charset=UTF-8"
-                }
-
-                const file = new Blob(blobParts, blobOptions)
-                const link = document.createElement("a")
-
-                link.href = window.URL.createObjectURL(file)
-                link.download = `report.csv`
-                link.click()
+                router.push({ pathname: "/download", query: router.query })
               }}
             >
               {"Export"}
