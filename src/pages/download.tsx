@@ -3,7 +3,6 @@ import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import Head from "next/head"
 import { ParsedUrlQuery } from "querystring"
-import { courtCaseToDisplayPartialCourtCaseDto } from "services/dto/courtCaseDto"
 import getDataSource from "services/getDataSource"
 import listCourtCases from "services/listCourtCases"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
@@ -14,6 +13,8 @@ import withCsrf from "../middleware/withCsrf/withCsrf"
 import CsrfServerSidePropsContext from "../types/CsrfServerSidePropsContext"
 import { extractSearchParamsFromQuery } from "utils/extractSearchParamsFromQuery"
 import { json2csv } from "json-2-csv"
+import { QueryType } from "../services/QueryColumns"
+import { courtCaseToDisplayFullCourtCaseDto } from "services/dto/courtCaseDto"
 
 type Props = {
   reportCsv: string
@@ -38,16 +39,31 @@ export const getServerSideProps = withMultipleServerSideProps(
       }
     }
 
-    const courtCases = await listCourtCases(dataSource, caseListQueryParams, currentUser)
+    const courtCases = await listCourtCases(dataSource, caseListQueryParams, currentUser, QueryType.ReportQuery)
 
     if (isError(courtCases)) {
       throw courtCases
     }
 
-    const displayCases = courtCases.result.map((courtCase) =>
-      courtCaseToDisplayPartialCourtCaseDto(courtCase, currentUser)
+    const csv = json2csv(
+      courtCases.result.map((courtCase) => {
+        const caseDto = courtCaseToDisplayFullCourtCaseDto(courtCase, currentUser)
+        return {
+          hearingDate: caseDto.aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.DateOfHearing,
+          courtName: caseDto.aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHearingLocation,
+          hearingTime: caseDto.aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.TimeOfHearing,
+          defendantAddress: Object.values(
+            caseDto.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Address
+          ).join(", "),
+          dateOfBirth:
+            caseDto.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.DefendantDetail?.BirthDate,
+          PTIRUN: caseDto.aho.AnnotatedHearingOutcome.HearingOutcome.Case.PTIURN,
+          ASN: caseDto.asn,
+          offenceTitles: caseDto.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence,
+          nextCourtAppearance: caseDto.aho.AnnotatedHearingOutcome.HearingOutcome.Hearing
+        }
+      })
     )
-    const csv = json2csv(displayCases)
 
     return {
       props: {

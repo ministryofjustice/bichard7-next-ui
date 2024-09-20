@@ -10,7 +10,8 @@ import User from "./entities/User"
 import filterByReasonAndResolutionStatus from "./filters/filterByReasonAndResolutionStatus"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 import leftJoinAndSelectTriggersQuery from "./queries/leftJoinAndSelectTriggersQuery"
-import QueryColumns from "./QueryColumns"
+import { QueryType } from "./QueryColumns"
+import { CaseListQuerySelection } from "./QueryColumns"
 import { formatName } from "../helpers/formatName"
 
 const listCourtCases = async (
@@ -34,12 +35,17 @@ const listCourtCases = async (
     asn
   }: CaseListQueryParams,
   user: User,
-  selectColumns: string[] = QueryColumns.CaseListQuery
+  queryType: QueryType = QueryType.CaseListQuery
 ): PromiseResult<ListCourtCaseResult> => {
   const pageNumValidated = (page ? page : 1) - 1 // -1 because the db index starts at 0
   const maxPageItemsValidated = maxPageItems ? maxPageItems : 25
   const repository = connection.getRepository(CourtCase)
-  let query = repository.createQueryBuilder("courtCase").select(selectColumns)
+  let query = repository.createQueryBuilder("courtCase")
+
+  if (queryType === QueryType.CaseListQuery) {
+    query.select(CaseListQuerySelection)
+  }
+
   query = courtCasesByOrganisationUnitQuery(query, user)
 
   leftJoinAndSelectTriggersQuery(query, user.excludedTriggers, caseState ?? "Unresolved")
