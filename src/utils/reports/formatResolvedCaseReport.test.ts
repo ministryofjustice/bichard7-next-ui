@@ -1,13 +1,13 @@
-import { DisplayFullCourtCase } from "types/display/CourtCases"
 import formatResolvedCaseReport from "./formatResolvedCaseReport"
 import type { ResolvedCaseReportCase } from "./formatResolvedCaseReport"
 import fs from "fs"
 import generateAho from "../../../test/helpers/generateAho"
-import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/core/lib/parse/parseAhoXml/parseAhoXml"
+import CourtCase from "services/entities/CourtCase"
 
 describe("formatResolvedCourtCasesReport", () => {
   it("returns a list of resolved court cases", () => {
     const ahoXml = fs.readFileSync("test/test-data/AnnotatedHOTemplate.xml").toString()
+    const date = new Date()
     const courtCases = [
       {
         asn: "asn",
@@ -22,18 +22,29 @@ describe("formatResolvedCourtCasesReport", () => {
         errorLockedByUsername: "error-locked-by-user-name",
         isUrgent: false,
         defendantName: "defendant-name",
-        resolutionTimestamp: "2024-09-23T15:50:49.110Z",
-        aho: parseAhoXml(
-          generateAho({
-            firstName: "first-name",
-            lastName: "last-name",
-            ahoTemplate: ahoXml,
-            ptiurn: "ptirun",
-            courtName: "court-name"
-          })
-        )
+        resolutionTimestamp: date,
+        messageReceivedTimestamp: date,
+        hearingOutcome: generateAho({
+          firstName: "first-name",
+          lastName: "last-name",
+          ahoTemplate: ahoXml,
+          ptiurn: "ptirun",
+          courtName: "court-name"
+        }),
+        notes: [
+          {
+            noteText: "note text",
+            user: "user",
+            createdAt: new Date("21-2-2024")
+          },
+          {
+            noteText: "resolved text",
+            user: "user2",
+            createdAt: new Date("21-3-2024")
+          }
+        ]
       }
-    ] as unknown as DisplayFullCourtCase[]
+    ] as unknown as CourtCase[]
 
     const result = formatResolvedCaseReport(courtCases)
 
@@ -45,10 +56,10 @@ describe("formatResolvedCourtCasesReport", () => {
         courtName: "court-name",
         hearingDate: "2011-09-26T00:00:00.000Z",
         caseReference: "97/1626/008395Q",
-        dateTimeRecievedByCJSE: "date-time-recieved-by-cjse",
-        dateTimeResolved: "2024-09-23T15:50:49.110Z",
-        notes: ["note"],
-        resolutionAction: "resolution-action"
+        dateTimeRecievedByCJSE: date.toISOString(),
+        dateTimeResolved: date.toISOString(),
+        notes: ["user: note text", "user2: resolved text"],
+        resolutionAction: "resolved text"
       }
     ] as ResolvedCaseReportCase[])
   })
