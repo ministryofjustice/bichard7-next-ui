@@ -9,7 +9,9 @@ commands:
     steps:
       - run:
           name: Clone bichard7-next-core
-          command: git clone --depth 1 --branch main https://github.com/ministryofjustice/bichard7-next-core.git ~/bichard7-next-core
+          command: |
+            mkdir -p ~/bichard7-next-core
+            git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-core.git ~/bichard7-next-core
 
   install_npm_packages:
     steps:
