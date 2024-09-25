@@ -17,16 +17,20 @@ export interface ResolvedCaseReportCase {
 
 export default (courtCases: CourtCase[]): ResolvedCaseReportCase[] =>
   courtCases.map((courtCase) => {
-    const aho = parseAhoXml(courtCase.hearingOutcome) as AnnotatedHearingOutcome
+    let aho: AnnotatedHearingOutcome | null = null
+
+    if (courtCase.hearingOutcome) {
+      aho = parseAhoXml(courtCase.hearingOutcome) as AnnotatedHearingOutcome
+    }
 
     return {
       ASN: courtCase.asn,
       PTIURN: courtCase.ptiurn,
       defendantName: courtCase.defendantName,
       courtName: courtCase.courtName,
-      hearingDate: aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.DateOfHearing.toISOString(),
-      caseReference: aho.AnnotatedHearingOutcome.HearingOutcome.Case.CourtCaseReferenceNumber || "",
-      dateTimeRecievedByCJSE: courtCase.messageReceivedTimestamp.toISOString(),
+      hearingDate: aho ? aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.DateOfHearing.toISOString() : "",
+      caseReference: aho ? aho.AnnotatedHearingOutcome.HearingOutcome.Case.CourtCaseReferenceNumber || "" : "",
+      dateTimeRecievedByCJSE: courtCase.messageReceivedTimestamp?.toISOString() || "",
       dateTimeResolved: courtCase.resolutionTimestamp?.toISOString() || "",
       notes: courtCase.notes.map((note) => `${note.user}: ${note.noteText}`),
       resolutionAction:
