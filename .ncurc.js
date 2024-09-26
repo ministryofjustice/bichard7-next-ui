@@ -6,13 +6,21 @@
     - Another package does not yet support the latest version
   - @typescript-eslint/parser
     - Another package does not yet support the latest version
+  - date-fns
+    - Date-fns-tz does not yet support the latest version  
 
 
   Skipped:
   - next
     - 13.4.13 causes failures with fetch
 */
-const pinned = ["styled-components", "eslint", "@typescript-eslint/eslint-plugin", "@typescript-eslint/parser"]
+const pinned = [
+  "styled-components",
+  "eslint",
+  "@typescript-eslint/eslint-plugin",
+  "@typescript-eslint/parser",
+  "date-fns"
+]
 const ignored = []
 const skipped = [{ package: "next", version: "13.4.13" }]
 
