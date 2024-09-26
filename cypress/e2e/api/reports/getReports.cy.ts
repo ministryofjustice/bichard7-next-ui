@@ -45,7 +45,8 @@ describe("reports API endpoint", () => {
           errorReport: "HO100321||ds:ArrestSummonsNumber",
           errorReason: "HO100321",
           errorResolvedBy: "GeneralHandler",
-          defendantName: "WAYNE Bruce"
+          defendantName: "WAYNE Bruce",
+          resolutionTimestamp: new Date("2024-09-26 10:44:14.092")
         },
         {
           orgForPoliceFilter: "01",
@@ -60,24 +61,25 @@ describe("reports API endpoint", () => {
       ])
     })
 
-    it("returns a 200 status code", () => {
+    it("returns a 400 if resolved dates not included in query string", () => {
       cy.request({
         method: "GET",
-        url: `/bichard/api/reports/resolved-cases`
+        url: `/bichard/api/reports/resolved-cases`,
+        failOnStatusCode: false
       }).then((response) => {
-        expect(response.status).to.equal(200)
+        expect(response.status).to.equal(400)
       })
     })
 
     it("returns a csv payload", () => {
       cy.request({
         method: "GET",
-        url: `/bichard/api/reports/resolved-cases?order=desc&orderBy=courtDate&reason=All&state=Resolved&lockedState=All`
+        url: `/bichard/api/reports/resolved-cases?resolvedFrom=2024-09-20 00:00:00&resolvedTo=2024-09-26 22:59:59&state=Resolved`
       }).then((response) => {
         expect(response.status).to.equal(200)
         console.log(response.body)
         expect(response.body.report).to.equal(
-          `ASN,PTIURN,defendantName,courtName,hearingDate,caseReference,dateTimeRecievedByCJSE,dateTimeResolved,notes,resolutionAction\n0836FP0100000377244A,Case00000,WAYNE Bruce,Magistrates' Courts Essex Basildon,,,,,[],`
+          `ASN,PTIURN,defendantName,courtName,hearingDate,caseReference,dateTimeRecievedByCJSE,dateTimeResolved,notes,resolutionAction\n0836FP0100000377244A,Case00000,WAYNE Bruce,Magistrates' Courts Essex Basildon,,,,2024-09-26T08:44:14.092Z,[],`
         )
       })
     })

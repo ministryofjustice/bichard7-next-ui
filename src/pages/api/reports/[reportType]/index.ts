@@ -8,7 +8,7 @@ import formatResolvedCaseReport from "utils/reports/formatResolvedCaseReport"
 import { extractSearchParamsFromQuery } from "utils/validateQueryParams"
 
 enum ReportType {
-  "resolved-cases"
+  RESOLVED_CASES = "resolved-cases"
 }
 
 export default async (request: NextApiRequest, response: NextApiResponse) => {
@@ -21,12 +21,19 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
 
   const { req, res, currentUser } = auth
   const { reportType } = req.query
+  const caseListQueryParams = extractSearchParamsFromQuery(req.query, currentUser)
 
-  if (!Object.values(ReportType).includes(reportType as string)) {
-    res.status(404).json({ message: reportType })
+  switch (reportType) {
+    case ReportType.RESOLVED_CASES:
+      if (!caseListQueryParams.resolvedDateRange) {
+        res.status(400).end()
+      }
+      caseListQueryParams.caseState = "Resolved"
+      break
+    default:
+      res.status(404).end()
   }
 
-  const caseListQueryParams = extractSearchParamsFromQuery(req.query, currentUser)
   const dataSource = await getDataSource()
 
   const courtCases = await listCourtCases(dataSource, caseListQueryParams, currentUser)
