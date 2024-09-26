@@ -7,6 +7,10 @@ import { isError } from "types/Result"
 import formatResolvedCaseReport from "utils/reports/formatResolvedCaseReport"
 import { extractSearchParamsFromQuery } from "utils/validateQueryParams"
 
+enum ReportType {
+  "resolved-cases"
+}
+
 export default async (request: NextApiRequest, response: NextApiResponse) => {
   const allowedMethods = ["GET"]
   const auth = await withApiAuthentication(request, response, allowedMethods)
@@ -16,6 +20,11 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
   }
 
   const { req, res, currentUser } = auth
+  const { reportType } = req.query
+
+  if (!Object.values(ReportType).includes(reportType as string)) {
+    res.status(404).json({ message: reportType })
+  }
 
   const caseListQueryParams = extractSearchParamsFromQuery(req.query, currentUser)
   const dataSource = await getDataSource()
