@@ -74,12 +74,12 @@ describe("reports API endpoint", () => {
     it("returns a csv payload", () => {
       cy.request({
         method: "GET",
-        url: `/bichard/api/reports/resolved-cases?resolvedFrom=2024-09-20 00:00:00&resolvedTo=2024-09-26 22:59:59&state=Resolved`
+        url: `/bichard/api/reports/resolved-cases?resolvedFrom=2024-09-20%2000:00:00&resolvedTo=2024-09-26%2022:59:59`
       }).then((response) => {
         expect(response.status).to.equal(200)
         console.log(response.body)
         expect(response.body.report).to.equal(
-          `ASN,PTIURN,defendantName,courtName,hearingDate,caseReference,dateTimeRecievedByCJSE,dateTimeResolved,notes,resolutionAction\n0836FP0100000377244A,Case00000,WAYNE Bruce,Magistrates' Courts Essex Basildon,,,,2024-09-26T08:44:14.092Z,[],`
+          `ASN,PTIURN,Defendant Name,Court Name,Hearing Date,Case Reference,Date/Time Received By CJSE,Date/Time Resolved,Notes,Resolution Action\n0836FP0100000377244A,Case00000,WAYNE Bruce,Magistrates' Courts Essex Basildon,,,2022-06-30 09:44:03.93,2024-09-26T08:44:14.092Z,[],`
         )
       })
     })

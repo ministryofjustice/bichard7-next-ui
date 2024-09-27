@@ -42,7 +42,20 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
     throw courtCases
   }
 
-  const report = json2csv(formatResolvedCaseReport(courtCases.result))
+  const report = json2csv(formatResolvedCaseReport(courtCases.result), {
+    keys: [
+      { field: "ASN" },
+      { field: "PTIURN" },
+      { field: "defendantName", title: "Defendant Name" },
+      { field: "courtName", title: "Court Name" },
+      { field: "hearingDate", title: "Hearing Date" },
+      { field: "caseReference", title: "Case Reference" },
+      { field: "dateTimeRecievedByCJSE", title: "Date/Time Received By CJSE" },
+      { field: "dateTimeResolved", title: "Date/Time Resolved" },
+      { field: "notes", title: "Notes" },
+      { field: "resolutionAction", title: "Resolution Action" }
+    ]
+  })
 
   res.status(200).json({ report })
 }
