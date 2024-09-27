@@ -3,12 +3,14 @@ import withApiAuthentication from "middleware/withApiAuthentication/withApiAuthe
 import type { NextApiRequest, NextApiResponse } from "next"
 import getDataSource from "services/getDataSource"
 import listCourtCases from "services/listCourtCases"
+import QueryColumns from "services/QueryColumns"
+import { Reason } from "types/CaseListQueryParams"
 import { isError } from "types/Result"
 import formatResolvedCaseReport from "utils/reports/formatResolvedCaseReport"
 import { extractSearchParamsFromQuery } from "utils/validateQueryParams"
 
 enum ReportType {
-  RESOLVED_CASES = "resolved-cases"
+  RESOLVED_CASES = "resolved-exceptions"
 }
 
 export default async (request: NextApiRequest, response: NextApiResponse) => {
@@ -29,6 +31,7 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
         res.status(400).end()
       }
       caseListQueryParams.caseState = "Resolved"
+      caseListQueryParams.reason = Reason.Exceptions
       break
     default:
       res.status(404).end()
@@ -36,7 +39,12 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
 
   const dataSource = await getDataSource()
 
-  const courtCases = await listCourtCases(dataSource, caseListQueryParams, currentUser)
+  const courtCases = await listCourtCases(
+    dataSource,
+    caseListQueryParams,
+    currentUser,
+    QueryColumns.ResolvedExceptionsReport
+  )
 
   if (isError(courtCases)) {
     throw courtCases

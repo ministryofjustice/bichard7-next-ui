@@ -7,7 +7,7 @@ describe("reports API endpoint", () => {
       it("returns a 401 status code", () => {
         cy.request({
           method: "GET",
-          url: `/bichard/api/reports/resolved-cases`,
+          url: `/bichard/api/reports/resolved-exceptions`,
           failOnStatusCode: false
         }).then((response) => {
           expect(response.status).to.equal(401)
@@ -31,7 +31,7 @@ describe("reports API endpoint", () => {
     })
   })
 
-  describe("GET /reports/resolved-cases", () => {
+  describe("GET /reports/resolved-exceptions", () => {
     beforeEach(() => {
       cy.loginAs("GeneralHandler")
       cy.task("insertCourtCasesWithFields", [
@@ -46,7 +46,8 @@ describe("reports API endpoint", () => {
           errorReason: "HO100321",
           errorResolvedBy: "GeneralHandler",
           defendantName: "WAYNE Bruce",
-          resolutionTimestamp: new Date("2024-09-26 10:44:14.092")
+          resolutionTimestamp: new Date("2024-09-26 10:44:14.092"),
+          messageReceivedTimestamp: new Date("2022-06-30 09:44:03.93")
         },
         {
           orgForPoliceFilter: "01",
@@ -64,7 +65,7 @@ describe("reports API endpoint", () => {
     it("returns a 400 if resolved dates not included in query string", () => {
       cy.request({
         method: "GET",
-        url: `/bichard/api/reports/resolved-cases`,
+        url: `/bichard/api/reports/resolved-exceptions`,
         failOnStatusCode: false
       }).then((response) => {
         expect(response.status).to.equal(400)
@@ -74,12 +75,12 @@ describe("reports API endpoint", () => {
     it("returns a csv payload", () => {
       cy.request({
         method: "GET",
-        url: `/bichard/api/reports/resolved-cases?resolvedFrom=2024-09-20%2000:00:00&resolvedTo=2024-09-26%2022:59:59`
+        url: `/bichard/api/reports/resolved-exceptions?resolvedFrom=2024-09-20%2000:00:00&resolvedTo=2024-09-26%2022:59:59`
       }).then((response) => {
         expect(response.status).to.equal(200)
         console.log(response.body)
         expect(response.body.report).to.equal(
-          `ASN,PTIURN,Defendant Name,Court Name,Hearing Date,Case Reference,Date/Time Received By CJSE,Date/Time Resolved,Notes,Resolution Action\n0836FP0100000377244A,Case00000,WAYNE Bruce,Magistrates' Courts Essex Basildon,,,2022-06-30 09:44:03.93,2024-09-26T08:44:14.092Z,[],`
+          `ASN,PTIURN,Defendant Name,Court Name,Hearing Date,Case Reference,Date/Time Received By CJSE,Date/Time Resolved,Notes,Resolution Action\n0836FP0100000377244A,Case00000,WAYNE Bruce,Magistrates' Courts Essex Basildon,,,2022-06-30T07:44:03.930Z,2024-09-26T08:44:14.092Z,[],`
         )
       })
     })
