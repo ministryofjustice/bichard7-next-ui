@@ -1,6 +1,7 @@
 import CourtCase from "services/entities/CourtCase"
 import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/core/lib/parse/parseAhoXml/parseAhoXml"
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
+import { isError } from "lodash"
 
 export interface ResolvedExceptionsReportLine {
   ASN: string | null
@@ -21,6 +22,11 @@ export const createResolvedExceptionsReportLines = (courtCases: CourtCase[]): Re
 
     if (courtCase.hearingOutcome) {
       aho = parseAhoXml(courtCase.hearingOutcome) as AnnotatedHearingOutcome
+    }
+
+    // TODO: handle errors from parsing ahoXML
+    if (isError(aho)) {
+      throw aho
     }
 
     return {

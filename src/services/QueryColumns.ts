@@ -20,7 +20,7 @@ const CaseListQuery = [
   "courtCase.triggerLockedByUsername"
 ]
 
-const ResolvedExceptionsReport = [...CaseListQuery, "courtCase.messageReceivedTimestamp"]
+const ResolvedExceptionsReport = [...CaseListQuery, "courtCase.messageReceivedTimestamp", "courtCase.hearingOutcome"]
 
 export default {
   CaseListQuery,

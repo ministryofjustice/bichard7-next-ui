@@ -85,7 +85,7 @@ describe("reports API endpoint", () => {
         expect(response.status).to.equal(200)
         console.log(response.body)
         expect(response.body.report).to.equal(
-          `ASN,PTIURN,Defendant Name,Court Name,Hearing Date,Case Reference,Date/Time Received By CJSE,Date/Time Resolved,Notes,Resolution Action\n0836FP0100000377244A,Case00000,WAYNE Bruce,Magistrates' Courts Essex Basildon,,,${timeStamp},${timeStamp},[],`
+          `ASN,PTIURN,Defendant Name,Court Name,Hearing Date,Case Reference,Date/Time Received By CJSE,Date/Time Resolved,Notes,Resolution Action\n0836FP0100000377244A,Case00000,WAYNE Bruce,Magistrates' Courts Essex Basildon,,15/1987/0076855H,${timeStamp},${timeStamp},[],`
         )
       })
     })
