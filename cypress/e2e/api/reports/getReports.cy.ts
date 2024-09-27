@@ -32,7 +32,9 @@ describe("reports API endpoint", () => {
   })
 
   describe("GET /reports/resolved-exceptions", () => {
+    let date: Date
     beforeEach(() => {
+      date = new Date("2024-09-26 10:44:14 UTC")
       cy.loginAs("GeneralHandler")
       cy.task("insertCourtCasesWithFields", [
         {
@@ -46,8 +48,8 @@ describe("reports API endpoint", () => {
           errorReason: "HO100321",
           errorResolvedBy: "GeneralHandler",
           defendantName: "WAYNE Bruce",
-          resolutionTimestamp: new Date("2024-09-26 10:44:14.092").toUTCString(),
-          messageReceivedTimestamp: new Date("2022-06-30 09:44:03.93").toUTCString()
+          resolutionTimestamp: date,
+          messageReceivedTimestamp: date
         },
         {
           orgForPoliceFilter: "01",
@@ -73,6 +75,9 @@ describe("reports API endpoint", () => {
     })
 
     it("returns a csv payload", () => {
+      const localOffset = date.getTimezoneOffset() * 60 * 1000
+      const dateStamp = date.getTime() + localOffset
+      const timeStamp = new Date(dateStamp).toISOString()
       cy.request({
         method: "GET",
         url: `/bichard/api/reports/resolved-exceptions?resolvedFrom=2024-09-20%2000:00:00&resolvedTo=2024-09-26%2022:59:59`
@@ -80,7 +85,7 @@ describe("reports API endpoint", () => {
         expect(response.status).to.equal(200)
         console.log(response.body)
         expect(response.body.report).to.equal(
-          `ASN,PTIURN,Defendant Name,Court Name,Hearing Date,Case Reference,Date/Time Received By CJSE,Date/Time Resolved,Notes,Resolution Action\n0836FP0100000377244A,Case00000,WAYNE Bruce,Magistrates' Courts Essex Basildon,,,2022-06-30T07:44:03.000Z,2024-09-26T08:44:14.000Z,[],`
+          `ASN,PTIURN,Defendant Name,Court Name,Hearing Date,Case Reference,Date/Time Received By CJSE,Date/Time Resolved,Notes,Resolution Action\n0836FP0100000377244A,Case00000,WAYNE Bruce,Magistrates' Courts Essex Basildon,,,${timeStamp},${timeStamp},[],`
         )
       })
     })

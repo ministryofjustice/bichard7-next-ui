@@ -1,11 +1,10 @@
-import formatResolvedCaseReport from "./formatResolvedCaseReport"
-import type { ResolvedCaseReportCase } from "./formatResolvedCaseReport"
+import resolvedExceptionsReport, { ResolvedExceptionsReportLine } from "./ResolvedExceptionsReport"
 import fs from "fs"
 import generateAho from "../../../test/helpers/generateAho"
 import CourtCase from "services/entities/CourtCase"
 
-describe("formatResolvedCourtCasesReport", () => {
-  it("returns a list of resolved court cases", () => {
+describe("resolvedExceptionsReport", () => {
+  it("returns a list of resolved exceptions", () => {
     const ahoXml = fs.readFileSync("test/test-data/AnnotatedHOTemplate.xml").toString()
     const date = new Date()
     const courtCases = [
@@ -46,7 +45,7 @@ describe("formatResolvedCourtCasesReport", () => {
       }
     ] as unknown as CourtCase[]
 
-    const result = formatResolvedCaseReport(courtCases)
+    const result = resolvedExceptionsReport(courtCases)
 
     expect(result).toEqual([
       {
@@ -61,6 +60,6 @@ describe("formatResolvedCourtCasesReport", () => {
         notes: ["user: note text", "user2: resolved text"],
         resolutionAction: "resolved text"
       }
-    ] as ResolvedCaseReportCase[])
+    ] as ResolvedExceptionsReportLine[])
   })
 })

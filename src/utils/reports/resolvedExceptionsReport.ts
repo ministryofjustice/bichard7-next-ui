@@ -2,7 +2,7 @@ import CourtCase from "services/entities/CourtCase"
 import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/core/lib/parse/parseAhoXml/parseAhoXml"
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 
-export interface ResolvedCaseReportCase {
+export interface ResolvedExceptionsReportLine {
   ASN: string | null
   PTIURN: string
   defendantName: string | null
@@ -15,7 +15,7 @@ export interface ResolvedCaseReportCase {
   resolutionAction: string
 }
 
-export default (courtCases: CourtCase[]): ResolvedCaseReportCase[] =>
+export default (courtCases: CourtCase[]): ResolvedExceptionsReportLine[] =>
   courtCases.map((courtCase) => {
     let aho: AnnotatedHearingOutcome | null = null
 

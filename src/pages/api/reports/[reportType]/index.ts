@@ -6,12 +6,9 @@ import listCourtCases from "services/listCourtCases"
 import QueryColumns from "services/QueryColumns"
 import { Reason } from "types/CaseListQueryParams"
 import { isError } from "types/Result"
-import formatResolvedCaseReport from "utils/reports/formatResolvedCaseReport"
+import { ReportType } from "utils/reports/ReportTypes"
+import ResolvedExceptionsReport from "utils/reports/ResolvedExceptionsReport"
 import { extractSearchParamsFromQuery } from "utils/validateQueryParams"
-
-enum ReportType {
-  RESOLVED_CASES = "resolved-exceptions"
-}
 
 export default async (request: NextApiRequest, response: NextApiResponse) => {
   const allowedMethods = ["GET"]
@@ -26,7 +23,7 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
   const caseListQueryParams = extractSearchParamsFromQuery(req.query, currentUser)
 
   switch (reportType) {
-    case ReportType.RESOLVED_CASES:
+    case ReportType.RESOLVED_EXCEPTIONS:
       if (!caseListQueryParams.resolvedDateRange) {
         res.status(400).end()
       }
@@ -50,7 +47,8 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
     throw courtCases
   }
 
-  const report = json2csv(formatResolvedCaseReport(courtCases.result), {
+  // TODO: handle different report types when we start adding them
+  const report = json2csv(ResolvedExceptionsReport(courtCases.result), {
     keys: [
       { field: "ASN" },
       { field: "PTIURN" },
