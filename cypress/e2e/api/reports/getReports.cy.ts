@@ -46,8 +46,8 @@ describe("reports API endpoint", () => {
           errorReason: "HO100321",
           errorResolvedBy: "GeneralHandler",
           defendantName: "WAYNE Bruce",
-          resolutionTimestamp: new Date("2024-09-26 10:44:14.092"),
-          messageReceivedTimestamp: new Date("2022-06-30 09:44:03.93")
+          resolutionTimestamp: new Date("2024-09-26 10:44:14.092").toUTCString(),
+          messageReceivedTimestamp: new Date("2022-06-30 09:44:03.93").toUTCString()
         },
         {
           orgForPoliceFilter: "01",
@@ -80,7 +80,7 @@ describe("reports API endpoint", () => {
         expect(response.status).to.equal(200)
         console.log(response.body)
         expect(response.body.report).to.equal(
-          `ASN,PTIURN,Defendant Name,Court Name,Hearing Date,Case Reference,Date/Time Received By CJSE,Date/Time Resolved,Notes,Resolution Action\n0836FP0100000377244A,Case00000,WAYNE Bruce,Magistrates' Courts Essex Basildon,,,2022-06-30T07:44:03.930Z,2024-09-26T08:44:14.092Z,[],`
+          `ASN,PTIURN,Defendant Name,Court Name,Hearing Date,Case Reference,Date/Time Received By CJSE,Date/Time Resolved,Notes,Resolution Action\n0836FP0100000377244A,Case00000,WAYNE Bruce,Magistrates' Courts Essex Basildon,,,2022-06-30T07:44:03.000Z,2024-09-26T08:44:14.000Z,[],`
         )
       })
     })
