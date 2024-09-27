@@ -1,7 +1,10 @@
 import fs from "fs"
 import generateAho from "../../../test/helpers/generateAho"
 import CourtCase from "services/entities/CourtCase"
-import ResolvedExceptionsReport, { ResolvedExceptionsReportLine } from "./ResolvedExceptionsReport"
+import {
+  createResolvedExceptionsReportLines,
+  ResolvedExceptionsReportLine
+} from "./createResolvedExceptionsReportLines"
 
 describe("resolvedExceptionsReport", () => {
   it("returns a list of resolved exceptions", () => {
@@ -45,7 +48,7 @@ describe("resolvedExceptionsReport", () => {
       }
     ] as unknown as CourtCase[]
 
-    const result = ResolvedExceptionsReport(courtCases)
+    const result = createResolvedExceptionsReportLines(courtCases)
 
     expect(result).toEqual([
       {

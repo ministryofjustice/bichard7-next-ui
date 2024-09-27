@@ -6,8 +6,8 @@ import listCourtCases from "services/listCourtCases"
 import QueryColumns from "services/QueryColumns"
 import { Reason } from "types/CaseListQueryParams"
 import { isError } from "types/Result"
+import { createResolvedExceptionsReportLines } from "utils/reports/createResolvedExceptionsReportLines"
 import { ReportType } from "utils/reports/ReportTypes"
-import ResolvedExceptionsReport from "utils/reports/ResolvedExceptionsReport"
 import { extractSearchParamsFromQuery } from "utils/validateQueryParams"
 
 export default async (request: NextApiRequest, response: NextApiResponse) => {
@@ -48,7 +48,7 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
   }
 
   // TODO: handle different report types when we start adding them
-  const report = json2csv(ResolvedExceptionsReport(courtCases.result), {
+  const report = json2csv(createResolvedExceptionsReportLines(courtCases.result), {
     keys: [
       { field: "ASN" },
       { field: "PTIURN" },

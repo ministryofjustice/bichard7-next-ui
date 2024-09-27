@@ -15,7 +15,7 @@ export interface ResolvedExceptionsReportLine {
   resolutionAction: string
 }
 
-export default (courtCases: CourtCase[]): ResolvedExceptionsReportLine[] =>
+export const createResolvedExceptionsReportLines = (courtCases: CourtCase[]): ResolvedExceptionsReportLine[] =>
   courtCases.map((courtCase) => {
     let aho: AnnotatedHearingOutcome | null = null
 
