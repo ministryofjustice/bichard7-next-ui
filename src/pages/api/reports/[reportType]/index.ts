@@ -44,11 +44,13 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
   )
 
   if (isError(courtCases)) {
-    throw courtCases
+    const { message } = courtCases
+    return res.status(500).json({ error: message })
   }
 
   // TODO: handle different report types when we start adding them
-  const report = json2csv(createResolvedExceptionsReportLines(courtCases.result), {
+  const reportLines = createResolvedExceptionsReportLines(courtCases.result)
+  const report = json2csv(reportLines, {
     keys: [
       { field: "ASN" },
       { field: "PTIURN" },

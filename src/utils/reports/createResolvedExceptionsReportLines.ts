@@ -1,6 +1,5 @@
 import CourtCase from "services/entities/CourtCase"
 import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/core/lib/parse/parseAhoXml/parseAhoXml"
-import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { isError } from "lodash"
 
 export interface ResolvedExceptionsReportLine {
@@ -18,11 +17,7 @@ export interface ResolvedExceptionsReportLine {
 
 export const createResolvedExceptionsReportLines = (courtCases: CourtCase[]): ResolvedExceptionsReportLine[] =>
   courtCases.map((courtCase) => {
-    let aho: AnnotatedHearingOutcome | null = null
-
-    if (courtCase.hearingOutcome) {
-      aho = parseAhoXml(courtCase.hearingOutcome) as AnnotatedHearingOutcome
-    }
+    const aho = parseAhoXml(courtCase.hearingOutcome)
 
     const reportLine = {
       ASN: courtCase.asn,
@@ -38,7 +33,7 @@ export const createResolvedExceptionsReportLines = (courtCases: CourtCase[]): Re
         courtCase.notes.sort((a, b) => a.createdAt.valueOf() - b.createdAt.valueOf()).pop()?.noteText || ""
     }
 
-    if (aho && !isError(aho)) {
+    if (!isError(aho)) {
       reportLine.hearingDate = aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.DateOfHearing.toISOString() || ""
       reportLine.caseReference = aho.AnnotatedHearingOutcome.HearingOutcome.Case.CourtCaseReferenceNumber || ""
     }
