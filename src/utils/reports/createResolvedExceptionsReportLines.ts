@@ -24,22 +24,24 @@ export const createResolvedExceptionsReportLines = (courtCases: CourtCase[]): Re
       aho = parseAhoXml(courtCase.hearingOutcome) as AnnotatedHearingOutcome
     }
 
-    // TODO: handle errors from parsing ahoXML
-    if (isError(aho)) {
-      throw aho
-    }
-
-    return {
+    const reportLine = {
       ASN: courtCase.asn,
       PTIURN: courtCase.ptiurn,
       defendantName: courtCase.defendantName,
       courtName: courtCase.courtName,
-      hearingDate: aho ? aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.DateOfHearing.toISOString() : "",
-      caseReference: aho ? aho.AnnotatedHearingOutcome.HearingOutcome.Case.CourtCaseReferenceNumber || "" : "",
+      hearingDate: "",
+      caseReference: "",
       dateTimeRecievedByCJSE: courtCase.messageReceivedTimestamp?.toISOString() || "",
       dateTimeResolved: courtCase.resolutionTimestamp?.toISOString() || "",
       notes: courtCase.notes.map((note) => `${note.user}: ${note.noteText}`),
       resolutionAction:
         courtCase.notes.sort((a, b) => a.createdAt.valueOf() - b.createdAt.valueOf()).pop()?.noteText || ""
     }
+
+    if (aho && !isError(aho)) {
+      reportLine.hearingDate = aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.DateOfHearing.toISOString() || ""
+      reportLine.caseReference = aho.AnnotatedHearingOutcome.HearingOutcome.Case.CourtCaseReferenceNumber || ""
+    }
+
+    return reportLine
   })
