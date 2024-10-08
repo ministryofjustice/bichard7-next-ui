@@ -50,7 +50,7 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
 
   // TODO: handle different report types when we start adding them
   const reportLines = createResolvedExceptionsReportLines(courtCases.result)
-  const report = json2csv(reportLines, {
+  const report = json2csv(reportLines.report, {
     keys: [
       { field: "ASN" },
       { field: "PTIURN" },

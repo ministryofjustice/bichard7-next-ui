@@ -1,22 +1,10 @@
 import CourtCase from "services/entities/CourtCase"
 import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/core/lib/parse/parseAhoXml/parseAhoXml"
 import { isError } from "lodash"
+import { ResolvedException, Report } from "./Report"
 
-export interface ResolvedExceptionsReportLine {
-  ASN: string | null
-  PTIURN: string
-  defendantName: string | null
-  courtName: string
-  hearingDate: string
-  caseReference: string
-  dateTimeRecievedByCJSE: string
-  dateTimeResolved: string
-  notes: string[]
-  resolutionAction: string
-}
-
-export const createResolvedExceptionsReportLines = (courtCases: CourtCase[]): ResolvedExceptionsReportLine[] =>
-  courtCases.map((courtCase) => {
+export const createResolvedExceptionsReportLines = (courtCases: CourtCase[]): Report<ResolvedException> => {
+  const report = courtCases.map((courtCase) => {
     const aho = parseAhoXml(courtCase.hearingOutcome)
 
     const reportLine = {
@@ -40,3 +28,6 @@ export const createResolvedExceptionsReportLines = (courtCases: CourtCase[]): Re
 
     return reportLine
   })
+
+  return { report }
+}

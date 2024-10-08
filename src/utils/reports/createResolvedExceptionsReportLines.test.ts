@@ -1,10 +1,8 @@
 import fs from "fs"
 import generateAho from "../../../test/helpers/generateAho"
 import CourtCase from "services/entities/CourtCase"
-import {
-  createResolvedExceptionsReportLines,
-  ResolvedExceptionsReportLine
-} from "./createResolvedExceptionsReportLines"
+import { createResolvedExceptionsReportLines } from "./createResolvedExceptionsReportLines"
+import { ResolvedException, Report } from "./Report"
 
 describe("resolvedExceptionsReport", () => {
   it("returns a list of resolved exceptions", () => {
@@ -50,19 +48,21 @@ describe("resolvedExceptionsReport", () => {
 
     const result = createResolvedExceptionsReportLines(courtCases)
 
-    expect(result).toEqual([
-      {
-        ASN: "asn",
-        PTIURN: "ptiurn",
-        defendantName: "defendant-name",
-        courtName: "court-name",
-        hearingDate: "2011-09-26T00:00:00.000Z",
-        caseReference: "97/1626/008395Q",
-        dateTimeRecievedByCJSE: date.toISOString(),
-        dateTimeResolved: date.toISOString(),
-        notes: ["user: note text", "user2: resolved text"],
-        resolutionAction: "resolved text"
-      }
-    ] as ResolvedExceptionsReportLine[])
+    expect(result).toEqual({
+      report: [
+        {
+          ASN: "asn",
+          PTIURN: "ptiurn",
+          defendantName: "defendant-name",
+          courtName: "court-name",
+          hearingDate: "2011-09-26T00:00:00.000Z",
+          caseReference: "97/1626/008395Q",
+          dateTimeRecievedByCJSE: date.toISOString(),
+          dateTimeResolved: date.toISOString(),
+          notes: ["user: note text", "user2: resolved text"],
+          resolutionAction: "resolved text"
+        }
+      ]
+    } as Report<ResolvedException>)
   })
 })
