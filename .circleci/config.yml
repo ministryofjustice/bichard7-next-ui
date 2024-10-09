@@ -371,6 +371,10 @@ jobs:
             equal: [true, << parameters.ms-edge >>]
           steps:
             - install_ms_edge
+      - run:
+          name: Build Core
+          command: npm run build
+          working_directory: ~/bichard7-next-core
       - start_bichard7_legacy
       - run_test_chunk:
           ARGS: >-
@@ -379,7 +383,6 @@ jobs:
             MS_EDGE=<< parameters.ms-edge >>
       - save_artifacts
       - store_test_results:
-          working_directory: ~/bichard7-next-tests
           path: ./cucumber/results
 
   zap_scanner:
