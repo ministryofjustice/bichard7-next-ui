@@ -43,7 +43,7 @@
     "babel-plugin-transform-typescript-metadata": "^0.3.2",
     "cookie": "^0.7.2",
     "cookie-signature": "^1.2.1",
-    "cookies-next": "^4.2.1",
+    "cookies-next": "^4.3.0",
     "csrf": "^3.1.0",
     "date-fns": "^3.6.0",
     "date-fns-tz": "^3.2.0",
