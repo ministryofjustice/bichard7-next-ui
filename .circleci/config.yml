@@ -9,21 +9,25 @@ commands:
     steps:
       - run:
           name: Clone bichard7-next-core
-          command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-core.git ~/bichard7-next-core
+          command: bash .circleci/scripts/clone-core-repo.sh
+      - node/install-packages:
+          app-dir: ~/bichard7-next-core
+          cache-path: ~/bichard7-next-core/node_modules
+          include-branch-in-cache-key: true
 
   install_npm_packages:
     steps:
-        - restore_cache:
-            name: Load node_modules from the cache if they haven't changed
-            keys:
-              - v1-npm-deps-{{ .Branch  }}-{{ checksum "package-lock.json" }}
-              - v1-npm-deps-
-        - run:
-            name: Install npm dependencies
-            command: npm i
-        - save_cache:
-            key: v1-npm-deps-{{ .Branch  }}-{{ checksum "package-lock.json" }}
-            paths: node_modules
+      - restore_cache:
+          name: Load node_modules from the cache if they haven't changed
+          keys:
+            - v1-npm-deps-{{ .Branch  }}-{{ checksum "package-lock.json" }}
+            - v1-npm-deps-
+      - run:
+          name: Install npm dependencies
+          command: npm i
+      - save_cache:
+          key: v1-npm-deps-{{ .Branch  }}-{{ checksum "package-lock.json" }}
+          paths: node_modules
   setup:
     steps:
       - checkout
@@ -71,7 +75,7 @@ commands:
     steps:
       - run:
           name: Run test chunk
-          working_directory: ~/bichard7-next-tests
+          working_directory: ~/bichard7-next-core/packages/e2e-test
           command: |
             CHUNK=$(circleci tests glob "features/**/*.feature" | circleci tests split --split-by=timings) \
             <<parameters.ARGS>> \
@@ -94,31 +98,31 @@ commands:
   save_artifacts:
     steps:
       - run:
-          working_directory: ~/bichard7-next-tests
+          working_directory: ~/bichard7-next-core/packages/e2e-test
           name: Compress the artifacts for easier downloading
           when: always
           command: for file in ./screenshots/*; do tar -czf ${file}.tar.gz $file; done
       - run:
-          working_directory: ~/bichard7-next-tests
+          working_directory: ~/bichard7-next-core/packages/e2e-test
           name: Create the saved_artifacts directory
           when: always
           command: mkdir ./saved_artifacts;
       - run:
-          working_directory: ~/bichard7-next-tests
+          working_directory: ~/bichard7-next-core/packages/e2e-test
           name: Move the gzipped files across
           when: always
           command: mv ./screenshots/*.tar.gz ./saved_artifacts/
       - store_artifacts:
-          path: /home/circleci/bichard7-next-tests/saved_artifacts
+          path: /home/circleci/bichard7-next-core/packages/e2e-test/saved_artifacts
       - store_test_results:
-          path: /home/circleci/bichard7-next-tests/test-results.xml
+          path: /home/circleci/bichard7-next-core/packages/e2e-test/test-results.xml
 
   install_ms_edge:
     steps:
       - restore_cache:
           keys:
-              - ubuntu-package-cache-v1-{{ checksum "~/bichard7-next-core/.circleci/scripts/install-ms-edge-on-linux.sh" }}
-              - ubuntu-package-cache-v1-
+            - ubuntu-package-cache-v1-{{ checksum "~/bichard7-next-core/.circleci/scripts/install-ms-edge-on-linux.sh" }}
+            - ubuntu-package-cache-v1-
       - run:
           name: Install MS Edge (dev)
           working_directory: ~/bichard7-next-core
@@ -126,8 +130,8 @@ commands:
       - save_cache:
           key: ubuntu-package-cache-v1-{{ checksum "~/bichard7-next-core/.circleci/scripts/install-ms-edge-on-linux.sh" }}
           paths:
-              - ~/vendor/apt_cache
-              - ~/vendor/apt_lists
+            - ~/vendor/apt_cache
+            - ~/vendor/apt_lists
 
   ################### Services
   start_bichard7_legacy:
@@ -368,12 +372,9 @@ jobs:
           steps:
             - install_ms_edge
       - run:
-          name: Clone bichard7-next-tests
-          command: bash .circleci/scripts/clone-tests-repo.sh
-      - node/install-packages:
-          app-dir: ~/bichard7-next-tests
-          cache-path: ~/bichard7-next-tests/node_modules
-          include-branch-in-cache-key: true
+          name: Build Core
+          command: npm run build
+          working_directory: ~/bichard7-next-core
       - start_bichard7_legacy
       - run_test_chunk:
           ARGS: >-
@@ -382,7 +383,6 @@ jobs:
             MS_EDGE=<< parameters.ms-edge >>
       - save_artifacts
       - store_test_results:
-          working_directory: ~/bichard7-next-tests
           path: ./cucumber/results
 
   zap_scanner:
