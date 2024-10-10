@@ -4,6 +4,7 @@ describe("reports API endpoint", () => {
   describe("GET /reports/*", () => {
     describe("without authentication", () => {
       it("returns a 401 status code", () => {
+        cy.clearCookies()
         cy.request({
           method: "GET",
           url: `/bichard/api/reports/resolved-exceptions`,
