@@ -1,4 +1,3 @@
-import { json2csv } from "json-2-csv"
 import withApiAuthentication from "middleware/withApiAuthentication/withApiAuthentication"
 import type { NextApiRequest, NextApiResponse } from "next"
 import getDataSource from "services/getDataSource"
@@ -6,7 +5,8 @@ import listCourtCases from "services/listCourtCases"
 import QueryColumns from "services/QueryColumns"
 import { Reason } from "types/CaseListQueryParams"
 import { isError } from "types/Result"
-import { createResolvedExceptionsReportLines } from "utils/reports/createResolvedExceptionsReportLines"
+import { createReport } from "utils/reports/createReport"
+import { createReportCsv } from "utils/reports/createReportCsv"
 import { ReportType } from "utils/reports/ReportTypes"
 import { extractSearchParamsFromQuery } from "utils/validateQueryParams"
 
@@ -48,22 +48,8 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
     return res.status(500).json({ error: message })
   }
 
-  // TODO: handle different report types when we start adding them
-  const reportLines = createResolvedExceptionsReportLines(courtCases.result)
-  const report = json2csv(reportLines.report, {
-    keys: [
-      { field: "ASN" },
-      { field: "PTIURN" },
-      { field: "defendantName", title: "Defendant Name" },
-      { field: "courtName", title: "Court Name" },
-      { field: "hearingDate", title: "Hearing Date" },
-      { field: "caseReference", title: "Case Reference" },
-      { field: "dateTimeRecievedByCJSE", title: "Date/Time Received By CJSE" },
-      { field: "dateTimeResolved", title: "Date/Time Resolved" },
-      { field: "notes", title: "Notes" },
-      { field: "resolutionAction", title: "Resolution Action" }
-    ]
-  })
+  const reportLines = createReport(courtCases.result, reportType as ReportType)
+  const report = createReportCsv(reportLines, reportType as ReportType)
 
   res.status(200).json({ report })
 }
