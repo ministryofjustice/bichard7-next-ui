@@ -7,7 +7,7 @@
   - @typescript-eslint/parser
     - Another package does not yet support the latest version
   - date-fns
-    - Date-fns-tz does not yet support the latest version  
+    - Date-fns-tz does not yet support the latest version
 
 
   Skipped:
@@ -17,6 +17,7 @@
 const pinned = [
   "styled-components",
   "eslint",
+  "eslint-plugin-cypress",
   "@typescript-eslint/eslint-plugin",
   "@typescript-eslint/parser",
   "date-fns"
