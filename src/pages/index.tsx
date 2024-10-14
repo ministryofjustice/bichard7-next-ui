@@ -3,6 +3,7 @@ import Pagination from "components/Pagination"
 import { CsrfTokenContext, CsrfTokenContextType } from "context/CsrfTokenContext"
 import { CurrentUserContext, CurrentUserContextType } from "context/CurrentUserContext"
 import { getCookie, setCookie } from "cookies-next"
+import type { OptionsType } from "cookies-next/lib/types"
 import AppliedFilters from "features/CourtCaseFilters/AppliedFilters"
 import CourtCaseFilter from "features/CourtCaseFilters/CourtCaseFilter"
 import CourtCaseWrapper from "features/CourtCaseFilters/CourtCaseFilterWrapper"
@@ -37,10 +38,10 @@ import { logUiDetails } from "utils/logUiDetails"
 import { logCaseListRenderTime } from "utils/logging"
 import { calculateLastPossiblePageNumber } from "utils/pagination/calculateLastPossiblePageNumber"
 import redirectTo from "utils/redirectTo"
+import { extractSearchParamsFromQuery } from "utils/validateQueryParams"
 import withCsrf from "../middleware/withCsrf/withCsrf"
 import CsrfServerSidePropsContext from "../types/CsrfServerSidePropsContext"
 import shouldShowSwitchingFeedbackForm from "../utils/shouldShowSwitchingFeedbackForm"
-import { extractSearchParamsFromQuery } from "utils/validateQueryParams"
 
 type Props = {
   build: string | null
@@ -192,13 +193,13 @@ const Home: NextPage<Props> = (props) => {
     const [, queryString] = router.asPath.split("?")
 
     const queryParams = new URLSearchParams(queryString)
-    nonSavedParams.map((param) => queryParams.delete(param))
+    nonSavedParams.forEach((param) => queryParams.delete(param))
 
-    setCookie(queryStringCookieName, queryParams.toString(), { path: "/" })
+    setCookie(queryStringCookieName, queryParams.toString(), { path: "/" } as OptionsType)
 
     const { pathname } = router
     const newQueryParams = removeBlankQueryParams(queryParams)
-    nonSavedParams.map((param) => newQueryParams.delete(param))
+    nonSavedParams.forEach((param) => newQueryParams.delete(param))
 
     if (!isEqual(newQueryParams.toString(), queryParams.toString())) {
       router.push({ pathname, query: newQueryParams.toString() }, undefined, { shallow: true })
