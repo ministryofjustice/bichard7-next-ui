@@ -1,2 +1,0 @@
-import amendNextResultSourceOrganisation from "./amendNextResultSourceOrganisation"
-export default amendNextResultSourceOrganisation
