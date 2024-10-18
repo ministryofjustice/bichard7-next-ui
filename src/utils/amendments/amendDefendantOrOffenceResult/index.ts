@@ -1,2 +1,0 @@
-import amendDefendantOrOffenceResult from "./amendDefendantOrOffenceResult"
-export default amendDefendantOrOffenceResult
